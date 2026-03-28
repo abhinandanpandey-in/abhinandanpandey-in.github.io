@@ -1,0 +1,9 @@
+# Allow all search engines to crawl the site
+User-agent: *
+Allow: /
+
+# Specifically point to your sitemap to speed up indexing
+Sitemap: https://abhinandanpandey-in.github.io/sitemap.xml
+
+# If you have private draft folders (e.g., 'img/drafts'), you can hide them:
+Disallow: /img/drafts/
