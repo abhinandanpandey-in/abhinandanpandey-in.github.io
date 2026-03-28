@@ -12,6 +12,7 @@ html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;overflow-x:hidden;cursor:none}
 .cursor{width:8px;height:8px;background:var(--accent);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:9999;transition:transform .1s;mix-blend-mode:screen}
 .cursor-ring{width:32px;height:32px;border:1px solid var(--accent);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:9998;opacity:.4;transition:all .15s ease}
+@media(hover:none),(pointer:coarse){.cursor,.cursor-ring{display:none}body{cursor:auto}}
 body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,255,136,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(0,255,136,.02) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
 body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.04) 2px,rgba(0,0,0,.04) 4px);pointer-events:none;z-index:1}
 
@@ -816,14 +817,17 @@ document.querySelectorAll('.vid-link[data-video]').forEach(btn => {
   });
 });
 
-const cursor=document.getElementById('cursor'),ring=document.getElementById('cursorRing');
-let mx=0,my=0,rx=0,ry=0;
-document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cursor.style.left=mx-4+'px';cursor.style.top=my-4+'px'});
-(function a(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;ring.style.left=rx-16+'px';ring.style.top=ry-16+'px';requestAnimationFrame(a)})();
-document.querySelectorAll('a,button,.skill-card,.vuln-item,.exp-item,.cert-card,.dsa-stat,.topic-chip,.paper-card').forEach(el=>{
-  el.addEventListener('mouseenter',()=>{cursor.style.transform='scale(3)';ring.style.opacity='0.8'});
-  el.addEventListener('mouseleave',()=>{cursor.style.transform='scale(1)';ring.style.opacity='0.4'});
-});
+// Only run custom cursor on devices with a real pointer (not touchscreens)
+if(window.matchMedia('(hover:hover) and (pointer:fine)').matches){
+  const cursor=document.getElementById('cursor'),ring=document.getElementById('cursorRing');
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cursor.style.left=mx-4+'px';cursor.style.top=my-4+'px'});
+  (function a(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;ring.style.left=rx-16+'px';ring.style.top=ry-16+'px';requestAnimationFrame(a)})();
+  document.querySelectorAll('a,button,.skill-card,.vuln-item,.exp-item,.cert-card,.dsa-stat,.topic-chip,.paper-card').forEach(el=>{
+    el.addEventListener('mouseenter',()=>{cursor.style.transform='scale(3)';ring.style.opacity='0.8'});
+    el.addEventListener('mouseleave',()=>{cursor.style.transform='scale(1)';ring.style.opacity='0.4'});
+  });
+}
 function filterProjects(cat,btn){
   document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
