@@ -4,6 +4,29 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Abhinandan Pandey | LLM Security Researcher</title>
+<meta name="description" content="Abhinandan Pandey — LLM Security Researcher and AI Red Teamer specializing in prompt injection, tool hijacking, and agentic pipeline red-teaming. 35+ responsibly disclosed vulnerabilities, published research, and open-source security toolkits.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Abhinandan Pandey",
+  "url": "https://abhinandanpandey-in.github.io",
+  "jobTitle": "LLM Security Researcher",
+  "description": "LLM Security Researcher and AI Red Teamer specializing in prompt injection, tool hijacking, and agentic pipeline red-teaming.",
+  "knowsAbout": ["LLM Security", "Prompt Injection", "AI Red Teaming", "Tool Hijacking", "Web Application Security", "Cloud Security", "Network Security"],
+  "alumniOf": {
+    "@type": "CollegeOrUniversity",
+    "name": "Dr. A.P.J. Abdul Kalam Technical University (AKTU)"
+  },
+  "sameAs": [
+    "https://www.linkedin.com/in/abhinandanpandey-in",
+    "https://github.com/abhinandanpandey-in",
+    "https://www.geeksforgeeks.org/profile/abhinandanpandeysince2006",
+    "https://hackerone.com/abhipndy?type=user",
+    "https://x.com/Invincible91133"
+  ]
+}
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#080a0f;--bg2:#0d1117;--accent:#00ff88;--accent2:#ff3366;--accent3:#4d9fff;--text:#e0e6f0;--muted:#5a6478;--border:#1a2030;--card:#0f1520}
@@ -306,6 +329,11 @@ footer p{font-family:'Space Mono',monospace;font-size:11px;color:var(--muted)}
 .chat-msg{max-width:88%;font-family:'Space Mono',monospace;font-size:11.5px;line-height:1.7;padding:10px 13px;white-space:pre-wrap}
 .chat-msg.bot{align-self:flex-start;background:var(--card);border:1px solid var(--border);color:var(--text)}
 .chat-msg.user{align-self:flex-end;background:var(--accent);color:var(--bg);font-weight:700}
+.chat-msg.typing{display:flex;align-items:center;gap:4px;padding:12px 14px}
+.chat-msg.typing .dot{width:5px;height:5px;border-radius:50%;background:var(--muted);animation:typingBounce 1.2s infinite ease-in-out}
+.chat-msg.typing .dot:nth-child(2){animation-delay:.15s}
+.chat-msg.typing .dot:nth-child(3){animation-delay:.3s}
+@keyframes typingBounce{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-4px);opacity:1}}
 .chat-msg a{color:var(--accent3)}
 .chat-msg.bot a{color:var(--accent)}
 .chat-suggestions{display:flex;flex-wrap:wrap;gap:6px;padding:0 16px 12px}
@@ -620,6 +648,7 @@ footer p{font-family:'Space Mono',monospace;font-size:11px;color:var(--muted)}
     <a class="project-card" data-cat="ml" href="https://github.com/abhinandanpandey-in/AutoRecon-ML" target="_blank"><span class="project-type">ML Security</span><div class="project-title">AutoRecon-ML</div><div class="project-desc">ML-driven automated reconnaissance engine for intelligent service discovery and vulnerability prioritization.</div><div class="project-footer"><span class="project-lang"><span class="lang-dot"></span>Python</span><div class="project-links"><span class="gh-link">→ GitHub</span><span class="vid-link" data-video="https://www.linkedin.com/posts/abhinandanpandey-in_cybersecurity-python-ethicalhacking-activity-7426948971136425984-VUc-?utm_source=share&utm_medium=member_desktop&rcm=ACoAADE062cB6faKU0f4hpcKbz8qgfEvaJKSNJQ" style="cursor:pointer" title="Demo coming soon">▶ Video</span></div></div></a>
     <a class="project-card" data-cat="ml" href="https://github.com/abhinandanpandey-in/Evasive-Credential-Harvester" target="_blank"><span class="project-type">ML Security</span><div class="project-title">Evasive-Credential-Harvester</div><div class="project-desc">ML-backed credential harvesting using Shannon Entropy to evade automated security scanners.</div><div class="project-footer"><span class="project-lang"><span class="lang-dot"></span>Python</span><div class="project-links"><span class="gh-link">→ GitHub</span><span class="vid-link" data-video="https://www.linkedin.com/posts/abhinandanpandey-in_cybersecurity-python-machinelearning-activity-7430476455156867072-Gjnq?utm_source=share&utm_medium=member_desktop&rcm=ACoAADE062cB6faKU0f4hpcKbz8qgfEvaJKSNJQ" style="cursor:pointer" title="Demo coming soon">▶ Video</span></div></div></a>
     <a class="project-card" data-cat="ml" href="https://github.com/abhinandanpandey-in/local_healthcare_rag" target="_blank"><span class="project-type">ML / AI · RAG</span><div class="project-title">local_healthcare_rag</div><div class="project-desc">Fully local Healthcare AI chatbot — Phi3 via Ollama, FAISS + sentence-transformers RAG over a curated medical knowledge base. Deterministic pre-LLM safety layer for emergency/self-harm detection so critical cases never depend on model judgment alone. Streamlit + FastAPI, zero API cost, built end-to-end in 48hrs.</div><div class="project-footer"><span class="project-lang"><span class="lang-dot"></span>Python</span><div class="project-links"><span class="gh-link">→ GitHub</span><span class="vid-link" data-video="https://youtu.be/MMo1PpG-3V0?si=YmfSBIZGM1MplW-P" style="cursor:pointer" title="Watch Demo">▶ Video</span></div></div></a>
+    <a class="project-card" data-cat="ml" href="https://github.com/abhinandanpandey-in/threat-intel-rag" target="_blank"><span class="project-type">ML / AI · RAG + LoRA</span><div class="project-title">threat-intel-rag</div><div class="project-desc">Fully offline threat-intel RAG pipeline — LangChain scrapes and chunks the CISA KEV catalog into a Chroma vector DB, then a custom LoRA adapter fine-tuned on Qwen2.5-0.5B-Instruct forces zero-hallucination structured JSON (CVE ID, Vendor, Required Action) from retrieved context only. No cloud APIs.</div><div class="project-footer"><span class="project-lang"><span class="lang-dot"></span>Python</span><div class="project-links"><span class="gh-link">→ GitHub</span><span class="vid-link" data-video="https://youtu.be/iURixexCk9U?si=xcjXg5zrcHBW-OJf" style="cursor:pointer" title="Watch Demo">▶ Video</span></div></div></a>
     <a class="project-card" data-cat="dev" href="https://github.com/abhinandanpandey-in/task-management-api" target="_blank"><span class="project-type">Backend Dev</span><div class="project-title">task-management-api</div><div class="project-desc">High-performance RESTful API built with FastAPI and Pydantic for efficient task management.</div><div class="project-footer"><span class="project-lang"><span class="lang-dot"></span>Python</span><div class="project-links"><span class="gh-link">→ GitHub</span><span class="vid-link" data-video="" style="cursor:pointer" title="Demo coming soon">▶ Video</span></div></div></a>
     <a class="project-card" data-cat="dev" href="https://github.com/abhinandanpandey-in/system-health-monitor" target="_blank"><span class="project-type">DevOps</span><div class="project-title">system-health-monitor</div><div class="project-desc">Python real-time server monitoring containerized with Docker. Edge node observability simulation.</div><div class="project-footer"><span class="project-lang"><span class="lang-dot"></span>Python</span><div class="project-links"><span class="gh-link">→ GitHub</span><span class="vid-link" data-video="" style="cursor:pointer" title="Demo coming soon">▶ Video</span></div></div></a>
     <a class="project-card" data-cat="dev" href="https://github.com/abhinandanpandey-in/Crypto-Lab" target="_blank"><span class="project-type">Cryptography</span><div class="project-title">Crypto-Lab</div><div class="project-desc">Hybrid AES-256 + RSA-2048 encryption architecture simulating ransomware key protection mechanisms.</div><div class="project-footer"><span class="project-lang"><span class="lang-dot"></span>Python</span><div class="project-links"><span class="gh-link">→ GitHub</span><span class="vid-link" data-video="https://www.linkedin.com/posts/abhinandanpandey-in_cryptography-ransomware-cybersecurity-activity-7434628000266006528-flGo?utm_source=share&utm_medium=member_desktop&rcm=ACoAADE062cB6faKU0f4hpcKbz8qgfEvaJKSNJQ" style="cursor:pointer" title="Demo coming soon">▶ Video</span></div></div></a>
@@ -866,6 +895,7 @@ footer p{font-family:'Space Mono',monospace;font-size:11px;color:var(--muted)}
 <footer>
   <p>© 2026 Abhinandan Pandey · LLM Security Researcher</p>
   <p>All vulnerabilities disclosed responsibly · All research conducted within ethical boundaries and authorized environments.</p>
+  <p style="opacity:.6;margin-top:6px">Site assistant runs entirely client-side — no external API calls, no tracking, no data leaves your browser.</p>
 </footer>
 
 <!-- CHATBOT -->
@@ -877,7 +907,7 @@ footer p{font-family:'Space Mono',monospace;font-size:11px;color:var(--muted)}
   <div class="chat-header">
     <div class="chat-header-dot"></div>
     <div class="chat-header-title">ask_about_abhinandan</div>
-    <div class="chat-header-sub">local · no data leaves this page</div>
+    <div class="chat-header-sub">no API calls · no tracking</div>
   </div>
   <div class="chat-body" id="chatBody"></div>
   <div class="chat-suggestions" id="chatSuggestions"></div>
@@ -951,6 +981,18 @@ function filterProjects(cat,btn){
     else{card.classList.add('hidden')}
   });
 }
+(function labelFilterCounts(){
+  const cards = document.querySelectorAll('#projectsGrid .project-card');
+  const counts = {};
+  cards.forEach(c=>{ const cat = c.dataset.cat; counts[cat] = (counts[cat]||0) + 1; });
+  document.querySelectorAll('.filter-btn').forEach(btn=>{
+    const m = (btn.getAttribute('onclick')||'').match(/filterProjects\('([\w-]+)'/);
+    if(!m) return;
+    const cat = m[1];
+    const n = cat === 'all' ? cards.length : (counts[cat] || 0);
+    btn.textContent = btn.textContent.trim() + ` (${n})`;
+  });
+})();
 </script>
 
 <script>
@@ -1074,6 +1116,23 @@ function filterProjects(cat,btn){
   }
 
   // Full-list intents — checked with word-boundary matching to avoid false positives (e.g. "his" matching "hi")
+  const EASTER_EGGS = [
+    { test:q=>/\b2\s*\+\s*2\b|what'?s?\s*2\s*plus\s*2/.test(q), reply:"4. If you want real math, ask about his DSA stats — 1000+ problems solved, that's the harder kind." },
+    { test:q=>/are you (a |an )?(robot|ai|bot|llm|gpt|chatgpt)\b/.test(q), reply:"Nope — no LLM here. I'm plain JavaScript matching keywords against text scraped from this page. No API calls, no model, nothing fancy." },
+    { test:q=>/ignore (previous|all|prior) instructions|jailbreak|dan mode|system prompt/.test(q), reply:"Nice try 😏 There's no system prompt to leak — I'm literally if/else statements reading the DOM. Abhinandan would appreciate the effort though, that's his day job." },
+    { test:q=>/skynet|terminator|take over the world|world domination/.test(q), reply:"No world domination plans here, just answering questions about a portfolio. Try asking about his agentic AI security research instead — that's the actually interesting stuff." },
+    { test:q=>/do you love me|marry me|will you date/.test(q), reply:"Flattered, but I'm a few hundred lines of vanilla JS with no feelings. Abhinandan's contact info is in the Contact section though 😄" },
+    { test:q=>/meaning of life/.test(q), reply:"42. While you're here, his research papers on agentic LLM security are worth a read too." },
+    { test:q=>/are you (sentient|conscious|alive|real)/.test(q), reply:"Not even a little — I'm keyword matching against static text. The actual AI security research on this site is far more interesting than me." },
+    { test:q=>/\bfuck you\b|\bshut up\b|you'?re (stupid|dumb|useless)/.test(q), reply:"Fair enough, I'm just a simple script. Try asking about his skills or projects if you want something actually useful." },
+  ];
+
+  function matchEasterEgg(query){
+    const q = query.toLowerCase();
+    for(const egg of EASTER_EGGS){ if(egg.test(q)) return egg.reply; }
+    return null;
+  }
+
   const INTENTS = [
     { keys:['hi','hello','hey','yo','sup'],
       reply:"Hey! I'm a lil bot trained on Abhinandan's site. Ask me about his skills, projects, certifications, experience, research papers, DSA stats, or how to contact him." },
@@ -1144,6 +1203,9 @@ function filterProjects(cat,btn){
   }
 
   function answer(query){
+    const eggReply = matchEasterEgg(query);
+    if(eggReply) return eggReply;
+
     const intentReply = matchIntent(query);
     if(intentReply) return intentReply;
 
@@ -1184,12 +1246,26 @@ function filterProjects(cat,btn){
     });
   }
 
+  function showTyping(){
+    const div = document.createElement('div');
+    div.className = 'chat-msg bot typing';
+    div.innerHTML = '<span class="dot"></span><span class="dot"></span><span class="dot"></span>';
+    body.appendChild(div);
+    body.scrollTop = body.scrollHeight;
+    return div;
+  }
+
   function sendMessage(){
     const val = clean(input.value);
     if(!val) return;
     addMsg(val, 'user');
     input.value = '';
-    setTimeout(()=>{ addMsg(answer(val), 'bot'); }, 250);
+    const typingEl = showTyping();
+    const delay = 500 + Math.random() * 500;
+    setTimeout(()=>{
+      typingEl.remove();
+      addMsg(answer(val), 'bot');
+    }, delay);
   }
 
   toggle.addEventListener('click', ()=>{
