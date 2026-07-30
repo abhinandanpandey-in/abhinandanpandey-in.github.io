@@ -24,6 +24,7 @@ The site is intentionally dependency-free — no React, no bundler, no build ste
 | Certifications | CRTOM, Microsoft/Coursera, C-DAC/IIT Roorkee, GeeksforGeeks, internship LORs |
 | Vulnerability Disclosures | 35+ coordinated responsible disclosures across AI platforms, SaaS, and cloud providers |
 | Contact | LinkedIn, GitHub, GeeksforGeeks, Email |
+| Site Assistant | Client-side chatbot that answers visitor questions using content scraped live from the page DOM — no external AI API, no key exposure |
 
 ---
 
@@ -42,6 +43,14 @@ Toolkits:
 
 ---
 
+## Site Assistant & Feedback
+
+The floating chat widget (bottom-right) answers visitor questions about the portfolio by reading the live DOM at page load — skills, experience, projects, certifications, research papers, DSA stats, and contact links. No external LLM API is called, so there's no key to expose and no per-message cost. Answers stay in sync automatically whenever the page content is edited.
+
+When a visitor closes the chat after using it, a small feedback popup appears once per session asking for a quick reaction (emoji rating + optional note). Submissions are sent via a [Formspree](https://formspree.io) endpoint straight to email — no database, no backend required.
+
+---
+
 ## Tech Stack
 
 | Layer | Detail |
@@ -49,7 +58,8 @@ Toolkits:
 | Structure | HTML5, semantic markup |
 | Styling | Vanilla CSS, CSS custom properties, grid layout |
 | Fonts | Space Mono, Syne — loaded via Google Fonts |
-| JavaScript | Vanilla JS — custom cursor, project filter, scroll behavior |
+| JavaScript | Vanilla JS — custom cursor, project filter, scroll behavior, DOM-driven site chatbot, post-interaction feedback widget |
+| Feedback | Formspree (external form endpoint) — visitor feedback from the chatbot popup delivered by email, no custom backend |
 | Deployment | Static file — no build process required |
 
 ---

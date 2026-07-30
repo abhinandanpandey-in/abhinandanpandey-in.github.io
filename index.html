@@ -289,6 +289,59 @@ footer p{font-family:'Space Mono',monospace;font-size:11px;color:var(--muted)}
   .stat-num{font-size:22px}
   .vuln-item{flex-direction:column;align-items:flex-start;gap:6px}
 }
+
+/* CHATBOT WIDGET */
+#chatToggle{position:fixed;bottom:26px;right:26px;width:56px;height:56px;border-radius:50%;background:var(--accent);color:var(--bg);border:none;cursor:pointer;z-index:500;display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 4px 20px rgba(0,255,136,.35);transition:transform .2s}
+#chatToggle:hover{transform:scale(1.08)}
+#chatToggle .close-icon{display:none}
+#chatToggle.open .chat-icon{display:none}
+#chatToggle.open .close-icon{display:block}
+#chatPanel{position:fixed;bottom:96px;right:26px;width:min(360px,calc(100vw - 32px));height:min(520px,calc(100vh - 160px));background:var(--card);border:1px solid var(--border);z-index:500;display:none;flex-direction:column;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,.5)}
+#chatPanel.open{display:flex}
+.chat-header{background:var(--bg2);padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.chat-header-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent)}
+.chat-header-title{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text)}
+.chat-header-sub{font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);margin-left:auto}
+.chat-body{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;background:var(--bg)}
+.chat-msg{max-width:88%;font-family:'Space Mono',monospace;font-size:11.5px;line-height:1.7;padding:10px 13px;white-space:pre-wrap}
+.chat-msg.bot{align-self:flex-start;background:var(--card);border:1px solid var(--border);color:var(--text)}
+.chat-msg.user{align-self:flex-end;background:var(--accent);color:var(--bg);font-weight:700}
+.chat-msg a{color:var(--accent3)}
+.chat-msg.bot a{color:var(--accent)}
+.chat-suggestions{display:flex;flex-wrap:wrap;gap:6px;padding:0 16px 12px}
+.chat-chip{font-family:'Space Mono',monospace;font-size:9.5px;letter-spacing:.5px;color:var(--muted);border:1px solid var(--border);padding:6px 10px;cursor:pointer;background:transparent;transition:.2s}
+.chat-chip:hover{color:var(--accent);border-color:var(--accent)}
+.chat-input-row{display:flex;border-top:1px solid var(--border);background:var(--bg2)}
+.chat-input-row input{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-family:'Space Mono',monospace;font-size:12px;padding:14px 16px}
+.chat-input-row input::placeholder{color:var(--muted)}
+.chat-send{background:transparent;border:none;color:var(--accent);cursor:pointer;padding:0 18px;font-size:14px;font-family:'Space Mono',monospace}
+.chat-body::-webkit-scrollbar{width:6px}
+.chat-body::-webkit-scrollbar-thumb{background:var(--border)}
+@media(max-width:480px){#chatPanel{right:16px;bottom:88px}#chatToggle{right:16px;bottom:20px}}
+
+/* FEEDBACK POPUP */
+#fbOverlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:600;display:none;align-items:center;justify-content:center;padding:20px}
+#fbOverlay.open{display:flex}
+#fbCard{background:var(--card);border:1px solid var(--border);border-top:2px solid var(--accent);width:min(340px,100%);padding:24px 22px;position:relative;box-shadow:0 12px 40px rgba(0,0,0,.5)}
+#fbClose{position:absolute;top:10px;right:12px;background:none;border:none;color:var(--muted);font-size:16px;cursor:pointer;font-family:'Space Mono',monospace}
+#fbClose:hover{color:var(--text)}
+.fb-emoji{font-size:26px;margin-bottom:10px}
+.fb-title{font-size:16px;font-weight:800;margin-bottom:6px;letter-spacing:-.3px}
+.fb-sub{font-family:'Space Mono',monospace;font-size:10.5px;color:var(--muted);line-height:1.6;margin-bottom:16px}
+.fb-rating{display:flex;gap:8px;margin-bottom:14px}
+.fb-rating button{flex:1;background:transparent;border:1px solid var(--border);padding:10px 0;font-size:20px;cursor:pointer;transition:.2s}
+.fb-rating button:hover,.fb-rating button.selected{border-color:var(--accent);background:#0f1a28}
+#fbText{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'Space Mono',monospace;font-size:11.5px;padding:10px 12px;resize:vertical;min-height:64px;margin-bottom:14px;outline:none}
+#fbText::placeholder{color:var(--muted)}
+#fbText:focus{border-color:var(--accent)}
+.fb-actions{display:flex;gap:10px}
+#fbSkip{flex:0;background:transparent;color:var(--muted);border:1px solid var(--border);font-family:'Space Mono',monospace;font-size:9.5px;letter-spacing:1px;text-transform:uppercase;padding:11px 14px;cursor:pointer}
+#fbSubmit{flex:1;background:var(--accent);color:var(--bg);border:none;font-family:'Space Mono',monospace;font-size:9.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:11px 14px;cursor:pointer}
+#fbSubmit:hover{opacity:.85}
+#fbSkip:hover{color:var(--text)}
+.fb-thanks{text-align:center;padding:10px 0}
+.fb-thanks-emoji{font-size:34px;margin-bottom:10px}
+.fb-thanks-text{font-family:'Space Mono',monospace;font-size:11.5px;color:var(--text);line-height:1.7}
 </style>
 </head>
 <body>
@@ -566,6 +619,7 @@ footer p{font-family:'Space Mono',monospace;font-size:11px;color:var(--muted)}
     <a class="project-card" data-cat="ml" href="https://github.com/abhinandanpandey-in/Aegis-ML" target="_blank"><span class="project-type">ML Security</span><div class="project-title">Aegis-ML</div><div class="project-desc">AI-powered network vulnerability scanner using Nmap and Random Forest for intelligent threat classification.</div><div class="project-footer"><span class="project-lang"><span class="lang-dot"></span>Python</span><div class="project-links"><span class="gh-link">→ GitHub</span><span class="vid-link" data-video="https://www.linkedin.com/posts/abhinandanpandey-in_cybersecurity-machinelearning-python-activity-7427279467321954304-oRBV?utm_source=share&utm_medium=member_desktop&rcm=ACoAADE062cB6faKU0f4hpcKbz8qgfEvaJKSNJQ" style="cursor:pointer" title="Demo coming soon">▶ Video</span></div></div></a>
     <a class="project-card" data-cat="ml" href="https://github.com/abhinandanpandey-in/AutoRecon-ML" target="_blank"><span class="project-type">ML Security</span><div class="project-title">AutoRecon-ML</div><div class="project-desc">ML-driven automated reconnaissance engine for intelligent service discovery and vulnerability prioritization.</div><div class="project-footer"><span class="project-lang"><span class="lang-dot"></span>Python</span><div class="project-links"><span class="gh-link">→ GitHub</span><span class="vid-link" data-video="https://www.linkedin.com/posts/abhinandanpandey-in_cybersecurity-python-ethicalhacking-activity-7426948971136425984-VUc-?utm_source=share&utm_medium=member_desktop&rcm=ACoAADE062cB6faKU0f4hpcKbz8qgfEvaJKSNJQ" style="cursor:pointer" title="Demo coming soon">▶ Video</span></div></div></a>
     <a class="project-card" data-cat="ml" href="https://github.com/abhinandanpandey-in/Evasive-Credential-Harvester" target="_blank"><span class="project-type">ML Security</span><div class="project-title">Evasive-Credential-Harvester</div><div class="project-desc">ML-backed credential harvesting using Shannon Entropy to evade automated security scanners.</div><div class="project-footer"><span class="project-lang"><span class="lang-dot"></span>Python</span><div class="project-links"><span class="gh-link">→ GitHub</span><span class="vid-link" data-video="https://www.linkedin.com/posts/abhinandanpandey-in_cybersecurity-python-machinelearning-activity-7430476455156867072-Gjnq?utm_source=share&utm_medium=member_desktop&rcm=ACoAADE062cB6faKU0f4hpcKbz8qgfEvaJKSNJQ" style="cursor:pointer" title="Demo coming soon">▶ Video</span></div></div></a>
+    <a class="project-card" data-cat="ml" href="https://github.com/abhinandanpandey-in/local_healthcare_rag" target="_blank"><span class="project-type">ML / AI · RAG</span><div class="project-title">local_healthcare_rag</div><div class="project-desc">Fully local Healthcare AI chatbot — Phi3 via Ollama, FAISS + sentence-transformers RAG over a curated medical knowledge base. Deterministic pre-LLM safety layer for emergency/self-harm detection so critical cases never depend on model judgment alone. Streamlit + FastAPI, zero API cost, built end-to-end in 48hrs.</div><div class="project-footer"><span class="project-lang"><span class="lang-dot"></span>Python</span><div class="project-links"><span class="gh-link">→ GitHub</span><span class="vid-link" data-video="https://youtu.be/MMo1PpG-3V0?si=YmfSBIZGM1MplW-P" style="cursor:pointer" title="Watch Demo">▶ Video</span></div></div></a>
     <a class="project-card" data-cat="dev" href="https://github.com/abhinandanpandey-in/task-management-api" target="_blank"><span class="project-type">Backend Dev</span><div class="project-title">task-management-api</div><div class="project-desc">High-performance RESTful API built with FastAPI and Pydantic for efficient task management.</div><div class="project-footer"><span class="project-lang"><span class="lang-dot"></span>Python</span><div class="project-links"><span class="gh-link">→ GitHub</span><span class="vid-link" data-video="" style="cursor:pointer" title="Demo coming soon">▶ Video</span></div></div></a>
     <a class="project-card" data-cat="dev" href="https://github.com/abhinandanpandey-in/system-health-monitor" target="_blank"><span class="project-type">DevOps</span><div class="project-title">system-health-monitor</div><div class="project-desc">Python real-time server monitoring containerized with Docker. Edge node observability simulation.</div><div class="project-footer"><span class="project-lang"><span class="lang-dot"></span>Python</span><div class="project-links"><span class="gh-link">→ GitHub</span><span class="vid-link" data-video="" style="cursor:pointer" title="Demo coming soon">▶ Video</span></div></div></a>
     <a class="project-card" data-cat="dev" href="https://github.com/abhinandanpandey-in/Crypto-Lab" target="_blank"><span class="project-type">Cryptography</span><div class="project-title">Crypto-Lab</div><div class="project-desc">Hybrid AES-256 + RSA-2048 encryption architecture simulating ransomware key protection mechanisms.</div><div class="project-footer"><span class="project-lang"><span class="lang-dot"></span>Python</span><div class="project-links"><span class="gh-link">→ GitHub</span><span class="vid-link" data-video="https://www.linkedin.com/posts/abhinandanpandey-in_cryptography-ransomware-cybersecurity-activity-7434628000266006528-flGo?utm_source=share&utm_medium=member_desktop&rcm=ACoAADE062cB6faKU0f4hpcKbz8qgfEvaJKSNJQ" style="cursor:pointer" title="Demo coming soon">▶ Video</span></div></div></a>
@@ -622,6 +676,18 @@ footer p{font-family:'Space Mono',monospace;font-size:11px;color:var(--muted)}
         <span class="cert-type" style="border-color:var(--accent2);color:var(--accent2)">Professional Certification</span>
         <div style="font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);border-left:2px solid #ff9600;padding-left:10px;line-height:1.6"></div>
         <a href="https://courses.redteamleaders.com/exam-completion/7ddb0632f87f196b" target="_blank" class="cert-pdf-btn">↗ Verify</a>
+      </div>
+    </div>
+
+    <!-- Red Team Leaders - Intermediate Malware Analysis -->
+    <div class="cert-card" style="border-top:2px solid var(--accent2)">
+      <span class="cert-issuer" style="color:var(--accent2)">Red Team Leaders</span>
+      <div class="cert-name">Intermediate Malware Analysis Course</div>
+      <div class="cert-meta">Certificate of Completion<br>Issued: June 22, 2026<br>By: Joas A. Santos, Founder and Instructor · Vasileios Spy, Instructor 2<br>Verify: courses.redteamleaders.com/completion/ed2e0ebb23fd376b</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px">
+        <span class="cert-type" style="border-color:var(--accent2);color:var(--accent2)">Course Certificate</span>
+        <div style="font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);border-left:2px solid #ff9600;padding-left:10px;line-height:1.6"></div>
+        <a href="https://courses.redteamleaders.com/completion/ed2e0ebb23fd376b" target="_blank" class="cert-pdf-btn">↗ Verify</a>
       </div>
     </div>
 
@@ -802,6 +868,54 @@ footer p{font-family:'Space Mono',monospace;font-size:11px;color:var(--muted)}
   <p>All vulnerabilities disclosed responsibly · All research conducted within ethical boundaries and authorized environments.</p>
 </footer>
 
+<!-- CHATBOT -->
+<button id="chatToggle" aria-label="Chat about Abhinandan">
+  <span class="chat-icon">💬</span>
+  <span class="close-icon">✕</span>
+</button>
+<div id="chatPanel">
+  <div class="chat-header">
+    <div class="chat-header-dot"></div>
+    <div class="chat-header-title">ask_about_abhinandan</div>
+    <div class="chat-header-sub">local · no data leaves this page</div>
+  </div>
+  <div class="chat-body" id="chatBody"></div>
+  <div class="chat-suggestions" id="chatSuggestions"></div>
+  <div class="chat-input-row">
+    <input id="chatInput" type="text" placeholder="Ask about skills, projects, certs..." autocomplete="off">
+    <button class="chat-send" id="chatSend">SEND →</button>
+  </div>
+</div>
+
+<!-- FEEDBACK POPUP -->
+<div id="fbOverlay">
+  <div id="fbCard">
+    <button id="fbClose" aria-label="Close">✕</button>
+    <div id="fbFormState">
+      <div class="fb-emoji">🥹</div>
+      <div class="fb-title">Got a sec?</div>
+      <div class="fb-sub">You just chatted with my site bot — mind leaving a tiny bit of feedback? It actually reaches me.</div>
+      <div class="fb-rating" id="fbRating">
+        <button type="button" data-val="Loved it">😍</button>
+        <button type="button" data-val="Pretty good">🙂</button>
+        <button type="button" data-val="Meh">😐</button>
+        <button type="button" data-val="Needs work">😕</button>
+      </div>
+      <textarea id="fbText" placeholder="Anything you want to say (optional)..."></textarea>
+      <div class="fb-actions">
+        <button id="fbSkip" type="button">Skip</button>
+        <button id="fbSubmit" type="button">Send →</button>
+      </div>
+    </div>
+    <div id="fbThanksState" style="display:none">
+      <div class="fb-thanks">
+        <div class="fb-thanks-emoji">💌</div>
+        <div class="fb-thanks-text">Thank you! That actually means a lot — appreciate you taking the time.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 // Vid-link: works on both desktop (click) and mobile (touchend)
 document.querySelectorAll('.vid-link[data-video]').forEach(btn => {
@@ -837,6 +951,326 @@ function filterProjects(cat,btn){
     else{card.classList.add('hidden')}
   });
 }
+</script>
+
+<script>
+/* ================= CHATBOT ================= */
+(function(){
+  const clean = s => (s||'').replace(/\s+/g,' ').trim();
+  const esc = s => (s||'').replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+  function wordMatch(query, keyword){
+    return new RegExp('\\b' + esc(keyword) + '\\b', 'i').test(query);
+  }
+
+  // Build knowledge base by reading the live DOM, so it always matches page content.
+  function buildKB(){
+    const kb = [];
+
+    // Hero / intro
+    const heroDesc = clean(document.querySelector('.hero-desc')?.textContent);
+    if(heroDesc) kb.push({section:'Intro', title:'Who is Abhinandan', text:heroDesc, link:'#about'});
+
+    const heroStats = [...document.querySelectorAll('.hero-stats .stat')].map(s=>{
+      const num = clean(s.querySelector('.stat-num')?.textContent);
+      const label = clean(s.querySelector('.stat-label')?.textContent);
+      return `${num} ${label}`;
+    }).join(', ');
+    if(heroStats) kb.push({section:'Stats', title:'Quick stats', text:heroStats, link:'#about'});
+
+    // About terminal
+    const aboutLines = [...document.querySelectorAll('.terminal .tc')].map(el=>clean(el.textContent)).filter(Boolean).join(' | ');
+    if(aboutLines) kb.push({section:'About', title:'Background', text:aboutLines, link:'#about'});
+
+    // Skills
+    const skillCards = [...document.querySelectorAll('#skills .skill-card')];
+    skillCards.forEach(card=>{
+      const name = clean(card.querySelector('.skill-name')?.textContent);
+      const desc = clean(card.querySelector('.skill-desc')?.textContent);
+      if(name) kb.push({section:'Skills', title:name, text:`${name}: ${desc}`, link:'#skills'});
+    });
+    const allSkillsText = skillCards.map(c=>clean(c.querySelector('.skill-name')?.textContent)).filter(Boolean).join(', ');
+
+    // Experience
+    const expItems = [...document.querySelectorAll('#experience .exp-item')];
+    expItems.forEach(item=>{
+      const org = clean(item.querySelector('.exp-org')?.textContent);
+      const title = clean(item.querySelector('.exp-title')?.textContent);
+      const period = clean(item.querySelector('.exp-period')?.textContent);
+      const desc = clean(item.querySelector('.exp-desc')?.textContent);
+      if(title) kb.push({section:'Experience', title:`${title} @ ${org}`, text:`${title} at ${org} (${period}): ${desc}`, link:'#experience'});
+    });
+
+    // Projects
+    const projectCards = [...document.querySelectorAll('#projects .project-card')];
+    projectCards.forEach(card=>{
+      const title = clean(card.querySelector('.project-title')?.textContent);
+      const type = clean(card.querySelector('.project-type')?.textContent);
+      const desc = clean(card.querySelector('.project-desc')?.textContent);
+      const href = card.getAttribute('href') || card.querySelector('a')?.getAttribute('href') || '';
+      if(title) kb.push({section:'Projects', title, text:`${title} (${type}): ${desc}`, link:href||'#projects'});
+    });
+
+    // DSA / Competitive Programming
+    const dsaStats = [...document.querySelectorAll('#dsa .dsa-stat')].map(s=>{
+      const num = clean(s.querySelector('.dsa-num')?.textContent);
+      const label = clean(s.querySelector('.dsa-label')?.textContent);
+      const sub = clean(s.querySelector('.dsa-sub')?.textContent);
+      return `${num} ${label} (${sub})`;
+    }).join(' | ');
+    if(dsaStats) kb.push({section:'DSA', title:'DSA & Competitive Programming stats', text:dsaStats, link:'#dsa'});
+    const topics = [...document.querySelectorAll('#dsa .topic-chip')].map(t=>clean(t.textContent)).filter(Boolean);
+    if(topics.length) kb.push({section:'DSA', title:'DSA topics covered', text:'Topics: ' + topics.join(', '), link:'#dsa'});
+
+    // Certifications
+    const certCards = [...document.querySelectorAll('#certifications .cert-card')];
+    certCards.forEach(card=>{
+      const issuer = clean(card.querySelector('.cert-issuer')?.textContent);
+      const name = clean(card.querySelector('.cert-name')?.textContent);
+      const meta = clean(card.querySelector('.cert-meta')?.textContent);
+      if(name) kb.push({section:'Certifications', title:name, text:`${name} — issued by ${issuer}. ${meta}`, link:'#certifications'});
+    });
+
+    // Research papers
+    const paperCards = [...document.querySelectorAll('#papers .paper-card')];
+    paperCards.forEach(card=>{
+      const title = clean(card.querySelector('.paper-title')?.textContent);
+      const sub = clean(card.querySelector('.paper-subtitle')?.textContent);
+      const abstract = clean(card.querySelector('.paper-abstract')?.textContent);
+      if(title) kb.push({section:'Research Papers', title, text:`${title} — ${sub}. ${abstract}`, link:'#papers'});
+    });
+
+    // Vulnerability disclosures
+    const vulns = [...document.querySelectorAll('.vuln-item')].map(v=>clean(v.textContent)).filter(Boolean);
+    if(vulns.length) kb.push({section:'Disclosures', title:'HackerOne Vulnerability Disclosures', text:vulns.join(' | '), link:'#research'});
+
+    // Contact
+    const contactItems = [...document.querySelectorAll('#contact .contact-item')];
+    contactItems.forEach(c=>{
+      const platform = clean(c.querySelector('.contact-platform')?.textContent);
+      const handle = clean(c.querySelector('.contact-handle')?.textContent);
+      const href = c.getAttribute('href') || '';
+      if(platform) kb.push({section:'Contact', title:platform, text:`${platform}: ${handle}`, link:href});
+    });
+
+    return { kb, skillCards, expItems, projectCards, certCards, paperCards, contactItems, allSkillsText };
+  }
+
+  const built = buildKB();
+  const KB = built.kb;
+
+  const STOP = new Set(['the','a','an','is','are','and','or','of','to','in','on','for','with','what','whats','how','tell','me','about','your','you','do','does','can','it','was','be','have','has']);
+  function tokenize(s){ return clean(s).toLowerCase().replace(/[^a-z0-9\s]/g,' ').split(' ').filter(w=>w && !STOP.has(w)); }
+
+  function search(query, limit){
+    const qTokens = tokenize(query);
+    if(!qTokens.length) return [];
+    const scored = KB.map(item=>{
+      const hay = (item.title + ' ' + item.text + ' ' + item.section).toLowerCase();
+      let score = 0;
+      qTokens.forEach(t=>{ if(hay.includes(t)) score += (item.title.toLowerCase().includes(t) ? 3 : 1); });
+      return {item, score};
+    }).filter(x=>x.score>0).sort((a,b)=>b.score-a.score);
+    return scored.slice(0, limit||4).map(x=>x.item);
+  }
+
+  // Full-list intents — checked with word-boundary matching to avoid false positives (e.g. "his" matching "hi")
+  const INTENTS = [
+    { keys:['hi','hello','hey','yo','sup'],
+      reply:"Hey! I'm a lil bot trained on Abhinandan's site. Ask me about his skills, projects, certifications, experience, research papers, DSA stats, or how to contact him." },
+
+    { keys:['who are you','what are you'],
+      reply:"I'm a site assistant — I only know what's published on this portfolio: skills, projects, certs, experience, papers, DSA stats, and disclosures. Ask away." },
+
+    { keys:['contact','reach','email','hire','linkedin','github handle'],
+      reply:()=>{
+        const items = KB.filter(i=>i.section==='Contact');
+        return items.length ? "You can reach Abhinandan here:\n" + items.map(i=>`→ ${i.title}: ${i.link || i.text}`).join('\n') : "Contact links aren't available right now — check the Contact section.";
+      }},
+
+    { keys:['skill','skills','tech stack','technologies','what can you do','what can he do'],
+      reply:()=>{
+        const items = KB.filter(i=>i.section==='Skills');
+        return items.length ? "Skill areas:\n" + items.map(i=>`→ ${i.text}`).join('\n') : "No skills info found.";
+      }},
+
+    { keys:['certification','certifications','certificate','certificates','cert','certs'],
+      reply:()=>{
+        const items = KB.filter(i=>i.section==='Certifications');
+        return items.length ? `${items.length} certifications on the site:\n` + items.map(i=>`→ ${i.title}`).join('\n') + "\n\nAsk about a specific one for details." : "No certification info found.";
+      }},
+
+    { keys:['research paper','research papers','papers','publication','publications'],
+      reply:()=>{
+        const items = KB.filter(i=>i.section==='Research Papers');
+        return items.length ? items.map(i=>`→ ${i.text}`).join('\n\n') : "No papers found.";
+      }},
+
+    { keys:['experience','internship','internships','work history','career'],
+      reply:()=>{
+        const items = KB.filter(i=>i.section==='Experience');
+        return items.length ? "Experience timeline:\n" + items.map(i=>`→ ${i.text}`).join('\n') : "No experience info found.";
+      }},
+
+    { keys:['dsa','competitive programming','problem solving','leetcode','gfg'],
+      reply:()=>{
+        const items = KB.filter(i=>i.section==='DSA');
+        return items.length ? items.map(i=>i.text).join('\n\n') : "No DSA info found.";
+      }},
+
+    { keys:['project','projects','portfolio','github repo','repos','repositories'],
+      reply:()=>{
+        const items = KB.filter(i=>i.section==='Projects');
+        if(!items.length) return "No project info found.";
+        return `${items.length} projects on the site, a few highlights:\n` + items.slice(0,8).map(i=>`→ ${i.title}`).join('\n') + `\n\nAsk about a specific project by name for full details, or check #projects on the page.`;
+      }},
+
+    { keys:['education','college','university','aktu','btech','b.tech','cgpa','gpa'],
+      reply:"Abhinandan is a final-year B.Tech CSE student at AKTU (Lucknow Institute of Technology), CGPA 8.58 — first in his family to pursue a B.Tech." },
+
+    { keys:['vulnerability','vulnerabilities','cve','disclosure','disclosures','hackerone','bug bounty'],
+      reply:()=>{
+        const item = KB.find(i=>i.section==='Disclosures');
+        return item ? "Verified HackerOne disclosures on the site:\n" + item.text.split(' | ').join('\n') : "Check the Disclosures section on the site.";
+      }},
+  ];
+
+  function matchIntent(query){
+    for(const intent of INTENTS){
+      if(intent.keys.some(k => k.includes(' ') ? query.toLowerCase().includes(k) : wordMatch(query, k))){
+        return typeof intent.reply === 'function' ? intent.reply() : intent.reply;
+      }
+    }
+    return null;
+  }
+
+  function answer(query){
+    const intentReply = matchIntent(query);
+    if(intentReply) return intentReply;
+
+    const results = search(query, 4);
+    if(!results.length){
+      return "I couldn't find anything about that on the site. Try asking about his skills, projects, certifications, experience, research papers, DSA stats, or vulnerability disclosures.";
+    }
+    return results.map(r=>{
+      const linkLine = r.link ? `\n(${r.link})` : '';
+      return `[${r.section}] ${r.text}${linkLine}`;
+    }).join('\n\n');
+  }
+
+  // UI wiring
+  const toggle = document.getElementById('chatToggle');
+  const panel = document.getElementById('chatPanel');
+  const body = document.getElementById('chatBody');
+  const input = document.getElementById('chatInput');
+  const sendBtn = document.getElementById('chatSend');
+  const suggestionsEl = document.getElementById('chatSuggestions');
+
+  function addMsg(text, who){
+    const div = document.createElement('div');
+    div.className = 'chat-msg ' + who;
+    div.textContent = text;
+    body.appendChild(div);
+    body.scrollTop = body.scrollHeight;
+  }
+
+  function renderSuggestions(list){
+    suggestionsEl.innerHTML = '';
+    list.forEach(s=>{
+      const chip = document.createElement('button');
+      chip.className = 'chat-chip';
+      chip.textContent = s;
+      chip.onclick = ()=>{ input.value = s; sendMessage(); };
+      suggestionsEl.appendChild(chip);
+    });
+  }
+
+  function sendMessage(){
+    const val = clean(input.value);
+    if(!val) return;
+    addMsg(val, 'user');
+    input.value = '';
+    setTimeout(()=>{ addMsg(answer(val), 'bot'); }, 250);
+  }
+
+  toggle.addEventListener('click', ()=>{
+    const isOpen = panel.classList.toggle('open');
+    toggle.classList.toggle('open', isOpen);
+    if(isOpen && !body.hasChildNodes()){
+      addMsg("Hey, I'm Abhinandan's site assistant. Ask me anything about his skills, projects, certifications, experience, DSA stats, or research — I only know what's on this page.", 'bot');
+      renderSuggestions(['His skills?', 'Show me projects', 'Certifications?', 'Research papers?', 'DSA stats?', 'How to contact him?']);
+    }
+    if(!isOpen) maybeShowFeedback();
+  });
+
+  sendBtn.addEventListener('click', sendMessage);
+  input.addEventListener('keydown', e=>{ if(e.key === 'Enter') sendMessage(); });
+
+  // Track whether the visitor actually interacted, so we only ask people who used it
+  let userInteracted = false;
+  const origSendMessage = sendMessage;
+  sendMessage = function(){ userInteracted = true; origSendMessage(); };
+  sendBtn.removeEventListener('click', origSendMessage);
+  sendBtn.addEventListener('click', sendMessage);
+  input.removeEventListener('keydown', ()=>{});
+  input.addEventListener('keydown', e=>{ if(e.key === 'Enter') sendMessage(); });
+
+  /* ---- FEEDBACK POPUP ---- */
+  const FORMSPREE_ENDPOINT = 'https://formspree.io/f/mnjerlyl';
+  const fbOverlay = document.getElementById('fbOverlay');
+  const fbClose = document.getElementById('fbClose');
+  const fbRating = document.getElementById('fbRating');
+  const fbText = document.getElementById('fbText');
+  const fbSkip = document.getElementById('fbSkip');
+  const fbSubmit = document.getElementById('fbSubmit');
+  const fbFormState = document.getElementById('fbFormState');
+  const fbThanksState = document.getElementById('fbThanksState');
+  let selectedRating = '';
+
+  fbRating.querySelectorAll('button').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      fbRating.querySelectorAll('button').forEach(b=>b.classList.remove('selected'));
+      btn.classList.add('selected');
+      selectedRating = btn.dataset.val;
+    });
+  });
+
+  function maybeShowFeedback(){
+    if(!userInteracted) return;
+    if(sessionStorage.getItem('fb_shown_v1')) return;
+    sessionStorage.setItem('fb_shown_v1', '1');
+    setTimeout(()=>{ fbOverlay.classList.add('open'); }, 500);
+  }
+
+  function closeFeedback(){
+    fbOverlay.classList.remove('open');
+  }
+
+  fbClose.addEventListener('click', closeFeedback);
+  fbSkip.addEventListener('click', closeFeedback);
+  fbOverlay.addEventListener('click', e=>{ if(e.target === fbOverlay) closeFeedback(); });
+
+  fbSubmit.addEventListener('click', async ()=>{
+    const message = clean(fbText.value);
+    if(!selectedRating && !message) { closeFeedback(); return; }
+    fbSubmit.disabled = true;
+    fbSubmit.textContent = 'Sending...';
+    try{
+      await fetch(FORMSPREE_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({
+          rating: selectedRating || 'Not rated',
+          message: message || '(no message)',
+          page: location.href,
+          source: 'Portfolio chatbot feedback'
+        })
+      });
+    }catch(e){ /* fail silently, still show thanks so it doesn't feel broken */ }
+    fbFormState.style.display = 'none';
+    fbThanksState.style.display = 'block';
+    setTimeout(closeFeedback, 2200);
+  });
+})();
 </script>
 </body>
 </html>
