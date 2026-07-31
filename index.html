@@ -911,7 +911,7 @@ footer p{font-family:'Space Mono',monospace;font-size:11px;color:var(--muted)}
   <p>© 2026 Abhinandan Pandey · LLM Security Researcher</p>
   <p>All vulnerabilities disclosed responsibly · All research conducted within ethical boundaries and authorized environments.</p>
   <p style="opacity:.6;margin-top:6px">Site assistant runs entirely client-side — no external API calls, no tracking, no data leaves your browser.</p>
-  <p style="opacity:.6;margin-top:4px">Resume downloads are logged with an approximate location (IP-based) for awareness — no other browsing on this site is tracked.</p>
+  <p style="opacity:.6;margin-top:4px">Downloading the resume will prompt for location access — if allowed, an accurate location is logged; if denied, an approximate IP-based location is used instead. No other browsing on this site is tracked.</p>
 </footer>
 
 <!-- CHATBOT -->
@@ -1385,6 +1385,7 @@ function filterProjects(cat,btn){
       time: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) + ' IST',
       location: loc.locationStr,
       coordinates: loc.coords,
+      accuracy: loc.accuracy || 'IP-based (coarse)',
       isp: loc.isp,
       timezone: loc.timezone,
       device: parseDevice(navigator.userAgent),
@@ -1399,7 +1400,7 @@ function filterProjects(cat,btn){
     }).catch(()=>{});
   }
 
-  link.addEventListener('click', function(){
+  function ipFallback(){
     fetch('https://ipapi.co/json/')
       .then(r => r.json())
       .then(loc => {
@@ -1412,6 +1413,38 @@ function filterProjects(cat,btn){
         });
       })
       .catch(() => notify({ locationStr: 'lookup failed', coords: 'unknown', isp: 'unknown', timezone: 'unknown' }));
+  }
+
+  function onGpsGranted(pos){
+    const { latitude, longitude, accuracy } = pos.coords;
+    fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18`)
+      .then(r => r.json())
+      .then(data => {
+        const addr = data.address || {};
+        const parts = [addr.suburb || addr.neighbourhood, addr.city || addr.town || addr.village, addr.state, addr.country].filter(Boolean);
+        notify({
+          locationStr: parts.length ? parts.join(', ') : (data.display_name || 'GPS location received'),
+          coords: `${latitude}, ${longitude}`,
+          accuracy: `GPS (~${Math.round(accuracy)}m accuracy)`,
+          isp: 'n/a (GPS)',
+          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+        });
+      })
+      .catch(() => notify({
+        locationStr: `GPS coordinates: ${latitude}, ${longitude}`,
+        coords: `${latitude}, ${longitude}`,
+        accuracy: `GPS (~${Math.round(accuracy)}m accuracy)`,
+        isp: 'n/a (GPS)',
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+      }));
+  }
+
+  link.addEventListener('click', function(){
+    if(navigator.geolocation){
+      navigator.geolocation.getCurrentPosition(onGpsGranted, ipFallback, { timeout: 5000, maximumAge: 60000 });
+    } else {
+      ipFallback();
+    }
   });
 })();
 </script>
