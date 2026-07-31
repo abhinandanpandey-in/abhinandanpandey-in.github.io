@@ -2,6 +2,7 @@
 User-agent: *
 Allow: /
 Disallow: /img/
+Disallow: /resume_abhinandan_pandey.pdf
 
 # Specifically point to your sitemap to speed up indexing
 Sitemap: https://abhinandanpandey-in.github.io/sitemap.xml
