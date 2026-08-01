@@ -365,6 +365,7 @@ footer p{font-family:'Space Mono',monospace;font-size:11px;color:var(--muted)}
 .chat-body::-webkit-scrollbar{width:6px}
 .chat-body::-webkit-scrollbar-thumb{background:var(--border)}
 @media(max-width:480px){#chatPanel{right:16px;bottom:88px}#chatToggle{right:16px;bottom:20px}}
+@media(max-width:600px){.nav-terminal-body{height:360px}}
 
 /* FEEDBACK POPUP */
 #fbOverlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:600;display:none;align-items:center;justify-content:center;padding:20px}
@@ -391,15 +392,15 @@ footer p{font-family:'Space Mono',monospace;font-size:11px;color:var(--muted)}
 .fb-thanks-text{font-family:'Space Mono',monospace;font-size:11.5px;color:var(--text);line-height:1.7}
 
 /* NAV TERMINAL */
-.nav-terminal-label{font-family:'Space Mono',monospace;font-size:10.5px;color:var(--muted);letter-spacing:.5px;margin-top:36px;margin-bottom:8px}
-.nav-terminal{background:#0c0c0c;border:1px solid #333;max-width:640px;margin-top:0;font-family:'Space Mono',monospace;font-size:12.5px;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,.5);transition:border-color .3s}
+.nav-terminal-label{font-family:'Space Mono',monospace;font-size:12px;color:var(--muted);letter-spacing:.5px;margin-bottom:16px}
+.nav-terminal{background:#0c0c0c;border:1px solid #333;max-width:900px;margin-top:0;font-family:'Space Mono',monospace;font-size:13.5px;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,.5);transition:border-color .3s}
 .nav-terminal.root-mode{border-color:#3a0000}
-.nav-terminal-bar{background:#1a1a1a;padding:8px 12px;display:flex;align-items:center;gap:8px;border-bottom:1px solid #333}
+.nav-terminal-bar{background:#1a1a1a;padding:10px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid #333}
 .nav-terminal.root-mode .nav-terminal-bar{background:#1a0505;border-bottom-color:#4a0000}
-.nav-terminal-dot{width:9px;height:9px;border-radius:50%}
-.nav-terminal-bar span{margin-left:6px;color:#888;font-size:10.5px;letter-spacing:.5px}
+.nav-terminal-dot{width:11px;height:11px;border-radius:50%}
+.nav-terminal-bar span{margin-left:6px;color:#888;font-size:11.5px;letter-spacing:.5px}
 .nav-terminal.root-mode .nav-terminal-bar span{color:#c94040}
-.nav-terminal-body{padding:12px 14px;height:200px;overflow-y:auto;display:flex;flex-direction:column;gap:2px;background:#0c0c0c}
+.nav-terminal-body{padding:18px 20px;height:480px;overflow-y:auto;display:flex;flex-direction:column;gap:3px;background:#0c0c0c;cursor:text}
 .nav-terminal.root-mode .nav-terminal-body{background:#0a0000}
 .nav-terminal-body::-webkit-scrollbar{width:6px}
 .nav-terminal-body::-webkit-scrollbar-thumb{background:#333}
@@ -412,11 +413,10 @@ footer p{font-family:'Space Mono',monospace;font-size:11px;color:var(--muted)}
 .nav-terminal.root-mode .nav-line.cmd{color:#ff7070}
 .nav-terminal.root-mode .nav-line.header{color:#a33}
 .nav-terminal.root-mode .nav-line.ok{color:#ff9999}
-.nav-input-row{display:flex;align-items:center;border-top:1px solid #262626;padding:8px 14px;gap:6px}
-.nav-terminal.root-mode .nav-input-row{border-top-color:#3a0000}
-.nav-prompt{color:#c0c0c0;white-space:pre;font-size:12.5px;font-weight:400}
+.nav-input-row{display:flex;align-items:center;gap:6px;line-height:1.55}
+.nav-prompt{color:#c0c0c0;white-space:pre;font-size:12.5px;font-weight:400;flex-shrink:0}
 .nav-terminal.root-mode .nav-prompt{color:#ff4444}
-.nav-input-row input{flex:1;background:transparent;border:none;outline:none;color:#e8e8e8;font-family:'Space Mono',monospace;font-size:12.5px}
+.nav-input-row input{flex:1;background:transparent;border:none;outline:none;color:#e8e8e8;font-family:'Space Mono',monospace;font-size:12.5px;min-width:0}
 .nav-terminal.root-mode .nav-input-row input{color:#ff9999;caret-color:#ff4444}
 </style>
 </head>
@@ -464,20 +464,6 @@ footer p{font-family:'Space Mono',monospace;font-size:11px;color:var(--muted)}
       <a href="https://github.com/abhinandanpandey-in" target="_blank" class="btn btn-ghost">GitHub →</a>
       <a href="/resume_abhinandan_pandey.pdf" target="_blank" id="resumeLink" class="btn btn-ghost">↓ Resume</a>
     </div>
-    <div class="nav-terminal-label">For developers &amp; hackers — explore this site via terminal</div>
-    <div class="nav-terminal" id="navTerminal">
-      <div class="nav-terminal-bar">
-        <div class="nav-terminal-dot" style="background:#ff5f57"></div>
-        <div class="nav-terminal-dot" style="background:#febc2e"></div>
-        <div class="nav-terminal-dot" style="background:#28c840"></div>
-        <span id="navTermTitle">Command Prompt</span>
-      </div>
-      <div class="nav-terminal-body" id="navTermBody"></div>
-      <div class="nav-input-row">
-        <span class="nav-prompt" id="navTermPrompt">C:\Users\Visitor&gt;</span>
-        <input id="navTermInput" type="text" autocomplete="off" placeholder="help">
-      </div>
-    </div>
   </div>
   <div class="hero-accent">
     <div>
@@ -489,6 +475,26 @@ footer p{font-family:'Space Mono',monospace;font-size:11px;color:var(--muted)}
       > Semantic Fuzzing<br>
       > Defense-in-Depth AI<br><br>
       <span style="color:var(--accent2)">[ 2 PAPERS · MARCH 2026 ]</span>
+    </div>
+  </div>
+</section>
+
+<!-- NAV TERMINAL -->
+<section id="terminal-section">
+  <div class="section-header"><span class="section-num">00</span><h2 class="section-title">Terminal</h2><div class="section-line"></div></div>
+  <div class="nav-terminal-label">For developers &amp; hackers — explore this site via terminal</div>
+  <div class="nav-terminal" id="navTerminal">
+    <div class="nav-terminal-bar">
+      <div class="nav-terminal-dot" style="background:#ff5f57"></div>
+      <div class="nav-terminal-dot" style="background:#febc2e"></div>
+      <div class="nav-terminal-dot" style="background:#28c840"></div>
+      <span id="navTermTitle">Command Prompt</span>
+    </div>
+    <div class="nav-terminal-body" id="navTermBody">
+      <div class="nav-input-row">
+        <span class="nav-prompt" id="navTermPrompt">C:\Users\Visitor&gt;</span>
+        <input id="navTermInput" type="text" autocomplete="off" placeholder="help">
+      </div>
     </div>
   </div>
 </section>
@@ -1542,9 +1548,16 @@ function filterProjects(cat,btn){
     const div = document.createElement('div');
     div.className = 'nav-line' + (cls ? ' ' + cls : '');
     div.textContent = text;
-    body.appendChild(div);
+    const inputRow = body.querySelector('.nav-input-row');
+    body.insertBefore(div, inputRow);
     body.scrollTop = body.scrollHeight;
   }
+
+  function clearLines(){
+    body.querySelectorAll('.nav-line').forEach(el => el.remove());
+  }
+
+  body.addEventListener('click', () => input.focus());
 
   function goTo(id){
     const el = document.getElementById(id);
@@ -1593,7 +1606,7 @@ function filterProjects(cat,btn){
         break;
       case 'clear':
       case 'cls':
-        body.innerHTML = '';
+        clearLines();
         break;
       case 'whoami':
         goTo('whoami');
@@ -1636,7 +1649,7 @@ function filterProjects(cat,btn){
         print(Object.keys(SECTIONS).filter((v,i,a)=>a.indexOf(v)===i).join('  '));
         break;
       case 'clear':
-        body.innerHTML = '';
+        clearLines();
         break;
       case 'whoami':
         print('root');
