@@ -389,6 +389,35 @@ footer p{font-family:'Space Mono',monospace;font-size:11px;color:var(--muted)}
 .fb-thanks{text-align:center;padding:10px 0}
 .fb-thanks-emoji{font-size:34px;margin-bottom:10px}
 .fb-thanks-text{font-family:'Space Mono',monospace;font-size:11.5px;color:var(--text);line-height:1.7}
+
+/* NAV TERMINAL */
+.nav-terminal-label{font-family:'Space Mono',monospace;font-size:10.5px;color:var(--muted);letter-spacing:.5px;margin-top:36px;margin-bottom:8px}
+.nav-terminal{background:#0c0c0c;border:1px solid #333;max-width:640px;margin-top:0;font-family:'Space Mono',monospace;font-size:12.5px;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,.5);transition:border-color .3s}
+.nav-terminal.root-mode{border-color:#3a0000}
+.nav-terminal-bar{background:#1a1a1a;padding:8px 12px;display:flex;align-items:center;gap:8px;border-bottom:1px solid #333}
+.nav-terminal.root-mode .nav-terminal-bar{background:#1a0505;border-bottom-color:#4a0000}
+.nav-terminal-dot{width:9px;height:9px;border-radius:50%}
+.nav-terminal-bar span{margin-left:6px;color:#888;font-size:10.5px;letter-spacing:.5px}
+.nav-terminal.root-mode .nav-terminal-bar span{color:#c94040}
+.nav-terminal-body{padding:12px 14px;height:200px;overflow-y:auto;display:flex;flex-direction:column;gap:2px;background:#0c0c0c}
+.nav-terminal.root-mode .nav-terminal-body{background:#0a0000}
+.nav-terminal-body::-webkit-scrollbar{width:6px}
+.nav-terminal-body::-webkit-scrollbar-thumb{background:#333}
+.nav-line{color:#c0c0c0;line-height:1.55;white-space:pre-wrap;word-break:break-word}
+.nav-line.cmd{color:#e8e8e8}
+.nav-line.err{color:#ff5f5f}
+.nav-line.ok{color:#4dd88a}
+.nav-line.header{color:#666}
+.nav-terminal.root-mode .nav-line{color:#ff4444}
+.nav-terminal.root-mode .nav-line.cmd{color:#ff7070}
+.nav-terminal.root-mode .nav-line.header{color:#a33}
+.nav-terminal.root-mode .nav-line.ok{color:#ff9999}
+.nav-input-row{display:flex;align-items:center;border-top:1px solid #262626;padding:8px 14px;gap:6px}
+.nav-terminal.root-mode .nav-input-row{border-top-color:#3a0000}
+.nav-prompt{color:#c0c0c0;white-space:pre;font-size:12.5px;font-weight:400}
+.nav-terminal.root-mode .nav-prompt{color:#ff4444}
+.nav-input-row input{flex:1;background:transparent;border:none;outline:none;color:#e8e8e8;font-family:'Space Mono',monospace;font-size:12.5px}
+.nav-terminal.root-mode .nav-input-row input{color:#ff9999;caret-color:#ff4444}
 </style>
 </head>
 <body>
@@ -434,6 +463,20 @@ footer p{font-family:'Space Mono',monospace;font-size:11px;color:var(--muted)}
       <a href="https://www.linkedin.com/in/abhinandanpandey-in/" class="btn btn-primary">LinkedIn</a>
       <a href="https://github.com/abhinandanpandey-in" target="_blank" class="btn btn-ghost">GitHub →</a>
       <a href="/resume_abhinandan_pandey.pdf" target="_blank" id="resumeLink" class="btn btn-ghost">↓ Resume</a>
+    </div>
+    <div class="nav-terminal-label">For developers &amp; hackers — explore this site via terminal</div>
+    <div class="nav-terminal" id="navTerminal">
+      <div class="nav-terminal-bar">
+        <div class="nav-terminal-dot" style="background:#ff5f57"></div>
+        <div class="nav-terminal-dot" style="background:#febc2e"></div>
+        <div class="nav-terminal-dot" style="background:#28c840"></div>
+        <span id="navTermTitle">Command Prompt</span>
+      </div>
+      <div class="nav-terminal-body" id="navTermBody"></div>
+      <div class="nav-input-row">
+        <span class="nav-prompt" id="navTermPrompt">C:\Users\Visitor&gt;</span>
+        <input id="navTermInput" type="text" autocomplete="off" placeholder="help">
+      </div>
     </div>
   </div>
   <div class="hero-accent">
@@ -876,8 +919,7 @@ footer p{font-family:'Space Mono',monospace;font-size:11px;color:var(--muted)}
 </section>
 
 <!-- ABOUT -->
-<section>
-  <div class="section-header"><span class="section-num">08</span><h2 class="section-title">About</h2><div class="section-line"></div></div>
+<section id="whoami">
   <div class="terminal">
     <div class="terminal-bar"><div class="t-dot t-r"></div><div class="t-dot t-y"></div><div class="t-dot t-g"></div></div>
     <div class="tc"><span class="ta">$ whoami</span></div>
@@ -1456,6 +1498,211 @@ function filterProjects(cat,btn){
     } else {
       ipFallback();
       openResume();
+    }
+  });
+})();
+</script>
+<script>
+/* ================= NAV TERMINAL ================= */
+(function(){
+  const body = document.getElementById('navTermBody');
+  const input = document.getElementById('navTermInput');
+  const terminal = document.getElementById('navTerminal');
+  const promptEl = document.getElementById('navTermPrompt');
+  const titleEl = document.getElementById('navTermTitle');
+  if(!body || !input || !terminal) return;
+
+  const SECTIONS = {
+    about: 'about', home: 'about', hero: 'about',
+    whoami: 'whoami', bio: 'whoami', journey: 'whoami',
+    papers: 'papers', research_papers: 'papers', publications: 'papers',
+    experience: 'experience', work: 'experience',
+    skills: 'skills', stack: 'skills',
+    projects: 'projects', repos: 'projects',
+    dsa: 'dsa', competitive: 'dsa',
+    certifications: 'certifications', certs: 'certifications', certificates: 'certifications',
+    research: 'research', disclosures: 'research', vulnerabilities: 'research', vulns: 'research',
+    contact: 'contact'
+  };
+
+  const HELP_TEXT =
+`Available commands:
+  ls                 list all sections
+  cd <section>        jump to a section
+  open <section>       same as cd
+  whoami             about the author
+  contact            jump to contact
+  clear              clear this terminal
+  help               show this message`;
+
+  let mode = 'normal'; // normal | await_user | await_pass | root
+  let suAttempts = 0;
+
+  function print(text, cls){
+    const div = document.createElement('div');
+    div.className = 'nav-line' + (cls ? ' ' + cls : '');
+    div.textContent = text;
+    body.appendChild(div);
+    body.scrollTop = body.scrollHeight;
+  }
+
+  function goTo(id){
+    const el = document.getElementById(id);
+    if(el){ el.scrollIntoView({ behavior: 'smooth', block: 'start' }); return true; }
+    return false;
+  }
+
+  function setPrompt(){
+    if(mode === 'root'){
+      print('┌──(root㉿kali)-[~]', 'header');
+      promptEl.textContent = '└─# ';
+    } else {
+      promptEl.textContent = 'C:\\Users\\Visitor>';
+    }
+  }
+
+  function enterRoot(){
+    mode = 'root';
+    terminal.classList.add('root-mode');
+    titleEl.textContent = 'root@kali: ~';
+    print('root access granted.', 'ok');
+    input.type = 'text';
+    setPrompt();
+  }
+
+  function exitRoot(){
+    mode = 'normal';
+    terminal.classList.remove('root-mode');
+    titleEl.textContent = 'Command Prompt';
+    input.type = 'text';
+    print('logout');
+    setPrompt();
+  }
+
+  function runNormal(cmdLine){
+    const [cmd, ...rest] = cmdLine.toLowerCase().split(/\s+/);
+    const arg = rest.join('_');
+
+    switch(cmd){
+      case 'help':
+        print(HELP_TEXT);
+        break;
+      case 'ls':
+      case 'dir':
+        print(Object.keys(SECTIONS).filter((v,i,a)=>a.indexOf(v)===i).join('  '));
+        break;
+      case 'clear':
+      case 'cls':
+        body.innerHTML = '';
+        break;
+      case 'whoami':
+        goTo('whoami');
+        print('Abhinandan Pandey — LLM Security Researcher & AI Red Teamer');
+        break;
+      case 'contact':
+        goTo('contact');
+        print('Jumping to contact...');
+        break;
+      case 'cd':
+      case 'open':
+      case 'goto':
+        if(!arg){ print('usage: cd <section>  (try: ls)', 'err'); break; }
+        if(SECTIONS[arg]){ goTo(SECTIONS[arg]); print(`→ ${arg}`); }
+        else { print(`cd: no such section: ${arg} (try: ls)`, 'err'); }
+        break;
+      case 'sudo':
+      case 'su':
+        mode = 'await_user';
+        print('[sudo] username: ', 'header');
+        promptEl.textContent = 'username:';
+        break;
+      default:
+        if(SECTIONS[cmd]){ goTo(SECTIONS[cmd]); print(`→ ${cmd}`); }
+        else { print(`'${cmd}' is not recognized as an internal or external command. (try: help)`, 'err'); }
+    }
+  }
+
+  function runRoot(cmdLine){
+    const [cmd, ...rest] = cmdLine.toLowerCase().split(/\s+/);
+    const arg = rest.join('_');
+
+    if(cmd === 'exit' || cmd === 'logout'){ exitRoot(); return; }
+
+    switch(cmd){
+      case 'help':
+        print(HELP_TEXT);
+        break;
+      case 'ls':
+        print(Object.keys(SECTIONS).filter((v,i,a)=>a.indexOf(v)===i).join('  '));
+        break;
+      case 'clear':
+        body.innerHTML = '';
+        break;
+      case 'whoami':
+        print('root');
+        break;
+      case 'id':
+        print('uid=0(root) gid=0(root) groups=0(root)');
+        break;
+      case 'contact':
+        goTo('contact');
+        print('→ contact');
+        break;
+      case 'cd':
+      case 'open':
+        if(!arg){ print('usage: cd <section>', 'err'); break; }
+        if(SECTIONS[arg]){ goTo(SECTIONS[arg]); print(`→ ${arg}`); }
+        else { print(`bash: cd: ${arg}: No such file or directory`, 'err'); }
+        break;
+      default:
+        if(SECTIONS[cmd]){ goTo(SECTIONS[cmd]); print(`→ ${cmd}`); }
+        else { print(`zsh: command not found: ${cmd}`, 'err'); }
+    }
+  }
+
+  function run(raw){
+    const val = raw.trim();
+
+    if(mode === 'await_user'){
+      print('username: ' + val, 'cmd');
+      if(val.toLowerCase() === 'root'){
+        mode = 'await_pass';
+        input.type = 'password';
+        promptEl.textContent = 'Password:';
+      } else {
+        print(`su: user '${val}' does not exist`, 'err');
+        mode = 'normal';
+        setPrompt();
+      }
+      return;
+    }
+
+    if(mode === 'await_pass'){
+      print('Password: ' + '*'.repeat(val.length), 'cmd');
+      input.type = 'text';
+      if(val === '2006'){
+        enterRoot();
+      } else {
+        suAttempts++;
+        print('su: Authentication failure', 'err');
+        mode = 'normal';
+        if(suAttempts >= 3) print('su: 3 incorrect password attempts', 'err');
+        setPrompt();
+      }
+      return;
+    }
+
+    print((mode === 'root' ? '└─# ' : 'C:\\Users\\Visitor>') + val, 'cmd');
+    if(!val) return;
+
+    if(mode === 'root') runRoot(val);
+    else runNormal(val);
+  }
+
+  input.addEventListener('keydown', function(e){
+    if(e.key === 'Enter'){
+      run(input.value);
+      input.value = '';
     }
   });
 })();
