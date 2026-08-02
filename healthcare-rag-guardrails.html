@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Building Guardrails That Don't Rely on the Model Behaving | Abhinandan Pandey</title>
+<meta name="description" content="Why a local healthcare AI chatbot needs a deterministic post-processing safety layer instead of trusting prompt instructions alone.">
+<meta name="robots" content="index, follow">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='16' fill='%23080a0f'/%3E%3Ctext x='50' y='68' font-family='monospace' font-size='58' font-weight='bold' fill='%2300ff88' text-anchor='middle'%3E%3E_%3C/text%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Space+Grotesk:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080a0f;--bg2:#0d1117;--accent:#00ff88;--accent2:#ff3366;--accent3:#4d9fff;--text:#e0e6f0;--muted:#5a6478;--border:#1a2030;--card:#0f1520}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;line-height:1.6}
+.wrap{max-width:760px;margin:0 auto;padding:60px 24px 100px}
+.back{font-family:'Space Mono',monospace;font-size:12px;color:var(--accent);text-decoration:none;display:inline-block;margin-bottom:40px}
+.back:hover{text-decoration:underline}
+.meta{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
+h1{font-size:34px;font-weight:800;line-height:1.25;margin-bottom:24px}
+.byline{font-family:'Space Mono',monospace;font-size:12px;color:var(--muted);margin-bottom:44px;padding-bottom:24px;border-bottom:1px solid var(--border)}
+article p{font-size:15.5px;color:var(--text);margin-bottom:22px}
+article h2{font-size:21px;font-weight:700;margin:40px 0 16px;color:var(--accent)}
+article code{background:var(--card);border:1px solid var(--border);padding:2px 7px;font-family:'Space Mono',monospace;font-size:13px;color:var(--accent3)}
+article pre{background:var(--card);border:1px solid var(--border);padding:18px;overflow-x:auto;font-family:'Space Mono',monospace;font-size:12.5px;color:var(--text);margin-bottom:22px;line-height:1.7}
+article ul{margin:0 0 22px 22px}
+article li{font-size:15.5px;margin-bottom:8px}
+.callout{background:var(--card);border-left:3px solid var(--accent);padding:16px 20px;margin-bottom:22px;font-size:14px;color:var(--muted)}
+.tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:40px}
+.tag{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1px;border:1px solid var(--border);padding:5px 10px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a href="../index.html#blog" class="back">← Back to portfolio</a>
+  <div class="meta">local_healthcare_rag · Guardrail Design · July 2026</div>
+  <h1>Building Guardrails That Don't Rely on the Model Behaving</h1>
+  <div class="byline">Abhinandan Pandey — LLM Security Researcher</div>
+
+  <article>
+    <p>I built <code>local_healthcare_rag</code> as a 48-hour AI Engineer assignment: a fully local, offline healthcare chatbot that answers questions on symptoms, diseases, nutrition, lifestyle, preventive care, and first aid — while never, under any circumstance, giving an actual diagnosis.</p>
+
+    <p>The chatbot itself was the easy part. Streamlit UI, FastAPI backend, Phi3 running locally via Ollama, a RAG pipeline over a curated medical knowledge base using FAISS and sentence-transformers. No API key, no cloud dependency, zero cost per query. Standard stack for this kind of project.</p>
+
+    <p>The interesting part — the part that actually matters if you've spent time doing LLM security research — was designing guardrails that don't collapse the moment the model does something you didn't expect.</p>
+
+    <h2>The naive approach fails silently</h2>
+
+    <p>The obvious first move is a system prompt: <em>"You are a helpful medical assistant. Never provide a diagnosis. Always recommend consulting a doctor."</em> This works most of the time. It also fails in exactly the situations where failure matters most — edge-case phrasing, multi-turn context where the instruction gets diluted, or just the model deciding to be unusually helpful at the wrong moment.</p>
+
+    <p>If your only defense is "hope the LLM follows instructions," you don't have a safety layer. You have a suggestion.</p>
+
+    <h2>Two-layer defense</h2>
+
+    <p>I split the guardrail into two independent layers that don't rely on each other to work:</p>
+
+    <ul>
+      <li><strong>Layer 1 — Explicit prompt rules.</strong> The system prompt still tells the model not to diagnose. This catches the majority of cases cheaply, before generation even happens.</li>
+      <li><strong>Layer 2 — Deterministic post-processing.</strong> Every model output passes through a rule-based scanner that catches diagnostic language patterns regardless of what the model actually said, and force-injects a disclaimer if triggered. This layer doesn't trust the model at all — it's plain string/pattern matching, the same category of logic as the site assistant on this portfolio.</li>
+    </ul>
+
+    <div class="callout">The critical design decision: the emergency/self-harm detection layer runs <strong>before</strong> the LLM is even called. If a message matches emergency criteria, the system responds with a fixed, pre-written safety response — the model never gets a chance to generate something unpredictable in a situation where unpredictability is dangerous.</div>
+
+    <h2>Why this matters beyond one project</h2>
+
+    <p>This is the same principle that shows up throughout my actual security research: prompt injection and jailbreak vulnerabilities exist precisely because systems trust the model's output as if it were sanitized input. A model instruction is not a security boundary. If a behavior is genuinely non-negotiable — no diagnosis, no leaking a system prompt, no executing a destructive tool call — it needs to be enforced by code that runs independently of whether the model "listened."</p>
+
+    <p>Prompting is a UX layer. Deterministic checks are the security layer. Conflating the two is how agentic AI systems end up with vulnerabilities that look obvious in hindsight.</p>
+  </article>
+
+  <div class="tags">
+    <span class="tag">RAG</span>
+    <span class="tag">LLM Safety</span>
+    <span class="tag">Ollama / Phi3</span>
+    <span class="tag">Guardrail Design</span>
+  </div>
+</div>
+</body>
+</html>

@@ -419,6 +419,56 @@ footer p{font-family:'Space Mono',monospace;font-size:11px;color:var(--muted)}
 .nav-input-row input{flex:1;background:transparent;border:none;outline:none;color:#5eff9e;font-family:'Space Mono',monospace;font-size:12.5px;min-width:0;caret-color:#5eff9e}
 .nav-terminal.root-mode .nav-input-row input{color:#ff9999;caret-color:#ff4444}
 .nav-input-row input.pw-hidden{color:transparent;caret-color:transparent;text-shadow:none}
+
+/* GITHUB STATS */
+.gh-stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);max-width:800px}
+.gh-stat-card{background:var(--card);padding:24px 20px;display:flex;flex-direction:column;gap:6px}
+.gh-stat-num{font-size:26px;font-weight:800;color:var(--accent)}
+.gh-stat-label{font-family:'Space Mono',monospace;font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted)}
+.gh-stats-link{display:inline-block;margin-top:16px;font-family:'Space Mono',monospace;font-size:11px;color:var(--accent3);text-decoration:none}
+.gh-stats-link:hover{text-decoration:underline}
+@media(max-width:640px){.gh-stats-grid{grid-template-columns:1fr 1fr}}
+
+/* SKILL BARS */
+.skill-bar-track{width:100%;height:4px;background:var(--border);margin-top:10px;overflow:hidden}
+.skill-bar-fill{height:100%;background:var(--accent);width:0;transition:width 1s ease}
+.skill-bar-label{font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);margin-top:5px;letter-spacing:.5px}
+
+/* DISCLOSURE TIMELINE */
+.timeline{position:relative;max-width:900px;padding-left:28px}
+.timeline::before{content:'';position:absolute;left:5px;top:6px;bottom:6px;width:1px;background:var(--border)}
+.timeline-item{position:relative;padding-bottom:22px}
+.timeline-item::before{content:'';position:absolute;left:-28px;top:5px;width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent)}
+.timeline-item.high::before{background:var(--accent2);box-shadow:0 0 8px var(--accent2)}
+.timeline-id{font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:1px}
+.timeline-title{font-size:14px;font-weight:700;margin-top:3px}
+.timeline-meta{font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);margin-top:4px}
+
+/* CHANGELOG */
+.changelog-list{max-width:800px}
+.changelog-entry{border-left:2px solid var(--border);padding:0 0 22px 20px;position:relative}
+.changelog-entry::before{content:'';position:absolute;left:-6px;top:2px;width:10px;height:10px;border-radius:50%;background:var(--accent)}
+.changelog-date{font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:1px}
+.changelog-title{font-size:14px;font-weight:700;margin-top:4px}
+.changelog-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.changelog-tag{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.5px;color:var(--accent3);border:1px solid var(--border);padding:3px 8px}
+
+/* USES PAGE */
+.uses-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border);max-width:800px}
+.uses-card{background:var(--card);padding:22px}
+.uses-cat{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+.uses-item{font-size:13px;color:var(--text);margin-bottom:6px;line-height:1.5}
+.uses-item span{color:var(--muted);font-family:'Space Mono',monospace;font-size:10.5px;display:block}
+@media(max-width:640px){.uses-grid{grid-template-columns:1fr}}
+
+/* BLOG */
+.blog-grid{display:flex;flex-direction:column;gap:1px;background:var(--border);border:1px solid var(--border);max-width:900px}
+.blog-card{background:var(--card);padding:26px 24px;text-decoration:none;display:block;transition:.2s}
+.blog-card:hover{background:#131d2e}
+.blog-meta{font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:1px;margin-bottom:8px}
+.blog-title{font-size:18px;font-weight:800;color:var(--text);margin-bottom:8px}
+.blog-excerpt{font-size:13px;color:var(--muted);line-height:1.6}
+.blog-arrow{font-family:'Space Mono',monospace;font-size:11px;color:var(--accent);margin-top:12px;display:inline-block}
 </style>
 </head>
 <body>
@@ -459,6 +509,7 @@ footer p{font-family:'Space Mono',monospace;font-size:11px;color:var(--muted)}
       <div class="stat"><span class="stat-num">1071</span><span class="stat-label">DSA Solved</span></div>
       <div class="stat"><span class="stat-num">2</span><span class="stat-label">Papers</span></div>
       <div class="stat"><span class="stat-num">50+</span><span class="stat-label">Repos</span></div>
+      <div class="stat" id="viewsStat" style="display:none"><span class="stat-num" id="viewsCount">—</span><span class="stat-label">Page Views</span></div>
     </div>
     <div class="hero-cta">
       <a href="https://www.linkedin.com/in/abhinandanpandey-in/" class="btn btn-primary">LinkedIn</a>
@@ -667,14 +718,14 @@ footer p{font-family:'Space Mono',monospace;font-size:11px;color:var(--muted)}
 <section id="skills">
   <div class="section-header"><span class="section-num">03</span><h2 class="section-title">Skills</h2><div class="section-line"></div></div>
   <div class="skills-grid">
-    <div class="skill-card"><div class="skill-icon">⚡</div><div class="skill-name">LLM Security</div><div class="skill-desc">Prompt injection, jailbreaks, multi-agent deception, RAG vulnerabilities, tool hijacking in agentic LLM deployments. Published researcher.</div><div class="skill-tags"><span class="tag r">Red Team</span><span class="tag g">Offensive</span><span class="tag b">Agentic AI</span></div></div>
-    <div class="skill-card"><div class="skill-icon">🔍</div><div class="skill-name">Web App Security</div><div class="skill-desc">SQLi, XSS, CSRF, SSRF, BOLA/IDOR, JWT attacks, Session Hijacking, Path Traversal, SSTI, Command Injection — full OWASP Top 10.</div><div class="skill-tags"><span class="tag r">OWASP Top 10</span><span class="tag b">CVE</span></div></div>
-    <div class="skill-card"><div class="skill-icon">☁️</div><div class="skill-name">Cloud Security</div><div class="skill-desc">AWS S3 leak detection, IAM privilege escalation, VPC hardening, misconfigured bucket exploitation, auto-remediation frameworks.</div><div class="skill-tags"><span class="tag g">AWS</span><span class="tag r">IAM</span><span class="tag b">S3</span></div></div>
-    <div class="skill-card"><div class="skill-icon">🛠️</div><div class="skill-name">Offensive Tooling</div><div class="skill-desc">Automated scanners, exploit frameworks, C2 simulators, credential harvesters, network recon engines — built from scratch.</div><div class="skill-tags"><span class="tag g">Python</span><span class="tag r">Automation</span></div></div>
-    <div class="skill-card"><div class="skill-icon">🌐</div><div class="skill-name">Network Security</div><div class="skill-desc">ARP spoofing, MITM, MQTT exploitation, DDoS simulation, botnet C2 orchestration, packet analysis with Scapy & Nmap.</div><div class="skill-tags"><span class="tag b">Scapy</span><span class="tag g">Nmap</span><span class="tag r">DoS</span></div></div>
-    <div class="skill-card"><div class="skill-icon">⚛️</div><div class="skill-name">Quantum Computing</div><div class="skill-desc">C-DAC/IIT Roorkee certified. Quantum algorithms, qubit operations, post-quantum cryptography fundamentals.</div><div class="skill-tags"><span class="tag b">Qiskit</span><span class="tag g">IIT Roorkee</span></div></div>
-    <div class="skill-card"><div class="skill-icon">💻</div><div class="skill-name">Full-Stack Dev</div><div class="skill-desc">JavaScript, React, HTML5, FastAPI, Flask, Python backend. App Development internship with LOR from Head of Training.</div><div class="skill-tags"><span class="tag g">React</span><span class="tag b">FastAPI</span><span class="tag">Flask</span></div></div>
-    <div class="skill-card"><div class="skill-icon">🧠</div><div class="skill-name">ML / AI Engineering</div><div class="skill-desc">ML internships at CodeAlpha. Random Forest, Jupyter workflows, AI-powered security tooling, Nmap + ML integration.</div><div class="skill-tags"><span class="tag g">Python</span><span class="tag b">ML</span><span class="tag">Jupyter</span></div></div>
+    <div class="skill-card"><div class="skill-icon">⚡</div><div class="skill-name">LLM Security</div><div class="skill-desc">Prompt injection, jailbreaks, multi-agent deception, RAG vulnerabilities, tool hijacking in agentic LLM deployments. Published researcher.</div><div class="skill-tags"><span class="tag r">Red Team</span><span class="tag g">Offensive</span><span class="tag b">Agentic AI</span></div><div class="skill-bar-track"><div class="skill-bar-fill" data-skill-bar="LLM Security,prompt injection,agentic,tool hijacking"></div></div><div class="skill-bar-label" data-skill-label="LLM Security,prompt injection,agentic,tool hijacking">—</div></div>
+    <div class="skill-card"><div class="skill-icon">🔍</div><div class="skill-name">Web App Security</div><div class="skill-desc">SQLi, XSS, CSRF, SSRF, BOLA/IDOR, JWT attacks, Session Hijacking, Path Traversal, SSTI, Command Injection — full OWASP Top 10.</div><div class="skill-tags"><span class="tag r">OWASP Top 10</span><span class="tag b">CVE</span></div><div class="skill-bar-track"><div class="skill-bar-fill" data-skill-bar="SQLi,XSS,CSRF,SSRF,OWASP,JWT,injection"></div></div><div class="skill-bar-label" data-skill-label="SQLi,XSS,CSRF,SSRF,OWASP,JWT,injection">—</div></div>
+    <div class="skill-card"><div class="skill-icon">☁️</div><div class="skill-name">Cloud Security</div><div class="skill-desc">AWS S3 leak detection, IAM privilege escalation, VPC hardening, misconfigured bucket exploitation, auto-remediation frameworks.</div><div class="skill-tags"><span class="tag g">AWS</span><span class="tag r">IAM</span><span class="tag b">S3</span></div><div class="skill-bar-track"><div class="skill-bar-fill" data-skill-bar="AWS,IAM,S3,Cloud"></div></div><div class="skill-bar-label" data-skill-label="AWS,IAM,S3,Cloud">—</div></div>
+    <div class="skill-card"><div class="skill-icon">🛠️</div><div class="skill-name">Offensive Tooling</div><div class="skill-desc">Automated scanners, exploit frameworks, C2 simulators, credential harvesters, network recon engines — built from scratch.</div><div class="skill-tags"><span class="tag g">Python</span><span class="tag r">Automation</span></div><div class="skill-bar-track"><div class="skill-bar-fill" data-skill-bar="Python,scanner,exploit,C2,automation"></div></div><div class="skill-bar-label" data-skill-label="Python,scanner,exploit,C2,automation">—</div></div>
+    <div class="skill-card"><div class="skill-icon">🌐</div><div class="skill-name">Network Security</div><div class="skill-desc">ARP spoofing, MITM, MQTT exploitation, DDoS simulation, botnet C2 orchestration, packet analysis with Scapy & Nmap.</div><div class="skill-tags"><span class="tag b">Scapy</span><span class="tag g">Nmap</span><span class="tag r">DoS</span></div><div class="skill-bar-track"><div class="skill-bar-fill" data-skill-bar="Nmap,Scapy,MITM,DDoS,network"></div></div><div class="skill-bar-label" data-skill-label="Nmap,Scapy,MITM,DDoS,network">—</div></div>
+    <div class="skill-card"><div class="skill-icon">⚛️</div><div class="skill-name">Quantum Computing</div><div class="skill-desc">C-DAC/IIT Roorkee certified. Quantum algorithms, qubit operations, post-quantum cryptography fundamentals.</div><div class="skill-tags"><span class="tag b">Qiskit</span><span class="tag g">IIT Roorkee</span></div><div class="skill-bar-track"><div class="skill-bar-fill" data-skill-bar="Quantum,Qiskit"></div></div><div class="skill-bar-label" data-skill-label="Quantum,Qiskit">—</div></div>
+    <div class="skill-card"><div class="skill-icon">💻</div><div class="skill-name">Full-Stack Dev</div><div class="skill-desc">JavaScript, React, HTML5, FastAPI, Flask, Python backend. App Development internship with LOR from Head of Training.</div><div class="skill-tags"><span class="tag g">React</span><span class="tag b">FastAPI</span><span class="tag">Flask</span></div><div class="skill-bar-track"><div class="skill-bar-fill" data-skill-bar="React,FastAPI,Flask,JavaScript"></div></div><div class="skill-bar-label" data-skill-label="React,FastAPI,Flask,JavaScript">—</div></div>
+    <div class="skill-card"><div class="skill-icon">🧠</div><div class="skill-name">ML / AI Engineering</div><div class="skill-desc">ML internships at CodeAlpha. Random Forest, Jupyter workflows, AI-powered security tooling, Nmap + ML integration.</div><div class="skill-tags"><span class="tag g">Python</span><span class="tag b">ML</span><span class="tag">Jupyter</span></div><div class="skill-bar-track"><div class="skill-bar-fill" data-skill-bar="ML,RAG,LoRA,Jupyter,machine learning"></div></div><div class="skill-bar-label" data-skill-label="ML,RAG,LoRA,Jupyter,machine learning">—</div></div>
   </div>
 </section>
 
@@ -741,9 +792,21 @@ footer p{font-family:'Space Mono',monospace;font-size:11px;color:var(--muted)}
   </div>
 </section>
 
+<!-- GITHUB STATS -->
+<section id="github-stats">
+  <div class="section-header"><span class="section-num">05</span><h2 class="section-title">GitHub Activity</h2><div class="section-line"></div></div>
+  <div id="ghStatsGrid" class="gh-stats-grid">
+    <div class="gh-stat-card"><span class="gh-stat-num" id="ghRepos">—</span><span class="gh-stat-label">Public Repos</span></div>
+    <div class="gh-stat-card"><span class="gh-stat-num" id="ghFollowers">—</span><span class="gh-stat-label">Followers</span></div>
+    <div class="gh-stat-card"><span class="gh-stat-num" id="ghStars">—</span><span class="gh-stat-label">Total Stars</span></div>
+    <div class="gh-stat-card"><span class="gh-stat-num" id="ghLang">—</span><span class="gh-stat-label">Top Language</span></div>
+  </div>
+  <a href="https://github.com/abhinandanpandey-in" target="_blank" class="gh-stats-link">→ View full GitHub profile</a>
+</section>
+
 <!-- DSA -->
 <section id="dsa">
-  <div class="section-header"><span class="section-num">05</span><h2 class="section-title">DSA & Competitive</h2><div class="section-line"></div></div>
+  <div class="section-header"><span class="section-num">06</span><h2 class="section-title">DSA & Competitive</h2><div class="section-line"></div></div>
   <div class="dsa-grid">
     <div class="dsa-stat"><div class="dsa-num">1071</div><div class="dsa-label">Problems Solved</div><div class="dsa-sub">GFG · Score 4806</div></div>
     <div class="dsa-stat"><div class="dsa-num">182</div><div class="dsa-label">Longest Streak</div><div class="dsa-sub">Days · 246 POTDs</div></div>
@@ -763,7 +826,7 @@ footer p{font-family:'Space Mono',monospace;font-size:11px;color:var(--muted)}
 
 <!-- CERTIFICATIONS -->
 <section id="certifications">
-  <div class="section-header"><span class="section-num">06</span><h2 class="section-title">Certifications & LORs</h2><div class="section-line"></div></div>
+  <div class="section-header"><span class="section-num">07</span><h2 class="section-title">Certifications & LORs</h2><div class="section-line"></div></div>
   <div class="cert-grid">
 
     <!-- CRTOM - most prominent first -->
@@ -912,16 +975,131 @@ footer p{font-family:'Space Mono',monospace;font-size:11px;color:var(--muted)}
 
 <!-- RESEARCH DISCLOSURES -->
 <section id="research">
-  <div class="section-header"><span class="section-num">07</span><h2 class="section-title">Vulnerability Disclosures</h2><div class="section-line"></div></div>
-  <div class="vuln-list">
-    <div class="vuln-item"><span class="vuln-id">ABH-001</span><span class="vuln-title">Prompt Injection via Indirect Context Manipulation</span><span class="vuln-org">Global AI Platform</span><span class="sev critical">Critical</span></div>
-    <div class="vuln-item"><span class="vuln-id">ABH-002</span><span class="vuln-title">LLM Tool Hijacking in Agentic Workflow Pipeline</span><span class="vuln-org">Enterprise SaaS</span><span class="sev critical">Critical</span></div>
-    <div class="vuln-item"><span class="vuln-id">ABH-003</span><span class="vuln-title">Jailbreak via Role Escalation in System Prompts</span><span class="vuln-org">AI API Provider</span><span class="sev high">High</span></div>
-    <div class="vuln-item"><span class="vuln-id">ABH-004</span><span class="vuln-title">RAG Poisoning via Adversarial Document Injection</span><span class="vuln-org">Fortune 500</span><span class="sev high">High</span></div>
-    <div class="vuln-item"><span class="vuln-id">ABH-005</span><span class="vuln-title">AWS IAM Privilege Escalation via Misconfigured S3</span><span class="vuln-org">Cloud Provider</span><span class="sev critical">Critical</span></div>
-    <div class="vuln-item"><span class="vuln-id">ABH-006</span><span class="vuln-title">Safety Filter Bypass via Multilingual Obfuscation</span><span class="vuln-org">AI Chatbot Product</span><span class="sev high">High</span></div>
-    <div class="vuln-item"><span class="vuln-id">ABH-007</span><span class="vuln-title">BOLA/IDOR Account Takeover in RESTful API Gateway</span><span class="vuln-org">Global MNC</span><span class="sev high">High</span></div>
-    <div class="vuln-item" style="justify-content:center;padding:14px"><span style="font-family:'Space Mono',monospace;font-size:11px;color:var(--muted)"> All disclosed via coordinated responsible disclosure</span></div>
+  <div class="section-header"><span class="section-num">08</span><h2 class="section-title">Vulnerability Disclosures</h2><div class="section-line"></div></div>
+  <div class="timeline">
+    <div class="timeline-item high"><div class="timeline-id">ABH-001 · Critical</div><div class="timeline-title">Prompt Injection via Indirect Context Manipulation</div><div class="timeline-meta">Global AI Platform</div></div>
+    <div class="timeline-item high"><div class="timeline-id">ABH-002 · Critical</div><div class="timeline-title">LLM Tool Hijacking in Agentic Workflow Pipeline</div><div class="timeline-meta">Enterprise SaaS</div></div>
+    <div class="timeline-item"><div class="timeline-id">ABH-003 · High</div><div class="timeline-title">Jailbreak via Role Escalation in System Prompts</div><div class="timeline-meta">AI API Provider</div></div>
+    <div class="timeline-item"><div class="timeline-id">ABH-004 · High</div><div class="timeline-title">RAG Poisoning via Adversarial Document Injection</div><div class="timeline-meta">Fortune 500</div></div>
+    <div class="timeline-item high"><div class="timeline-id">ABH-005 · Critical</div><div class="timeline-title">AWS IAM Privilege Escalation via Misconfigured S3</div><div class="timeline-meta">Cloud Provider</div></div>
+    <div class="timeline-item"><div class="timeline-id">ABH-006 · High</div><div class="timeline-title">Safety Filter Bypass via Multilingual Obfuscation</div><div class="timeline-meta">AI Chatbot Product</div></div>
+    <div class="timeline-item"><div class="timeline-id">ABH-007 · High</div><div class="timeline-title">BOLA/IDOR Account Takeover in RESTful API Gateway</div><div class="timeline-meta">Global MNC</div></div>
+  </div>
+  <p style="font-family:'Space Mono',monospace;font-size:10.5px;color:var(--muted);margin-top:16px">All disclosed via coordinated responsible disclosure.</p>
+</section>
+
+<!-- CHANGELOG -->
+<section id="changelog">
+  <div class="section-header"><span class="section-num">09</span><h2 class="section-title">Site Changelog</h2><div class="section-line"></div></div>
+  <div class="changelog-list">
+    <div class="changelog-entry">
+      <div class="changelog-date">Late July 2026</div>
+      <div class="changelog-title">Full Linux-style interactive terminal</div>
+      <div class="changelog-tags"><span class="changelog-tag">Green visitor prompt</span><span class="changelog-tag">sudo/root Kali theme</span><span class="changelog-tag">Command history</span><span class="changelog-tag">cat/man/neofetch</span></div>
+    </div>
+    <div class="changelog-entry">
+      <div class="changelog-date">Late July 2026</div>
+      <div class="changelog-title">Site assistant chatbot — zero external API calls</div>
+      <div class="changelog-tags"><span class="changelog-tag">DOM-scraped knowledge base</span><span class="changelog-tag">No tracking</span><span class="changelog-tag">Post-chat feedback popup</span></div>
+    </div>
+    <div class="changelog-entry">
+      <div class="changelog-date">Late July 2026</div>
+      <div class="changelog-title">Resume download button with consent-based location logging</div>
+      <div class="changelog-tags"><span class="changelog-tag">GPS with permission prompt</span><span class="changelog-tag">IP fallback</span></div>
+    </div>
+    <div class="changelog-entry">
+      <div class="changelog-date">Late July 2026</div>
+      <div class="changelog-title">Privacy hardening — blocked personal documents from search indexing</div>
+      <div class="changelog-tags"><span class="changelog-tag">robots.txt</span><span class="changelog-tag">noimageindex</span></div>
+    </div>
+    <div class="changelog-entry">
+      <div class="changelog-date">Late July 2026</div>
+      <div class="changelog-title">SEO foundation — Open Graph, Twitter Card, JSON-LD schema, favicon</div>
+      <div class="changelog-tags"><span class="changelog-tag">Rich link previews</span><span class="changelog-tag">Schema.org Person</span></div>
+    </div>
+    <div class="changelog-entry">
+      <div class="changelog-date">Late July 2026</div>
+      <div class="changelog-title">Two new ML/AI projects added</div>
+      <div class="changelog-tags"><span class="changelog-tag">local_healthcare_rag</span><span class="changelog-tag">threat-intel-rag</span></div>
+    </div>
+    <div class="changelog-entry">
+      <div class="changelog-date">Late July 2026</div>
+      <div class="changelog-title">Contact section redesigned as compact icon badges</div>
+      <div class="changelog-tags"><span class="changelog-tag">Instagram</span><span class="changelog-tag">Telegram</span><span class="changelog-tag">GfG</span><span class="changelog-tag">X</span><span class="changelog-tag">HackerOne</span></div>
+    </div>
+    <div class="changelog-entry">
+      <div class="changelog-date">Early August 2026</div>
+      <div class="changelog-title">Live page-view counter, GitHub stats, skill relevance bars, disclosure timeline</div>
+      <div class="changelog-tags"><span class="changelog-tag">CounterAPI</span><span class="changelog-tag">GitHub API</span><span class="changelog-tag">Data-driven visuals</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW THIS SITE IS BUILT -->
+<section id="how-built">
+  <div class="section-header"><span class="section-num">10</span><h2 class="section-title">How This Site Is Built</h2><div class="section-line"></div></div>
+  <div style="max-width:800px;font-size:13.5px;color:var(--text);line-height:1.8">
+    <p style="margin-bottom:16px">Single static HTML file, hosted on GitHub Pages. No framework, no build step, no backend. Everything you see — the terminal, the chatbot, the feedback popup, the stats — is vanilla JavaScript reading and writing to this one page.</p>
+    <p style="margin-bottom:16px"><strong style="color:var(--accent)">The chatbot</strong> doesn't call any LLM API. On page load, it scrapes this page's own DOM into a structured knowledge base, then answers questions using keyword-boundary matching and a scored fuzzy search — no model, no cost per query, and provably private since there's nothing to intercept.</p>
+    <p style="margin-bottom:16px"><strong style="color:var(--accent)">The feedback popup</strong> posts to a Formspree endpoint — the only piece of this site with an external write dependency, and it's disclosed in the footer.</p>
+    <p style="margin-bottom:16px"><strong style="color:var(--accent)">The GitHub stats and page counter</strong> pull from GitHub's public REST API and CounterAPI respectively — both fail silently if unreachable, so a third-party outage never shows a broken UI to a visitor.</p>
+    <p><strong style="color:var(--accent)">Privacy stance:</strong> <code style="background:var(--card);padding:2px 6px;font-family:'Space Mono',monospace;font-size:12px">robots.txt</code> blocks crawlers from indexing personal documents (certificates, resume). Resume downloads log an approximate location — with the browser's native permission prompt, never silently.</p>
+  </div>
+</section>
+
+<!-- USES -->
+<section id="uses">
+  <div class="section-header"><span class="section-num">11</span><h2 class="section-title">/uses</h2><div class="section-line"></div></div>
+  <div class="uses-grid">
+    <div class="uses-card">
+      <div class="uses-cat">Offensive Security</div>
+      <div class="uses-item">Burp Suite Pro<span>Web/API testing</span></div>
+      <div class="uses-item">Metasploit<span>Exploitation framework</span></div>
+      <div class="uses-item">Nmap · Nuclei · ffuf · Amass<span>Recon & scanning</span></div>
+      <div class="uses-item">SQLMap<span>SQLi automation</span></div>
+      <div class="uses-item">Drozer · MobSF<span>Mobile security</span></div>
+      <div class="uses-item">Shodan · Subfinder<span>OSINT</span></div>
+    </div>
+    <div class="uses-card">
+      <div class="uses-cat">OS & Environment</div>
+      <div class="uses-item">Kali Linux<span>Primary offensive security OS</span></div>
+      <div class="uses-item">RHEL 10<span>Enterprise Linux practice</span></div>
+      <div class="uses-item">Windows<span>General use</span></div>
+      <div class="uses-item">VS Code<span>Editor</span></div>
+    </div>
+    <div class="uses-card">
+      <div class="uses-cat">Languages</div>
+      <div class="uses-item">Python<span>Primary — tooling, ML, automation</span></div>
+      <div class="uses-item">Bash<span>Scripting & automation</span></div>
+      <div class="uses-item">JavaScript<span>This site, web exploitation</span></div>
+      <div class="uses-item">SQL<span>Database & injection research</span></div>
+    </div>
+    <div class="uses-card">
+      <div class="uses-cat">Cloud & AI Stack</div>
+      <div class="uses-item">AWS · GCP · Azure<span>Cloud security research</span></div>
+      <div class="uses-item">Ollama<span>Local LLM inference</span></div>
+      <div class="uses-item">FAISS · sentence-transformers<span>RAG pipelines</span></div>
+      <div class="uses-item">LangChain<span>Retrieval orchestration</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- BLOG -->
+<section id="blog">
+  <div class="section-header"><span class="section-num">12</span><h2 class="section-title">Writeups</h2><div class="section-line"></div></div>
+  <div class="blog-grid">
+    <a href="blog/healthcare-rag-guardrails.html" class="blog-card">
+      <div class="blog-meta">local_healthcare_rag · Guardrail Design</div>
+      <div class="blog-title">Building Guardrails That Don't Rely on the Model Behaving</div>
+      <div class="blog-excerpt">A local, offline healthcare chatbot needs to never give a diagnosis — even when the model wants to. Why I built a deterministic post-processing safety layer instead of trusting prompt instructions alone.</div>
+      <span class="blog-arrow">Read →</span>
+    </a>
+    <a href="blog/threat-intel-lora.html" class="blog-card">
+      <div class="blog-meta">threat-intel-rag · Fine-Tuning</div>
+      <div class="blog-title">Why I Fine-Tuned a LoRA Adapter Instead of Just Prompting</div>
+      <div class="blog-excerpt">Base models hallucinate on dense CISA threat-intel data. Here's the two-phase architecture — LangChain retrieval plus a custom LoRA adapter — that forces zero-hallucination structured output.</div>
+      <span class="blog-arrow">Read →</span>
+    </a>
   </div>
 </section>
 
@@ -946,7 +1124,7 @@ footer p{font-family:'Space Mono',monospace;font-size:11px;color:var(--muted)}
 
 <!-- CONTACT -->
 <section id="contact">
-  <div class="section-header"><span class="section-num">09</span><h2 class="section-title">Contact</h2><div class="section-line"></div></div>
+  <div class="section-header"><span class="section-num">13</span><h2 class="section-title">Contact</h2><div class="section-line"></div></div>
   <div class="contact-grid">
     <a href="https://www.instagram.com/tenacious_n16h7m4r3_mr_lucifer" target="_blank" class="contact-item" data-tip="@tenacious_n16h7m4r3_mr_lucifer"><span class="contact-icon"><svg viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.55.22.95.48 1.37.9.42.42.68.82.9 1.37.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.55-.48.95-.9 1.37-.42.42-.82.68-1.37.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41-.55-.22-.95-.48-1.37-.9-.42-.42-.68-.82-.9-1.37-.16-.42-.36-1.06-.41-2.23-.06-1.27-.07-1.65-.07-4.85s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.55.48-.95.9-1.37.42-.42.82-.68 1.37-.9.42-.16 1.06-.36 2.23-.41C8.42 2.21 8.8 2.2 12 2.2zm0 1.8c-3.14 0-3.5.01-4.74.07-1 .05-1.5.2-1.86.34-.47.18-.8.4-1.15.75-.35.35-.57.68-.75 1.15-.14.36-.29.86-.34 1.86-.06 1.24-.07 1.6-.07 4.74s.01 3.5.07 4.74c.05 1 .2 1.5.34 1.86.18.47.4.8.75 1.15.35.35.68.57 1.15.75.36.14.86.29 1.86.34 1.24.06 1.6.07 4.74.07s3.5-.01 4.74-.07c1-.05 1.5-.2 1.86-.34.47-.18.8-.4 1.15-.75.35-.35.57-.68.75-1.15.14-.36.29-.86.34-1.86.06-1.24.07-1.6.07-4.74s-.01-3.5-.07-4.74c-.05-1-.2-1.5-.34-1.86-.18-.47-.4-.8-.75-1.15-.35-.35-.68-.57-1.15-.75-.36-.14-.86-.29-1.86-.34-1.24-.06-1.6-.07-4.74-.07zm0 3.06a4.94 4.94 0 1 1 0 9.88 4.94 4.94 0 0 1 0-9.88zm0 1.8a3.14 3.14 0 1 0 0 6.28 3.14 3.14 0 0 0 0-6.28zm5.15-1.99a1.15 1.15 0 1 1-2.3 0 1.15 1.15 0 0 1 2.3 0z"/></svg></span><span class="contact-platform">Instagram</span><span class="contact-handle">tenacious_n16h7m4r3_mr_lucifer</span></a>
     <a href="https://t.me/pertinaciousmrLucifer" target="_blank" class="contact-item" data-tip="@pertinaciousmrLucifer"><span class="contact-icon"><svg viewBox="0 0 24 24"><path d="M21.9 4.5 18.6 20.3c-.25 1.13-.9 1.4-1.83.87l-5.05-3.72-2.44 2.35c-.27.27-.5.5-1.02.5l.37-5.16 9.4-8.5c.41-.36-.09-.57-.63-.2L6.3 13.08l-5.02-1.57c-1.09-.34-1.11-1.09.23-1.62L20.5 3.03c.91-.34 1.7.2 1.4 1.47z"/></svg></span><span class="contact-platform">Telegram</span><span class="contact-handle">pertinaciousmrLucifer</span></a>
@@ -1033,7 +1211,7 @@ if(window.matchMedia('(hover:hover) and (pointer:fine)').matches){
   let mx=0,my=0,rx=0,ry=0;
   document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cursor.style.left=mx-4+'px';cursor.style.top=my-4+'px'});
   (function a(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;ring.style.left=rx-16+'px';ring.style.top=ry-16+'px';requestAnimationFrame(a)})();
-  document.querySelectorAll('a,button,.skill-card,.vuln-item,.exp-item,.cert-card,.dsa-stat,.topic-chip,.paper-card').forEach(el=>{
+  document.querySelectorAll('a,button,.skill-card,.timeline-item,.exp-item,.cert-card,.dsa-stat,.topic-chip,.paper-card').forEach(el=>{
     el.addEventListener('mouseenter',()=>{cursor.style.transform='scale(3)';ring.style.opacity='0.8'});
     el.addEventListener('mouseleave',()=>{cursor.style.transform='scale(1)';ring.style.opacity='0.4'});
   });
@@ -1147,8 +1325,29 @@ function filterProjects(cat,btn){
     });
 
     // Vulnerability disclosures
-    const vulns = [...document.querySelectorAll('.vuln-item')].map(v=>clean(v.textContent)).filter(Boolean);
+    const vulns = [...document.querySelectorAll('.timeline-item')].map(v=>clean(v.textContent)).filter(Boolean);
     if(vulns.length) kb.push({section:'Disclosures', title:'HackerOne Vulnerability Disclosures', text:vulns.join(' | '), link:'#research'});
+
+    // Changelog
+    const changelogItems = [...document.querySelectorAll('#changelog .changelog-entry')].map(e=>clean(e.textContent)).filter(Boolean);
+    if(changelogItems.length) kb.push({section:'Changelog', title:'Recent site updates', text:changelogItems.join(' | '), link:'#changelog'});
+
+    // How this site is built
+    const howBuilt = clean(document.querySelector('#how-built')?.textContent);
+    if(howBuilt) kb.push({section:'How Built', title:'How this site is built', text:howBuilt, link:'#how-built'});
+
+    // Uses
+    const usesItems = [...document.querySelectorAll('#uses .uses-item')].map(e=>clean(e.textContent)).filter(Boolean);
+    if(usesItems.length) kb.push({section:'Uses', title:'Tools and setup', text:usesItems.join(', '), link:'#uses'});
+
+    // Blog / writeups
+    const blogCards = [...document.querySelectorAll('#blog .blog-card')];
+    blogCards.forEach(card=>{
+      const title = clean(card.querySelector('.blog-title')?.textContent);
+      const excerpt = clean(card.querySelector('.blog-excerpt')?.textContent);
+      const href = card.getAttribute('href') || '';
+      if(title) kb.push({section:'Writeups', title, text:`${title}: ${excerpt}`, link:href});
+    });
 
     // Contact
     const contactItems = [...document.querySelectorAll('#contact .contact-item')];
@@ -1199,6 +1398,30 @@ function filterProjects(cat,btn){
   }
 
   const INTENTS = [
+    { keys:['blog','writeup','writeups','article','articles','post'],
+      reply:()=>{
+        const items = KB.filter(i=>i.section==='Writeups');
+        return items.length ? "Writeups on this site:\n" + items.map(i=>`→ ${i.title} (${i.link})`).join('\n') : "No writeups published yet.";
+      }},
+
+    { keys:['changelog','recent update','recent changes','whats new',"what's new"],
+      reply:()=>{
+        const item = KB.find(i=>i.section==='Changelog');
+        return item ? "Recent updates:\n" + item.text.split(' | ').join('\n') : "Check the Changelog section.";
+      }},
+
+    { keys:['how is this site built','how was this built','tech behind this site','how does this site work'],
+      reply:()=>{
+        const item = KB.find(i=>i.section==='How Built');
+        return item ? item.text : "Check the 'How This Site Is Built' section.";
+      }},
+
+    { keys:['uses','what tools do you use','what does he use','setup'],
+      reply:()=>{
+        const item = KB.find(i=>i.section==='Uses');
+        return item ? item.text : "Check the /uses section.";
+      }},
+
     { keys:['hi','hello','hey','yo','sup'],
       reply:"Hey! I'm a lil bot trained on Abhinandan's site. Ask me about his skills, projects, certifications, experience, research papers, DSA stats, or how to contact him." },
 
@@ -1526,9 +1749,14 @@ function filterProjects(cat,btn){
     experience: 'experience', work: 'experience',
     skills: 'skills', stack: 'skills',
     projects: 'projects', repos: 'projects',
+    github_stats: 'github-stats', github: 'github-stats',
     dsa: 'dsa', competitive: 'dsa',
     certifications: 'certifications', certs: 'certifications', certificates: 'certifications',
     research: 'research', disclosures: 'research', vulnerabilities: 'research', vulns: 'research',
+    changelog: 'changelog', updates: 'changelog',
+    how_built: 'how-built', build: 'how-built',
+    uses: 'uses',
+    blog: 'blog', writeups: 'blog', articles: 'blog',
     contact: 'contact'
   };
 
@@ -1772,6 +2000,81 @@ function filterProjects(cat,btn){
       }
       e.preventDefault();
     }
+  });
+})();
+</script>
+<script type="module">
+/* ================= PAGE VIEW COUNTER ================= */
+(async function(){
+  try {
+    const { Counter } = await import('https://cdn.jsdelivr.net/npm/counterapi/dist/counter.esm.min.js');
+    const counter = new Counter({ workspace: 'naren-pandeys-team-4894', timeout: 4000 });
+    const result = await counter.up('page-views');
+    const el = document.getElementById('viewsCount');
+    const stat = document.getElementById('viewsStat');
+    if(el && stat && typeof result.value === 'number'){
+      el.textContent = result.value.toLocaleString();
+      stat.style.display = '';
+    }
+  } catch(e){
+    // Fail silently — counter stat just stays hidden
+  }
+})();
+</script>
+<script>
+/* ================= GITHUB STATS ================= */
+(async function(){
+  const GH_USER = 'abhinandanpandey-in';
+  try {
+    const userRes = await fetch(`https://api.github.com/users/${GH_USER}`);
+    if(!userRes.ok) throw new Error('user fetch failed');
+    const user = await userRes.json();
+
+    const reposRes = await fetch(`https://api.github.com/users/${GH_USER}/repos?per_page=100`);
+    if(!reposRes.ok) throw new Error('repos fetch failed');
+    const repos = await reposRes.json();
+
+    const totalStars = repos.reduce((sum, r) => sum + (r.stargazers_count || 0), 0);
+    const langCount = {};
+    repos.forEach(r => { if(r.language) langCount[r.language] = (langCount[r.language] || 0) + 1; });
+    const topLang = Object.entries(langCount).sort((a,b) => b[1]-a[1])[0];
+
+    const set = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
+    set('ghRepos', user.public_repos ?? '—');
+    set('ghFollowers', user.followers ?? '—');
+    set('ghStars', totalStars);
+    set('ghLang', topLang ? topLang[0] : '—');
+  } catch(e){
+    const grid = document.getElementById('ghStatsGrid');
+    if(grid) grid.style.display = 'none';
+  }
+})();
+</script>
+<script>
+/* ================= SKILL BARS (data-driven from page content) ================= */
+(function(){
+  const scanText = [...document.querySelectorAll('.project-card, .exp-item, .paper-card, .cert-card, .skill-desc')]
+    .map(el => el.textContent.toLowerCase()).join(' ');
+
+  const fills = document.querySelectorAll('.skill-bar-fill');
+  const counts = [];
+  fills.forEach(fill => {
+    const keywords = fill.dataset.skillBar.toLowerCase().split(',');
+    let count = 0;
+    keywords.forEach(k => {
+      const re = new RegExp(k.trim().replace(/[.*+?^${}()|[\]\\]/g,'\\$&'), 'g');
+      const matches = scanText.match(re);
+      if(matches) count += matches.length;
+    });
+    counts.push(count);
+  });
+  const max = Math.max(...counts, 1);
+
+  fills.forEach((fill, i) => {
+    const pct = Math.max(12, Math.round((counts[i] / max) * 100));
+    setTimeout(() => { fill.style.width = pct + '%'; }, 100);
+    const label = document.querySelector(`.skill-bar-label[data-skill-label="${fill.dataset.skillBar}"]`);
+    if(label) label.textContent = `Referenced ${counts[i]}× across this site`;
   });
 })();
 </script>

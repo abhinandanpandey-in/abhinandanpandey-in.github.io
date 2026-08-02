@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Why I Fine-Tuned a LoRA Adapter Instead of Just Prompting | Abhinandan Pandey</title>
+<meta name="description" content="Base models hallucinate on dense threat-intel data. A two-phase RAG + LoRA architecture for zero-hallucination structured extraction from the CISA KEV catalog.">
+<meta name="robots" content="index, follow">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='16' fill='%23080a0f'/%3E%3Ctext x='50' y='68' font-family='monospace' font-size='58' font-weight='bold' fill='%2300ff88' text-anchor='middle'%3E%3E_%3C/text%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Space+Grotesk:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080a0f;--bg2:#0d1117;--accent:#00ff88;--accent2:#ff3366;--accent3:#4d9fff;--text:#e0e6f0;--muted:#5a6478;--border:#1a2030;--card:#0f1520}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;line-height:1.6}
+.wrap{max-width:760px;margin:0 auto;padding:60px 24px 100px}
+.back{font-family:'Space Mono',monospace;font-size:12px;color:var(--accent);text-decoration:none;display:inline-block;margin-bottom:40px}
+.back:hover{text-decoration:underline}
+.meta{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
+h1{font-size:34px;font-weight:800;line-height:1.25;margin-bottom:24px}
+.byline{font-family:'Space Mono',monospace;font-size:12px;color:var(--muted);margin-bottom:44px;padding-bottom:24px;border-bottom:1px solid var(--border)}
+article p{font-size:15.5px;color:var(--text);margin-bottom:22px}
+article h2{font-size:21px;font-weight:700;margin:40px 0 16px;color:var(--accent)}
+article code{background:var(--card);border:1px solid var(--border);padding:2px 7px;font-family:'Space Mono',monospace;font-size:13px;color:var(--accent3)}
+article pre{background:var(--card);border:1px solid var(--border);padding:18px;overflow-x:auto;font-family:'Space Mono',monospace;font-size:12.5px;color:var(--text);margin-bottom:22px;line-height:1.7}
+article ul{margin:0 0 22px 22px}
+article li{font-size:15.5px;margin-bottom:8px}
+.callout{background:var(--card);border-left:3px solid var(--accent);padding:16px 20px;margin-bottom:22px;font-size:14px;color:var(--muted)}
+.tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:40px}
+.tag{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1px;border:1px solid var(--border);padding:5px 10px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a href="../index.html#blog" class="back">← Back to portfolio</a>
+  <div class="meta">threat-intel-rag · Fine-Tuning · July 2026</div>
+  <h1>Why I Fine-Tuned a LoRA Adapter Instead of Just Prompting</h1>
+  <div class="byline">Abhinandan Pandey — LLM Security Researcher</div>
+
+  <article>
+    <p><code>threat-intel-rag</code> started from a simple, annoying problem: I wanted a completely offline system that could parse the CISA Known Exploited Vulnerabilities (KEV) catalog and turn dense, inconsistent threat reports into clean structured JSON — CVE ID, vendor, required action — without hallucinating fields that don't exist in the source data.</p>
+
+    <p>The first version was just prompting a small local model with the retrieved context and asking nicely for JSON. It didn't work reliably enough to trust.</p>
+
+    <h2>Where pure prompting breaks down</h2>
+
+    <p>Small, consumer-GPU-friendly models are genuinely useful for RAG, but they're inconsistent at strict output formatting under load — especially with dense, jargon-heavy security text. Ask for structured JSON from raw retrieved chunks and you'll get fields invented from pattern-completion instinct rather than the actual source. For a threat-intel tool, an invented "required action" is worse than no output at all — it's actively misleading.</p>
+
+    <p>Prompting alone gives you probabilistic compliance. Threat intelligence needs deterministic structure.</p>
+
+    <h2>Two-phase architecture</h2>
+
+    <p>I split the pipeline into two genuinely separate phases rather than trying to solve retrieval and formatting in one model call:</p>
+
+    <ul>
+      <li><strong>Phase 1 — LangChain Retrieval.</strong> Scrape and chunk the raw CISA KEV JSON feed, embed it, and store it in a Chroma vector database. This phase's only job is finding the right context — nothing else.</li>
+      <li><strong>Phase 2 — LoRA Extraction.</strong> A custom LoRA adapter, fine-tuned on <code>Qwen/Qwen2.5-0.5B-Instruct</code>, takes the retrieved context and is trained specifically to output the target JSON schema — and only from what's actually in the context window, not from parametric knowledge.</li>
+    </ul>
+
+    <div class="callout">The adapter is trained to refuse to fill in a field it can't source from the retrieved chunk. That constraint — "answer only from context, structurally" — is exactly what a base instruction-tuned model won't reliably do without fine-tuning, no matter how the prompt is worded.</div>
+
+    <h2>Why fine-tune a 0.5B model instead of prompting a bigger one</h2>
+
+    <p>The honest answer: constraints. This needed to run on a consumer GPU, fully offline, with no API cost. A 0.5B model with a LoRA adapter trained on exactly this extraction task outperforms a much larger general-purpose model being prompted zero-shot for the same structured task — because the small model isn't trying to be a generalist. It has one job, and PEFT training makes that job reliable instead of probabilistic.</p>
+
+    <p>This mirrors a pattern I keep running into in LLM security work: general-purpose capability and reliable, constrained behavior are often in tension. A system that needs to be trustworthy for one narrow task is usually better served by narrowing the model's actual degrees of freedom — through fine-tuning, retrieval constraints, or deterministic post-processing — than by hoping a bigger, more capable model happens to stay in its lane.</p>
+  </article>
+
+  <div class="tags">
+    <span class="tag">LoRA / PEFT</span>
+    <span class="tag">RAG</span>
+    <span class="tag">LangChain</span>
+    <span class="tag">Qwen2.5</span>
+  </div>
+</div>
+</body>
+</html>
