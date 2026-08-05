@@ -45,7 +45,7 @@
   ]
 }
 </script>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#080a0f;--bg2:#0d1117;--accent:#00ff88;--accent2:#ff3366;--accent3:#4d9fff;--text:#e0e6f0;--muted:#5a6478;--border:#1a2030;--card:#0f1520}
 *{margin:0;padding:0;box-sizing:border-box}
@@ -469,6 +469,39 @@ footer p{font-family:'Space Mono',monospace;font-size:11px;color:var(--muted)}
 .blog-title{font-size:18px;font-weight:800;color:var(--text);margin-bottom:8px}
 .blog-excerpt{font-size:13px;color:var(--muted);line-height:1.6}
 .blog-arrow{font-family:'Space Mono',monospace;font-size:11px;color:var(--accent);margin-top:12px;display:inline-block}
+
+/* ASCII HERO */
+.ascii-hero{position:relative;padding:60px 20px;overflow:hidden;background:radial-gradient(ellipse 80% 50% at 50% -10%, rgba(0,255,136,0.06), transparent), var(--bg)}
+.ascii-hero::before{content:'';position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(to bottom, rgba(255,255,255,0.018) 0px, rgba(255,255,255,0.018) 1px, transparent 1px, transparent 3px);mix-blend-mode:overlay;opacity:.5}
+.terminal-frame{position:relative;max-width:900px;margin:0 auto;background:var(--card);border:1px solid var(--border);border-radius:6px;box-shadow:0 0 0 1px rgba(0,255,136,0.04), 0 40px 80px -30px rgba(0,0,0,0.7)}
+.terminal-titlebar{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
+.terminal-titlebar .tdot{width:8px;height:8px;border-radius:50%;border:1px solid #0a7a4a}
+.terminal-titlebar .tpath{margin-left:4px;color:var(--muted)}
+.terminal-titlebar .tpath b{color:var(--accent);font-weight:500}
+.terminal-body{padding:clamp(16px,3vw,32px)}
+.ascii-art{font-family:'JetBrains Mono',monospace;font-size:clamp(3.2px,0.95vw,8.6px);line-height:1.15;letter-spacing:0;white-space:pre;color:var(--accent);text-shadow:0 0 6px rgba(0,255,136,0.25);overflow-x:auto;-webkit-font-smoothing:none;user-select:none}
+.ascii-art::-webkit-scrollbar{height:4px}
+.ascii-art::-webkit-scrollbar-thumb{background:#0a7a4a}
+.ascii-divider{height:1px;background:linear-gradient(to right, transparent, var(--border), transparent);margin:28px 0}
+.boot-line{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--muted);display:block;opacity:0;transform:translateY(4px);animation:asciiReveal .4s ease forwards}
+.boot-line b{color:var(--text);font-weight:500}
+.boot-line .bamber{color:var(--accent)}
+.boot-line:nth-child(1){animation-delay:.1s}
+.boot-line:nth-child(2){animation-delay:.22s}
+.boot-line:nth-child(3){animation-delay:.34s}
+.boot-line:nth-child(4){animation-delay:.46s}
+.boot-line:nth-child(5){animation-delay:.58s}
+.boot-line:nth-child(6){animation-delay:.70s}
+@keyframes asciiReveal{to{opacity:1;transform:translateY(0)}}
+.ascii-tagline{font-family:'JetBrains Mono',monospace;font-size:clamp(18px,2.6vw,28px);color:var(--text);margin:24px 0 4px;font-weight:500}
+.ascii-tagline .acursor{display:inline-block;width:9px;height:1.1em;background:var(--accent);margin-left:2px;vertical-align:-2px;animation:asciiBlink 1s step-start infinite}
+@keyframes asciiBlink{50%{opacity:0}}
+.ascii-subline{font-size:14px;color:var(--muted);margin-bottom:28px}
+.ascii-cta-row{display:flex;gap:14px;flex-wrap:wrap;margin-top:8px}
+.ascii-cta{font-family:'JetBrains Mono',monospace;font-size:13px;padding:10px 16px;border:1px solid var(--border);border-radius:4px;color:var(--text);text-decoration:none;background:rgba(255,255,255,0.015);transition:.15s}
+.ascii-cta .bamber{color:var(--accent)}
+.ascii-cta:hover,.ascii-cta:focus-visible{border-color:#0a7a4a;background:rgba(0,255,136,0.08);color:var(--accent);outline:none}
+@media(prefers-reduced-motion:reduce){.boot-line{animation:none;opacity:1;transform:none}.ascii-tagline .acursor{animation:none}}
 </style>
 </head>
 <body>
@@ -1123,6 +1156,91 @@ footer p{font-family:'Space Mono',monospace;font-size:11px;color:var(--muted)}
 </section>
 
 <!-- CONTACT -->
+<!-- ASCII HERO -->
+<section class="ascii-hero">
+  <div class="terminal-frame">
+    <div class="terminal-titlebar">
+      <span class="tdot"></span>
+      <span class="tpath">ssh <b>abhinandan@security</b> — ascii-portrait — 100x55</span>
+    </div>
+    <div class="terminal-body">
+      <pre class="ascii-art">%%%%%%%++###**-.-*####%%*#####+*%%%%%%%%%%%%#=*%%%%%@@@@@@@@@@@@@@@@@%%%#***##****#####++%%#%%%##***
+%%%%%%%+*#%#**-.-**###%+:-***#%%%%%#*#%%%*##++#%@@@@@@@@@@@@@@@@@@@@@@@##**********###%*+%%%@%%##***
+%%%%%%#*##%%#*+-.:*###%#++++*#%%%%%%##%#*=#%%%%%@%%%%%%%@@@@@@@@@@@@@@%#%##********###%%#%##%@%#****
+####%%#+*####*##+-+#*#%*:-+***##%%%#%%%%%#%@%%%%%%%%%%@@@@@@@@@@@@@@@@@@@@@@##*****####%%%#*%%%#****
+***+*%*+*+=**+*#*+*#*##===+==**#%%##%%%@@@%@%@@@%@@@@@@@@@@@@%%%%@@@@@@@@@@@@#*##***###%%%#+*%****#*
+%**###%%#+==**+*+=*###*=*###**##%%##%%@@@@@@@@@@@@@@@@@%%@@@%@@@@@@@@@@@@@@@@@#**#**####%*#%####**#*
+%#######%%#***+*##*=+##++#%%%**#*#%%%%@@@@@@@@@@@@@@%@@@@@@@@@@@@@@@@@@@@@@@@@%#****#*##%##%%#+*****
+%%#*######%*+*++%#++=**+##%%%%%###%@@@@@@@@@@%%%%%%####%%%@@@@@@@@@@@@@@@@@@@@%#******##%%@@#-=*****
+%*##########***####**###%%%%%%#*#%@@@@@@@%#*++======++++**#%%@@@@@@@@@@@@@@@@@@@%*****###%%%%#******
+%%%*###%#####**%*+#%#*##%%%%###%%%@@@@@%*+==----------====++***#%%@@@@@@@@@@@@@@@#****###%%#**+*****
+%%%*=+#########*=+*%%%%%####%%#%%@@%@%#+===---------------=====++**#%@@@@@@@@@@@@%*#***##%%#%%***+**
+%##*+***######%#*++#%%%%#######%%@@@%#+==----------------------====+*#%%@@@@@@@@@%*****##%%%*##*****
+%%%%%#+*####*##****##*+#%##=+##%%@@%#+==-------------------------===++*#%@@@@@@@@@%****###%%@#******
+*+##*#%%%%%#*##*##*=+*#####**++#@@@%#+==----------:-----:----------===++*#%@@@@@@@@#****###%%%#******
+%##%#%%%%##*#%#%%##*##%##*++**%@@@%+=--------::::::::::::-:--------===++*#%@@@@@@@#*****###%%#******
+%%%##%#####%%%%%%%##%#*#%%%%%%#%@%#---------:::::::::::::::---------==+++*#%%@@@@%#******#####****++
+%%%###%%%#%%%#######**%@%%%%%##%%@*---==++++++=--:::::::::::::-------==+++**%@@@@###**#######******+
+####%@%%######*+###%%#%%%%%##*#%%%+-=+===++*#%%#+=--::::::::-------======+++*%@@#*****#####%#+*****+
+**#%%%#####%#%##*+*#####%%%%%##%%%+----====++++++==-::::::--==+#%%%###***+++*%@###*####%%%%#***+****
+######%#**####%#*#%#%%%%%#%@%%%%%%+---======++**++=-::::--==++***++++++++**+*@############%#********
+#####***##%%###########%%#%%%#=-+#=--=+***##*#***+=--:---=+****+++++++++==++#%##*########%%*+*******
+##*##*#####*#%%%#%%#%%%%%%%%%#=--+---=++++**#*+*++=-----=+*****###*****++=++%%%#*########%#+=******+
+###*+*##***+**######%%%@%%%%%*---=------===++++==-------=+****+*#%##*%%*+++*%%%%#*######%%*=+*+*****
+####%###*#######%%@%##%%##%%%#--------------------------==+++++++++++**++++#*++#########%%*++*******
+%#*##%%#*###%@%%###%%%####%%%#=------::-----------------==================+*+++%##*#####%%#*******+*
+####%%%##*###%@@%%%%%%%#+*%%**=-=---:::::::::::---------======----=----===+++++%%#*###%%%%#*+***+*++
+####*+###**###%%@@@%%%########+--+-::::::::::::---------=====-----------==++++*%%%*#%%%@@#****+*****
+###%%%###***##*#@%%%%%%####%%%*=-*-::::::::::-------::---====------------=+*+#%%%%#%%@@@@#********++
+*#%%%%%****+****#%%%%%%%%##%%%%#*#--:::::::-----=++=---=++====----------==*++%%##%%@@@@@%*********++
+#*##%%#%###*****#%%%%%%%%##%%%%%##=--::::------=+++===+++*++==----------=+*+*%%%%%%%@@@%###*****++++
+=-=*#*#%%###***##%%%%%%%%%##*#%%%#+=--:--=+****#*++**++****+====------===#++*#%%%%%@@%%%###****+++++
+.-+**#%%#####***##%%%%%%#%##-+#%%%*==--=*##*+=+++++++++++*####*+==--====#%##%%%@@@@@@%%###******++++
++=***#%%%####****+#%#*####%#**#%%%#*+=-=#**##**++++++++++++**#%%*=====+#@%##%%%+=%@%%#####****+*++*+
+++*++#%%#+=*#**##*+#*+#%%%##%##%%%%#+=---===========++++**###**%%+==+*#%%%#%%#*#%%%%%###*******++***
+##*+++#####**#**####**#%%#*#%%%%%%%%#+=--------=====+=+++++++++**++**#%%%%%%%++#%%%###**********+*+*
+##**==*###%######%%%%#*####**#######%*==-------==+***++==========+*#%%%%%##%#*#%#%#####************+
+#*+:.=%%%%#####%%%%%%########%%%%%####*+==------==++++========+++*#%%%#%@%%%%####%#####***********++
+#%%#*###*#+=###%%%%%%#*#%%%%%%####%%**##*+-------============+++*#%%#%%@%@@%%%%#######***#****++++++
+%%###%####%%%%%########%%%%%%##%%%@%*==%%*+======++*++======+*#%%%**%%%%%%@@%#%#**#*###*******++++**
+#+=*#*=+##%%%%%##%####%%%%%%%%%##%%#*==+%%####****#***+**++*#%%%#**#%%%%%%%%%%%%##*####*************
+#*=+*+-=###*####%##%%%###%%%#%%%%%%#+===+#%%%%%%%%%####%%%%%@@%*+++#@#*%@%%%%%%%%***###*#***********
+####%###%%%#########%%#####%%%%%%+*#+==--=*%%%%@@@@@@@@@@@@@%*+++++%@*=+%%%%%#%%%##**####***********
++*####%#%%%%####*#%%%%######%%%%+*%#===---==+##%%%%%%@@%%%#*++++++*%#====#%%##%%*#****#*************
+=+*++###*#%%%#######%@%#####%#*=+%%+===-----======+++*++++++==++++*#======*#+*##==**#*#**#**********
+*++=+##**#%%####*###%@%##%%#*=--#%#+===-------=---====++=======++*#========++--**+#*###**#*********#
+##%%%#*+++#%%####%##%%%#+=---:-=#%*+====-----------============+++=-===========+*###*###**#*#**###*#
+#%%%#####**#%%#####*+--------:-*##*+====-----------===========+++=-=-===-==========+**###***##*####*
+##%#############+-::::------::=**+*+==-------------=========++*=----=----=============**#***##**##*#
+######*#%#+===--------------:-+*+=*++=--=----------========+++=---------==================++*#*#####
+#*####**+-------------------:-++===*+==-=-----------=====+++=------=--=-========--=======---==+*####
+####+--::-------------------:-+==--=+=====----------===+++====------===-========--=======-========+*
+**=::--::--------=----------::-==----=====----------==+=---------------========-==============-===--
+-::::--::-------==----------:::-=-::::-=-=----------==+----=-----=--=--================--=========--
+:-:.:--::-------=-----------:::-=-::.:::==--==------==---------==-------======-=======----=======---
+--:::--::------=-----------::-:-+--:::::::--==-----::::--=--------------======-======----======--===</pre>
+
+      <div class="ascii-divider"></div>
+
+      <span class="boot-line">$ whoami <span class="bamber">--verbose</span></span>
+      <span class="boot-line"><b>abhinandan pandey</b> — final year b.tech cse, aktu <span class="bamber">[8.58 cgpa]</span></span>
+      <span class="boot-line">role ....... <b>llm security researcher</b> &amp; ai red teamer</span>
+      <span class="boot-line">focus ...... prompt injection, tool hijacking, agentic pipeline red-teaming</span>
+      <span class="boot-line">record ..... <b>35+</b> zero-day disclosures across global mncs, hackerone</span>
+      <span class="boot-line">based ...... gurugram, delhi ncr, in</span>
+
+      <div class="ascii-tagline">I don't secure everything. I secure agents.<span class="acursor"></span></div>
+      <div class="ascii-subline">CRTOM certified · OSCP in progress · not a general cybersecurity profile, by design.</div>
+
+      <div class="ascii-cta-row">
+        <a class="ascii-cta" href="#projects">$ <span class="bamber">open</span> ./projects</a>
+        <a class="ascii-cta" href="#research">$ <span class="bamber">cat</span> ./research.pdf</a>
+        <a class="ascii-cta" href="#contact">$ <span class="bamber">ping</span> abhinandan --contact</a>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section id="contact">
   <div class="section-header"><span class="section-num">13</span><h2 class="section-title">Contact</h2><div class="section-line"></div></div>
   <div class="contact-grid">
