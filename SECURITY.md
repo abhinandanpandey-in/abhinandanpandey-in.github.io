@@ -10,7 +10,7 @@ If you find a security issue in this site or its code — XSS, exposed secrets, 
 
 **Preferred contact:**
 - HackerOne: [hackerone.com/abhipndy](https://hackerone.com/abhipndy?type=user)
-- Email: raftarr737@mail.com
+- Email: raftarr737@gmail.com
 
 Please include:
 - A clear description of the issue and its potential impact
