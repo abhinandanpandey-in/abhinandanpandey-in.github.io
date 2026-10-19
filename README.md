@@ -101,9 +101,10 @@ All vulnerabilities documented in this portfolio were disclosed through coordina
 - LinkedIn: [abhinandanpandey-in](https://www.linkedin.com/in/abhinandanpandey-in)
 - GitHub: [abhinandanpandey-in](https://github.com/abhinandanpandey-in)
 - GeeksforGeeks: [abhinandanpandeysince2006](https://www.geeksforgeeks.org/profile/abhinandanpandeysince2006)
+  
 
 ---
 
 ## License
 
-This portfolio and its design are not licensed for reuse. The security research toolkits linked from this site carry their own licenses — see individual repositories.
+This portfolio and its design are not licensed for reuse. The security research toolkits linked from this site carry their own licenses  see individual repositories.
