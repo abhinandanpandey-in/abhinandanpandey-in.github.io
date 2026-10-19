@@ -2274,11 +2274,13 @@ function rs(){W=cv.clientWidth;H=cv.clientHeight;cv.width=W*dpr;cv.height=H*dpr;
 rs();addEventListener('resize',rs);
 var ta=0,tb=0,a=0,b=.3,on=true,tm=0;
 hero.addEventListener('pointermove',function(e){var r=hero.getBoundingClientRect();ta=((e.clientX-r.left)/r.width-.5)*1.4;tb=((e.clientY-r.top)/r.height-.5)*.8});
-new IntersectionObserver(function(es){on=es[0].isIntersecting;if(on)requestAnimationFrame(fr)}).observe(hero);
-document.addEventListener('visibilitychange',function(){if(!document.hidden&&on)requestAnimationFrame(fr)});
-function fr(){
+new IntersectionObserver(function(es){on=es[0].isIntersecting;if(on){lt=0;requestAnimationFrame(fr)}}).observe(hero);
+document.addEventListener('visibilitychange',function(){if(!document.hidden&&on){lt=0;requestAnimationFrame(fr)}});
+var lt=0;
+function fr(t){
  if(!on||document.hidden)return;
- tm+=.0035;a+=(ta+tm-a)*.04;b+=(.3+tb-b)*.04;
+ t=t||performance.now();var dt=lt?Math.min(.05,(t-lt)/1000):.016;lt=t;var kf=1-Math.pow(.96,dt*60);
+ tm+=.07*dt;a+=(ta+tm-a)*kf;b+=(.3+tb-b)*kf;
  var ca=Math.cos(a),sa=Math.sin(a),cb=Math.cos(b),sb=Math.sin(b),k=Math.min(1.25,W/H*.8),ox=W>700?.42:0,Q=[];
  for(i=0;i<N;i++){var p=P[i],x=p[0]*ca+p[2]*sa,z=-p[0]*sa+p[2]*ca,y=p[1]*cb-z*sb,z2=p[1]*sb+z*cb,f=1/(1.9-z2*.5);
   Q.push([(x*f*k)*(H/W)*1.9+ox,y*f*k*1.0,Math.max(0,Math.min(1,(z2+1)/2)),x,y,z2])}
