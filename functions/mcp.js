@@ -47,7 +47,7 @@ export async function onRequestOptions() {
   return new Response(null, { status: 204, headers: CORS });
 }
 
-export async function onRequestPost({ request }) {
+async function _origOnRequestPost({ request }) {
   let body;
   try {
     body = await request.json();
@@ -87,4 +87,51 @@ export async function onRequestPost({ request }) {
   }
 
   return Response.json({ jsonrpc: "2.0", id, error: { code: -32601, message: `Method not found: ${method}` } }, { status: 404, headers: CORS });
+}
+
+
+// _RL_HARDENED_MCP: Edge guardrails preventing RL reward-oracle probing & payload abuse
+const MAX_MCP_BYTES = 4096;
+
+function uniformRpcError(status, code) {
+  return new Response(
+    JSON.stringify({ jsonrpc: "2.0", id: null, error: { code, message: "Request rejected by guardrail policy" } }),
+    {
+      status,
+      headers: {
+        "Content-Type": "application/json; charset=utf-8",
+        "TDM-Reservation": "1",
+        "X-RL-Environment-Policy": "sandboxed; reward-oracle=suppressed",
+      },
+    }
+  );
+}
+
+export async function onRequestPost(context) {
+  const ct = (context.request.headers.get("content-type") || "").toLowerCase();
+  if (!ct.startsWith("application/json")) {
+    return uniformRpcError(415, -32600);
+  }
+
+  const cl = Number(context.request.headers.get("content-length") || "0");
+  if (Number.isFinite(cl) && cl > MAX_MCP_BYTES) {
+    return uniformRpcError(413, -32600);
+  }
+
+  const rawBody = await context.request.text();
+  if (new TextEncoder().encode(rawBody).length > MAX_MCP_BYTES) {
+    return uniformRpcError(413, -32600);
+  }
+
+  const clonedReq = new Request(context.request.url, {
+    method: "POST",
+    headers: context.request.headers,
+    body: rawBody,
+  });
+
+  const resp = await _origOnRequestPost({ ...context, request: clonedReq });
+  const hardened = new Response(resp.body, resp);
+  hardened.headers.set("TDM-Reservation", "1");
+  hardened.headers.set("X-RL-Environment-Policy", "sandboxed; reward-oracle=suppressed");
+  return hardened;
 }

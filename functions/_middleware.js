@@ -13,6 +13,8 @@ export async function onRequest(context) {
     out.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
     out.headers.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
     out.headers.set("X-Frame-Options", "DENY");
+    out.headers.set("TDM-Reservation", "1");
+    out.headers.set("X-RL-Environment-Policy", "sandboxed; ai-train=no; reward-oracle=suppressed");
     out.headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=(), payment=(), usb=()");
     out.headers.set("Cross-Origin-Opener-Policy", "same-origin");
     out.headers.set(
