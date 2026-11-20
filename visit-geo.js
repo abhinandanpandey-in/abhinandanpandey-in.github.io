@@ -87,10 +87,12 @@
 
     let bestPos = null;
     let settled = false;
+    let refineTimer = null;
 
     const finish = () => {
       if (settled) return;
       settled = true;
+      if (refineTimer) clearTimeout(refineTimer);
       navigator.geolocation.clearWatch(watchId);
       if (bestPos) onGpsGranted(bestPos);
       else ipFallback();
@@ -101,13 +103,19 @@
         if (!bestPos || pos.coords.accuracy < bestPos.coords.accuracy) {
           bestPos = pos;
         }
-        if (pos.coords.accuracy <= 100) finish();
+        // Stop immediately once we have a tight GPS lock
+        if (pos.coords.accuracy <= 50) {
+          finish();
+          return;
+        }
+        // Start the 5s refine window ONLY after the first fix arrives
+        if (!refineTimer) {
+          refineTimer = setTimeout(finish, 5000);
+        }
       },
       () => finish(),
-      { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
     );
-
-    setTimeout(finish, 5000);
   }
 
   if (document.readyState === "loading") {
