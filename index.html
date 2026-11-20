@@ -674,6 +674,13 @@ nav{background:rgba(5,5,5,.72);-webkit-backdrop-filter:blur(14px);backdrop-filte
     }
   }
 </style>
+<style id="apk-text-ui">
+#apk-promo-bar .apk-text{display:flex;flex-direction:column;gap:2px;white-space:normal}
+#apk-promo-bar .apk-title{font-size:16px;font-weight:700;color:#fff;letter-spacing:-.01em}
+#apk-promo-bar .apk-sub{font-size:13px;color:var(--muted)}
+body{padding-bottom:76px!important}
+</style>
+
 <style id="ui-fixes">
 /* UI fixes: nav spacing, mobile menu, clipped headline, chat button vs APK bar, cursor start position */
 .hero h1 .role{padding-bottom:.17em;margin-bottom:-.1em}
@@ -694,6 +701,17 @@ nav.open .nav-burger span:nth-child(3){transform:translateY(-7px) rotate(-45deg)
 }
 @media(max-width:640px){#chatToggle{bottom:118px;right:16px}#chatPanel{bottom:188px;right:16px}.hero canvas.fx{opacity:.4}}
 </style>
+<style id="guardrail-ui">
+/* Guardrail lab: full-width, rounded, matches site cards (overrides inline styles set by guardrail-engine.js) */
+#guardrail-lab{padding-top:40px;padding-bottom:40px}
+#guardrail-lab>div[style]{max-width:none!important;width:100%!important;margin:0!important;padding:28px!important;background:var(--card)!important;border:1px solid rgba(255,255,255,.08)!important;border-radius:18px!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.05)}
+#guardrail-lab button{border-radius:10px!important}
+#guardrail-lab textarea,#guardrail-lab pre,#guardrail-lab input,#guardrail-lab select{border-radius:12px!important}
+#guardrail-lab [style*="border:1px solid"]:not(:first-child),#guardrail-lab pre{border-radius:12px}
+#rl-sandbox-banner{max-width:none!important;border-radius:12px}
+@media(max-width:600px){#guardrail-lab>div[style]{padding:18px!important;border-radius:14px!important}}
+</style>
+
 
 
 </head>
@@ -1581,8 +1599,8 @@ nav.open .nav-burger span:nth-child(3){transform:translateY(-7px) rotate(-45deg)
     <div class="apk-promo-left">
       <span class="apk-dot" aria-hidden="true"></span>
       <span class="apk-text">
-        <span class="apk-tag">[ANDROID APK]</span>
-        Get the native <strong>AbhiFolio</strong> app — offline portfolio, research papers &amp; security labs.
+        <strong class="apk-title">Native Android App</strong>
+        <span class="apk-sub">Switch to the app for the best experience.</span>
       </span>
     </div>
     <a class="apk-cta" href="/abhifolio.apk" download>
