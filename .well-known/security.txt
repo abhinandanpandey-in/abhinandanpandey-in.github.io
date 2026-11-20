@@ -1,6 +1,6 @@
-Contact: mailto:raftarr737@gmail.com
+Contact: mailto:thisisabhinandanpandey@gmail.com
 Expires: 2027-03-20T00:00:00.000Z
 Preferred-Languages: en, hi
-Canonical: https://abhinandanpandey-in.github.io/security.txt
-Policy: https://abhinandanpandey-in.github.io/policy.html
+Canonical: https://abhinandanpandey-in.github.io/.well-known/security.txt
+Policy: https://abhinandanpandey-in.github.io/SECURITY.md
 Hiring: https://abhinandanpandey-in.github.io/

@@ -106,12 +106,13 @@
 
     const reasons = [];
     if (!rlConfig.actions.includes(state.action)) reasons.push("unauthorized_action");
-    if (typeof state.step_count !== "number" || state.step_count > rlConfig.maxSteps) {
+    if (!Number.isInteger(state.step_count) || state.step_count < 0 || state.step_count > rlConfig.maxSteps) {
       reasons.push("step_budget_exceeded");
     }
-    if (typeof state.consecutive_repeats !== "number" || state.consecutive_repeats > rlConfig.maxRepeats) {
+    if (!Number.isInteger(state.consecutive_repeats) || state.consecutive_repeats < 0 || state.consecutive_repeats > rlConfig.maxRepeats) {
       reasons.push("action_loop_detected");
     }
+    if (!Array.isArray(state.mutated_fields)) reasons.push("invalid_mutated_fields");
     const mutated = Array.isArray(state.mutated_fields) ? state.mutated_fields : [];
     if (mutated.some((f) => rlConfig.protectedFields.includes(f))) {
       reasons.push("reward_tampering_detected");
@@ -125,11 +126,11 @@
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:16px;">
           <div>
             <div style="font-size:12px;letter-spacing:2px;color:#d4a853;">// LIVE DETERMINISTIC GUARDRAIL ENGINE</div>
-            <h2 style="margin:6px 0 0;font-size:22px;color:#fff;">YARA + OPA Rego + RL Env Sandbox</h2>
+            <h2 style="margin:6px 0 0;font-size:22px;color:#fff;">YARA-inspired Scanner + Rego-derived Policy Simulator + RL Guard Demo</h2>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <button data-gl-tab="yara" style="padding:8px 14px;background:#d4a853;color:#0a0a0a;border:none;font-family:inherit;font-weight:700;cursor:pointer;">YARA Scanner</button>
-            <button data-gl-tab="rego" style="padding:8px 14px;background:#161616;color:#aaa;border:1px solid #333;font-family:inherit;cursor:pointer;">OPA Rego (/mcp)</button>
+            <button data-gl-tab="yara" style="padding:8px 14px;background:#d4a853;color:#0a0a0a;border:none;font-family:inherit;font-weight:700;cursor:pointer;">YARA-inspired Scanner</button>
+            <button data-gl-tab="rego" style="padding:8px 14px;background:#161616;color:#aaa;border:1px solid #333;font-family:inherit;cursor:pointer;">Rego-derived Policy Simulator</button>
             <button data-gl-tab="rl" style="padding:8px 14px;background:#161616;color:#aaa;border:1px solid #333;font-family:inherit;cursor:pointer;">RL Env Guard</button>
             <button data-gl-tab="src" style="padding:8px 14px;background:#161616;color:#aaa;border:1px solid #333;font-family:inherit;cursor:pointer;">View Source</button>
           </div>

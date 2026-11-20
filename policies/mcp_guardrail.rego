@@ -1,5 +1,5 @@
 # Copyright (c) 2026 Abhinandan Pandey. All Rights Reserved.
-# Deterministic OPA policy enforcing privilege separation on the /mcp edge endpoint.
+# Rego policy example for the browser simulator. The current /mcp endpoint uses native JavaScript checks; this file is not evaluated by that endpoint.
 
 package portfolio.mcp.guardrail
 
@@ -11,13 +11,11 @@ allowed_methods := {
     "initialize",
     "tools/list",
     "tools/call",
-    "ping",
 }
 
 allowed_tools := {
-    "get_profile",
+    "get_research_profile",
     "list_publications",
-    "list_security_projects",
 }
 
 max_payload_bytes := 4096

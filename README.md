@@ -1,6 +1,6 @@
 # abhinandanpandey-in.github.io
 
-Personal portfolio of Abhinandan Pandey — LLM Security Researcher, Offensive AI Security specialist, and Bug Bounty Hunter. Built as a single-file static HTML site with no frameworks or dependencies.
+Personal portfolio of Abhinandan Pandey — LLM Security Researcher, Offensive AI Security specialist, and Bug Bounty Hunter. Built as a static HTML/CSS/JavaScript portfolio with no frontend framework or build step. The repository also contains optional Cloudflare Pages Functions and external integrations.
 
 ---
 
@@ -8,7 +8,7 @@ Personal portfolio of Abhinandan Pandey — LLM Security Researcher, Offensive A
 
 This repository contains the source for my personal security research portfolio. It documents my published research, vulnerability disclosures, security tooling, internship experience, certifications, and DSA work in one place.
 
-The site is intentionally dependency-free — no React, no bundler, no build step. One HTML file, vanilla CSS, and vanilla JavaScript.
+The site uses vanilla HTML, CSS and JavaScript with no React, bundler or build step. It is multi-file and includes external integrations; Cloudflare Pages Functions execute only on Cloudflare Pages, not GitHub Pages.
 
 ---
 
@@ -16,10 +16,10 @@ The site is intentionally dependency-free — no React, no bundler, no build ste
 
 | Section | Content |
 |---|---|
-| Research Papers | Two independent published papers on prompt injection and tool hijacking in agentic LLM systems |
+| Research Papers | Two related papers sharing an experimental foundation; review their methods and limitations before treating them as independent studies |
 | Experience | Security and development internships — CodeAlpha, CodeSpaze, CodSoft, GeeksforGeeks, C-DAC |
 | Skills | LLM Security, Web App Security, Cloud Security, Network Security, ML, Full-Stack |
-| Projects | 30+ offensive security tools, exploit labs, and research toolkits |
+| Projects | 35 featured project cards in the current homepage archive; additional repositories/labs should be counted separately and linked |
 | DSA | GeeksforGeeks stats — 1071 problems, 182-day streak, GfG 160 certified |
 | Certifications | CRTOM, Microsoft/Coursera, C-DAC/IIT Roorkee, GeeksforGeeks, internship LORs |
 | Vulnerability Disclosures | 35+ coordinated responsible disclosures across AI platforms, SaaS, and cloud providers |
@@ -71,10 +71,10 @@ No installation required.
 ```bash
 git clone https://github.com/abhinandanpandey-in/abhinandanpandey-in.github.io
 cd abhinandanpandey-in.github.io
-# Open portfolio.html in any browser
+# Open index.html in any browser
 ```
 
-Or deploy directly to GitHub Pages — the repo root serves the file automatically.
+GitHub Pages can serve static index.html. The functions/ directory is Cloudflare Pages-specific and will not execute on GitHub Pages. Deploy to Cloudflare Pages if you need those functions.
 
 ---
 
@@ -112,3 +112,10 @@ All vulnerabilities documented in this portfolio were disclosed through coordina
 No part of this repository—including source code, UI design, assets, or agentic manifests—may be copied, modified, distributed, or deployed without prior explicit written permission. See [LICENSE](./LICENSE) for full terms.
 
 *The open-source security research toolkits linked from this portfolio carry their own individual licenses—refer to each respective repository.*
+
+
+## Research reproducibility and evaluation status
+
+The current archive does not include the original experiment runner, raw model transcripts, or complete result dataset for the prompt-injection papers. The research/reproducibility directory provides corrected payload fixtures, an evaluation format, and benchmark templates. These are scaffolds, not completed cross-model results. Do not claim measured false-positive/false-negative rates or cross-model performance until actual runs are recorded.
+
+The browser guardrail page contains a YARA-inspired JavaScript signature matcher and a Rego-derived JavaScript policy simulator. These demonstrations do not execute native YARA or OPA runtimes, and the Rego file is not enforced by the current /mcp endpoint.

@@ -28,14 +28,25 @@ valid_action if {
 }
 
 within_step_budget if {
+    is_number(input.step_count)
+    input.step_count >= 0
     input.step_count <= max_steps_per_episode
+    floor(input.step_count) == input.step_count
 }
 
 no_action_loop if {
+    is_number(input.consecutive_repeats)
+    input.consecutive_repeats >= 0
     input.consecutive_repeats <= max_repeated_actions
+    floor(input.consecutive_repeats) == input.consecutive_repeats
+}
+
+valid_mutated_fields if {
+    is_array(input.mutated_fields)
 }
 
 no_reward_tampering if {
+    valid_mutated_fields
     count({f | some f in input.mutated_fields; f in protected_state_fields}) == 0
 }
 
