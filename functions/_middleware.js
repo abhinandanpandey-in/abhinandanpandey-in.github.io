@@ -15,11 +15,11 @@ export async function onRequest(context) {
     out.headers.set("X-Frame-Options", "DENY");
     out.headers.set("TDM-Reservation", "1");
     out.headers.set("X-RL-Environment-Policy", "sandboxed; ai-train=no; reward-oracle=suppressed");
-    out.headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=(), payment=(), usb=()");
+    out.headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=(self), payment=(), usb=()");
     out.headers.set("Cross-Origin-Opener-Policy", "same-origin");
     out.headers.set(
       "Content-Security-Policy",
-      "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; frame-ancestors 'none'; base-uri 'self'; form-action 'self';"
+      "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://formspree.io https://ipapi.co https://nominatim.openstreetmap.org https://api.github.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self';"
     );
     if (isPagesDev) {
       out.headers.set("X-Robots-Tag", "noindex, follow");
