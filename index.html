@@ -587,6 +587,8 @@ nav{background:rgba(5,5,5,.72);-webkit-backdrop-filter:blur(14px);backdrop-filte
 
 
 
+  <link rel=ai-catalog href=/.well-known/ai-catalog.json>
+  <link rel=ard href=/.well-known/ard.json>
 </head>
 <body>
 <div class="cursor" id="cursor"></div>
@@ -2424,6 +2426,53 @@ $('vzPrev').onclick=function(){stop();if(si>0){si--;draw()}};
 $('vzNext').onclick=function(){stop();if(si<S.length-1){si++;draw()}};
 $('vzPlay').onclick=function(){if(tm)return stop();$('vzPlay').textContent='Pause';if(si===S.length-1)si=0;draw();tm=setInterval(function(){if(si<S.length-1){si++;draw()}else stop()},3200)};
 draw();
+})();
+</script>
+<script>
+(function () {
+  var mc = (typeof navigator !== 'undefined' && navigator.modelContext) ||
+           (typeof document !== 'undefined' && document.modelContext);
+  if (!mc || typeof mc.registerTool !== 'function') return;
+
+  mc.registerTool({
+    name: 'get_research_profile',
+    description: 'Returns Abhinandan Pandey\u2019s AI security research focus, core open-source projects, and public links.',
+    inputSchema: { type: 'object', properties: {} },
+    execute: async function () {
+      return {
+        name: 'Abhinandan Pandey',
+        role: 'LLM Security Researcher & AI Red Teamer',
+        focus: ['Prompt Injection', 'MCP & Tool Hijacking Defense', 'Agentic Pipeline Red Teaming', 'Privilege Separation & Sandboxing'],
+        projects: [
+          { name: 'LLM-Agent-RedTeam-Toolkit', focus: 'Fuzzing & Guardrails', url: 'https://github.com/abhinandanpandey-in/LLM-Agent-RedTeam-Toolkit' },
+          { name: 'mcp-shield', focus: 'MCP & Tool Hijacking Defense', url: 'https://github.com/abhinandanpandey-in/mcp-shield' },
+          { name: 'Agent-Isolate-X', focus: 'Privilege Separation & Sandboxing', url: 'https://github.com/abhinandanpandey-in/Agent-Isolate-X' }
+        ],
+        links: {
+          portfolio: 'https://abhinandanpandey-in.github.io/',
+          github: 'https://github.com/abhinandanpandey-in',
+          linkedin: 'https://www.linkedin.com/in/abhinandanpandey-in',
+          security_txt: 'https://abhinandanpandey-in.github.io/.well-known/security.txt'
+        }
+      };
+    }
+  });
+
+  mc.registerTool({
+    name: 'list_publications',
+    description: 'Lists research papers and technical writeups hosted on Abhinandan Pandey\u2019s portfolio.',
+    inputSchema: { type: 'object', properties: {} },
+    execute: async function () {
+      return {
+        publications: [
+          { title: 'Prompt Injection and Tool Hijacking in Agentic Large Language Model Systems', type: 'paper', url: 'https://abhinandanpandey-in.github.io/research_paper-1.pdf' },
+          { title: 'Prompt Injection and Tool Hijacking in Agentic LLMs', type: 'paper', url: 'https://abhinandanpandey-in.github.io/research_paper-2.pdf' },
+          { title: 'Building Guardrails That Don\u2019t Rely on the Model Behaving', type: 'article', url: 'https://abhinandanpandey-in.github.io/healthcare-rag-guardrails.html' },
+          { title: 'Why I Fine-Tuned a LoRA Adapter Instead of Just Prompting', type: 'article', url: 'https://abhinandanpandey-in.github.io/threat-intel-lora.html' }
+        ]
+      };
+    }
+  });
 })();
 </script>
 </body>

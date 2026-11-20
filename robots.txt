@@ -1,8 +1,12 @@
 # Allow all search engines to crawl the site
 User-agent: *
+Content-Signal: ai-train=no, search=yes, ai-input=yes
 Allow: /
 Disallow: /img/
 Disallow: /resume_abhinandan_pandey.pdf
+
+# Agentic Resource Discovery (ARD)
+Agentmap: https://abhinandanpandey-in.github.io/.well-known/ai-catalog.json
 
 # Specifically point to your sitemap to speed up indexing
 Sitemap: https://abhinandanpandey-in.github.io/sitemap.xml

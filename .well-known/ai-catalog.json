@@ -1,0 +1,20 @@
+{
+  "specVersion": "1.0",
+  "host": {
+    "displayName": "Abhinandan Pandey"
+  },
+  "entries": [
+    {
+      "identifier": "urn:air:abhinandanpandey-in.github.io:skills:portfolio-research",
+      "displayName": "Abhinandan Pandey Agent Skills Index",
+      "type": "application/json",
+      "url": "https://abhinandanpandey-in.github.io/.well-known/agent-skills/index.json",
+      "description": "Discovery index of agent skills for exploring Abhinandan Pandey's LLM security research, toolkits (LLM-Agent-RedTeam-Toolkit, mcp-shield, Agent-Isolate-X), and technical papers.",
+      "representativeQueries": [
+        "Who is Abhinandan Pandey and what AI security projects has he built?",
+        "Where can I find Abhinandan Pandey's research on prompt injection and MCP tool hijacking?",
+        "What open-source LLM security toolkits has Abhinandan Pandey published?"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "$schema": "https://schemas.agentskills.io/discovery/0.2.0/schema.json",
+  "skills": [
+    {
+      "name": "portfolio-research",
+      "type": "skill-md",
+      "description": "Navigate Abhinandan Pandey's AI security research portfolio, open-source LLM security toolkits, and published papers.",
+      "url": "https://abhinandanpandey-in.github.io/.well-known/agent-skills/portfolio-research/SKILL.md",
+      "digest": "sha256:5fb44bb352df9d3598be771b4b4da970bb48039b40c42f83e57fbc37b6e0033b"
+    }
+  ]
+}
