@@ -1,0 +1,16 @@
+﻿# Local backend remediation artifacts
+_backend_backup_*/
+backend_only_harden.py
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+.dev.vars
+
+# Dependencies
+node_modules/
+
+# Debug logs
+npm-debug.log*
+yarn-debug.log*

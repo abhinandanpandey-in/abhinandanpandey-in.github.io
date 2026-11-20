@@ -1,14 +1,6 @@
 const TOOLS = [
-  {
-    name: "get_research_profile",
-    description: "Returns Abhinandan Pandey's AI security research focus, core open-source projects, and public links.",
-    inputSchema: { type: "object", properties: {} }
-  },
-  {
-    name: "list_publications",
-    description: "Lists research papers and technical writeups hosted on Abhinandan Pandey's portfolio.",
-    inputSchema: { type: "object", properties: {} }
-  }
+  { name: "get_research_profile", description: "Returns the public AI security research profile.", inputSchema: { type: "object", properties: {}, additionalProperties: false } },
+  { name: "list_publications", description: "Lists public research papers and technical writeups.", inputSchema: { type: "object", properties: {}, additionalProperties: false } }
 ];
 
 const PROFILE = {
@@ -27,7 +19,6 @@ const PROFILE = {
     security_txt: "https://abhinandanpandey-in.github.io/.well-known/security.txt"
   }
 };
-
 const PUBLICATIONS = {
   publications: [
     { title: "Prompt Injection and Tool Hijacking in Agentic Large Language Model Systems", type: "paper", url: "https://abhinandanpandey-in.github.io/research_paper-1.pdf" },
@@ -37,101 +28,126 @@ const PUBLICATIONS = {
   ]
 };
 
-const CORS = {
-  "Access-Control-Allow-Origin": "*",
+const MAX_BODY_BYTES = 4096;
+const PROTOCOL_VERSION = "2025-03-26";
+const ALLOWED_ORIGIN = "https://abhinandanpandey-in.github.io";
+const HEADERS = {
+  "Access-Control-Allow-Origin": ALLOWED_ORIGIN,
+  "Vary": "Origin",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Accept"
+  "Access-Control-Allow-Headers": "Content-Type, Accept, MCP-Protocol-Version",
+  "Access-Control-Expose-Headers": "MCP-Protocol-Version",
+  "Content-Type": "application/json; charset=utf-8",
+  "Cache-Control": "no-store",
+  "X-Content-Type-Options": "nosniff"
 };
 
-export async function onRequestOptions() {
-  return new Response(null, { status: 204, headers: CORS });
+function response(data, status = 200, extra = {}) {
+  return new Response(JSON.stringify(data), { status, headers: { ...HEADERS, ...extra } });
 }
-
-async function _origOnRequestPost({ request }) {
-  let body;
+function error(id, code, message, status = 200) {
+  return response({ jsonrpc: "2.0", id: id ?? null, error: { code, message } }, status);
+}
+function object(value) {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+function validEnvelope(value) {
+  if (!object(value) || value.jsonrpc !== "2.0") return false;
+  if (typeof value.method !== "string" || value.method.length === 0) return false;
+  if (value.params !== undefined && !object(value.params)) return false;
+  if (Object.hasOwn(value, "id")) {
+    const id = value.id;
+    if (!(id === null || typeof id === "string" || (typeof id === "number" && Number.isFinite(id)))) return false;
+  }
+  return true;
+}
+async function readLimited(request) {
+  if (!request.body) return "";
+  const reader = request.body.getReader();
+  const chunks = [];
+  let size = 0;
   try {
-    body = await request.json();
-  } catch {
-    return Response.json({ jsonrpc: "2.0", id: null, error: { code: -32700, message: "Parse error" } }, { status: 400, headers: CORS });
-  }
-
-  const { id = null, method, params } = body;
-
-  if (method === "initialize") {
-    return Response.json({
-      jsonrpc: "2.0",
-      id,
-      result: {
-        protocolVersion: "2025-03-26",
-        capabilities: { tools: {} },
-        serverInfo: { name: "abhinandan-pandey-portfolio", version: "1.0.0" }
+    while (true) {
+      const part = await reader.read();
+      if (part.done) break;
+      size += part.value.byteLength;
+      if (size > MAX_BODY_BYTES) {
+        await reader.cancel();
+        throw new Error("BODY_TOO_LARGE");
       }
-    }, { headers: CORS });
-  }
-
-  if (method === "tools/list") {
-    return Response.json({ jsonrpc: "2.0", id, result: { tools: TOOLS } }, { headers: CORS });
-  }
-
-  if (method === "tools/call") {
-    const name = params?.name;
-    if (name === "get_research_profile" || name === "list_publications") {
-      const payload = name === "get_research_profile" ? PROFILE : PUBLICATIONS;
-      return Response.json({
-        jsonrpc: "2.0",
-        id,
-        result: { content: [{ type: "text", text: JSON.stringify(payload, null, 2) }] }
-      }, { headers: CORS });
+      chunks.push(part.value);
     }
-    return Response.json({ jsonrpc: "2.0", id, error: { code: -32602, message: `Unknown tool: ${name}` } }, { status: 400, headers: CORS });
+  } finally {
+    reader.releaseLock();
   }
+  const bytes = new Uint8Array(size);
+  let offset = 0;
+  for (const chunk of chunks) {
+    bytes.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+  return new TextDecoder("utf-8", { fatal: true }).decode(bytes);
+}
+function dispatch(message) {
+  const hasId = Object.hasOwn(message, "id");
+  const id = hasId ? message.id : null;
+  const params = message.params || {};
 
-  return Response.json({ jsonrpc: "2.0", id, error: { code: -32601, message: `Method not found: ${method}` } }, { status: 404, headers: CORS });
+  // JSON-RPC notifications do not receive a JSON-RPC response.
+  if (!hasId) return new Response(null, { status: 202, headers: HEADERS });
+
+  if (message.method === "initialize") {
+    if (typeof params.protocolVersion !== "string") return error(id, -32602, "Invalid initialize parameters");
+    return response({
+      jsonrpc: "2.0", id,
+      result: {
+        protocolVersion: PROTOCOL_VERSION,
+        capabilities: { tools: { listChanged: false } },
+        serverInfo: { name: "abhinandan-pandey-portfolio", version: "1.1.0" }
+      }
+    }, 200, { "MCP-Protocol-Version": PROTOCOL_VERSION });
+  }
+  if (message.method === "ping") return response({ jsonrpc: "2.0", id, result: {} });
+  if (message.method === "tools/list") return response({ jsonrpc: "2.0", id, result: { tools: TOOLS } });
+  if (message.method === "tools/call") {
+    if (typeof params.name !== "string") return error(id, -32602, "tools/call requires a tool name");
+    if (params.arguments !== undefined && !object(params.arguments)) return error(id, -32602, "Tool arguments must be an object");
+    let data;
+    if (params.name === "get_research_profile") data = PROFILE;
+    else if (params.name === "list_publications") data = PUBLICATIONS;
+    else return error(id, -32602, "Unknown tool");
+    return response({ jsonrpc: "2.0", id, result: { content: [{ type: "text", text: JSON.stringify(data, null, 2) }], isError: false } });
+  }
+  return error(id, -32601, "Method not found");
 }
 
-
-// _RL_HARDENED_MCP: Edge guardrails preventing RL reward-oracle probing & payload abuse
-const MAX_MCP_BYTES = 4096;
-
-function uniformRpcError(status, code) {
-  return new Response(
-    JSON.stringify({ jsonrpc: "2.0", id: null, error: { code, message: "Request rejected by guardrail policy" } }),
-    {
-      status,
-      headers: {
-        "Content-Type": "application/json; charset=utf-8",
-        "TDM-Reservation": "1",
-        "X-RL-Environment-Policy": "sandboxed; reward-oracle=suppressed",
-      },
-    }
-  );
+export async function onRequestOptions({ request }) {
+  const origin = request.headers.get("Origin");
+  if (origin && origin !== ALLOWED_ORIGIN) return new Response(null, { status: 403, headers: { "Vary": "Origin" } });
+  return new Response(null, { status: 204, headers: HEADERS });
 }
+export async function onRequestPost({ request }) {
+  const origin = request.headers.get("Origin");
+  if (origin && origin !== ALLOWED_ORIGIN) return error(null, -32600, "Origin not allowed", 403);
 
-export async function onRequestPost(context) {
-  const ct = (context.request.headers.get("content-type") || "").toLowerCase();
-  if (!ct.startsWith("application/json")) {
-    return uniformRpcError(415, -32600);
+  const type = (request.headers.get("Content-Type") || "").split(";")[0].trim().toLowerCase();
+  if (type !== "application/json") return error(null, -32600, "Content-Type must be application/json", 415);
+
+  const length = request.headers.get("Content-Length");
+  if (length !== null && (!/^\d+$/.test(length) || Number(length) > MAX_BODY_BYTES)) {
+    return error(null, -32600, "Invalid or oversized Content-Length", 413);
   }
 
-  const cl = Number(context.request.headers.get("content-length") || "0");
-  if (Number.isFinite(cl) && cl > MAX_MCP_BYTES) {
-    return uniformRpcError(413, -32600);
+  let raw;
+  try { raw = await readLimited(request); }
+  catch (e) {
+    if (e && e.message === "BODY_TOO_LARGE") return error(null, -32600, "Request body too large", 413);
+    return error(null, -32700, "Invalid request body", 400);
   }
 
-  const rawBody = await context.request.text();
-  if (new TextEncoder().encode(rawBody).length > MAX_MCP_BYTES) {
-    return uniformRpcError(413, -32600);
-  }
-
-  const clonedReq = new Request(context.request.url, {
-    method: "POST",
-    headers: context.request.headers,
-    body: rawBody,
-  });
-
-  const resp = await _origOnRequestPost({ ...context, request: clonedReq });
-  const hardened = new Response(resp.body, resp);
-  hardened.headers.set("TDM-Reservation", "1");
-  hardened.headers.set("X-RL-Environment-Policy", "sandboxed; reward-oracle=suppressed");
-  return hardened;
+  let message;
+  try { message = JSON.parse(raw); }
+  catch { return error(null, -32700, "Parse error", 400); }
+  if (!validEnvelope(message)) return error(null, -32600, "Invalid JSON-RPC request", 400);
+  return dispatch(message);
 }
