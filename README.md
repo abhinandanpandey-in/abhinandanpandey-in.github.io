@@ -107,4 +107,8 @@ All vulnerabilities documented in this portfolio were disclosed through coordina
 
 ## License
 
-This portfolio and its design are not licensed for reuse. The security research toolkits linked from this site carry their own licenses  see individual repositories.
+**Copyright © 2026 Abhinandan Pandey. All Rights Reserved.**
+
+No part of this repository—including source code, UI design, assets, or agentic manifests—may be copied, modified, distributed, or deployed without prior explicit written permission. See [LICENSE](./LICENSE) for full terms.
+
+*The open-source security research toolkits linked from this portfolio carry their own individual licenses—refer to each respective repository.*
