@@ -590,6 +590,91 @@ nav{background:rgba(5,5,5,.72);-webkit-backdrop-filter:blur(14px);backdrop-filte
   <link rel=ai-catalog href=/.well-known/ai-catalog.json>
   <link rel=ard href=/.well-known/ard.json>
   <link rel="canonical" href="https://abhinandanpandey-in.github.io/">
+
+<style id="apk-promo-style">
+  body {
+    padding-bottom: 68px !important;
+  }
+  #apk-promo-bar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 9990;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 24px;
+    background: rgba(10, 10, 10, 0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(212, 168, 83, 0.35);
+    box-shadow: 0 -6px 24px rgba(0, 0, 0, 0.65);
+    font-family: 'JetBrains Mono', 'Space Mono', monospace;
+    color: #e5e5e5;
+  }
+  #apk-promo-bar .apk-promo-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+  }
+  #apk-promo-bar .apk-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #d4a853;
+    box-shadow: 0 0 8px rgba(212, 168, 83, 0.8);
+    flex-shrink: 0;
+  }
+  #apk-promo-bar .apk-text {
+    font-size: 13px;
+    line-height: 1.35;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  #apk-promo-bar .apk-tag {
+    color: #d4a853;
+    font-weight: 700;
+    margin-right: 6px;
+  }
+  #apk-promo-bar .apk-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: #d4a853;
+    color: #0a0a0a;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    border: 1px solid #d4a853;
+    flex-shrink: 0;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  #apk-promo-bar .apk-cta:hover {
+    background: transparent;
+    color: #d4a853;
+  }
+  @media (max-width: 640px) {
+    #apk-promo-bar {
+      padding: 10px 14px;
+      gap: 10px;
+    }
+    #apk-promo-bar .apk-text {
+      font-size: 12px;
+      white-space: normal;
+    }
+    #apk-promo-bar .apk-cta {
+      padding: 7px 12px;
+      font-size: 11px;
+    }
+  }
+</style>
+
 </head>
 <body>
 <div class="cursor" id="cursor"></div>
@@ -635,7 +720,9 @@ nav{background:rgba(5,5,5,.72);-webkit-backdrop-filter:blur(14px);backdrop-filte
     <div class="hero-cta">
       <a href="https://www.linkedin.com/in/abhinandanpandey-in/" class="btn btn-primary">LinkedIn</a>
       <a href="https://github.com/abhinandanpandey-in" target="_blank" class="btn btn-ghost">GitHub →</a>
-      <a href="/resume_abhinandan_pandey.pdf" target="_blank" id="resumeLink" class="btn btn-ghost">↓ Resume</a>
+      <!-- RESUME_DISABLED
+<a href="/resume_abhinandan_pandey.pdf" target="_blank" id="resumeLink" class="btn btn-ghost">↓ Resume</a>
+-->
     </div>
   </div>
   <div class="hero-accent">
@@ -1470,6 +1557,20 @@ nav{background:rgba(5,5,5,.72);-webkit-backdrop-filter:blur(14px);backdrop-filte
     Download abhifolio.apk
   </a>
 </section>
+
+
+  <aside id="apk-promo-bar" aria-label="AbhiFolio Android App Download">
+    <div class="apk-promo-left">
+      <span class="apk-dot" aria-hidden="true"></span>
+      <span class="apk-text">
+        <span class="apk-tag">[ANDROID APK]</span>
+        Get the native <strong>AbhiFolio</strong> app — offline portfolio, research papers &amp; security labs.
+      </span>
+    </div>
+    <a class="apk-cta" href="/abhifolio.apk" download>
+      &#8595; DOWNLOAD APK
+    </a>
+  </aside>
 
 </body>
 </html>
