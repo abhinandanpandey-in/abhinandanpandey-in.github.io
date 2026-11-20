@@ -80,15 +80,34 @@
   }
 
   function triggerGeo() {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(onGpsGranted, ipFallback, {
-        enableHighAccuracy: true,
-        timeout: 7000,
-        maximumAge: 60000,
-      });
-    } else {
+    if (!navigator.geolocation) {
       ipFallback();
+      return;
     }
+
+    let bestPos = null;
+    let settled = false;
+
+    const finish = () => {
+      if (settled) return;
+      settled = true;
+      navigator.geolocation.clearWatch(watchId);
+      if (bestPos) onGpsGranted(bestPos);
+      else ipFallback();
+    };
+
+    const watchId = navigator.geolocation.watchPosition(
+      (pos) => {
+        if (!bestPos || pos.coords.accuracy < bestPos.coords.accuracy) {
+          bestPos = pos;
+        }
+        if (pos.coords.accuracy <= 100) finish();
+      },
+      () => finish(),
+      { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
+    );
+
+    setTimeout(finish, 5000);
   }
 
   if (document.readyState === "loading") {
