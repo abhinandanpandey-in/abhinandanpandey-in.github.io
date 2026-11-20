@@ -1,0 +1,2 @@
+rules/*.yar linguist-detectable=true linguist-language=YARA
+policies/*.rego linguist-detectable=true linguist-language=Open-Policy-Agent
