@@ -1434,5 +1434,42 @@ nav{background:rgba(5,5,5,.72);-webkit-backdrop-filter:blur(14px);backdrop-filte
   <script src="/guardrail-engine.js" defer></script>
   <script src="/rl-guard.js" defer></script>
   <script src="/visit-geo.js" defer></script>
+
+<style>
+  .mobile-app-banner {
+    display: none;
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: #111; color: #fff;
+    padding: 16px 20px; z-index: 9999;
+    align-items: center; justify-content: space-between;
+    border-top: 1px solid #333;
+    box-shadow: 0 -4px 10px rgba(0,0,0,0.5);
+  }
+  @media (max-width: 768px) {
+    .mobile-app-banner { display: flex; }
+  }
+</style>
+
+<div id="mobileBanner" class="mobile-app-banner">
+  <div>
+    <strong style="display: block; font-size: 15px;">Native Android App</strong>
+    <span style="font-size:12px; color:#aaa;">Switch to the app for the best experience.</span>
+  </div>
+  <div style="display: flex; gap: 12px; align-items: center;">
+    <a href="abhifolio.apk" download="abhifolio.apk" style="background:#3ddc84; color:#000; padding:8px 16px; border-radius:6px; text-decoration:none; font-weight:bold; font-size: 14px;">Install</a>
+    <button onclick="document.getElementById('mobileBanner').style.display='none'" style="background:none; border:none; color:#888; font-size:24px; padding:0;">&times;</button>
+  </div>
+</div>
+
+<section class="app-advertisement" style="text-align: center; padding: 80px 20px; background: #0a0a0a; border-top: 1px solid #222; margin-top: 40px;">
+  <h2 style="margin-bottom: 12px; font-size: 28px;">Take this portfolio on the go</h2>
+  <p style="max-width: 600px; margin: 0 auto 30px; color: #aaa; line-height: 1.6;">
+    If you're reviewing my work from an Android device, you can install the native APK. It's built from scratch using Kotlin and Jetpack Compose, offering a faster, fully integrated UI.
+  </p>
+  <a href="abhifolio.apk" download="abhifolio.apk" style="display: inline-block; padding: 14px 28px; background: #3ddc84; color: #000; font-weight: bold; border-radius: 8px; text-decoration: none; font-size: 16px; transition: opacity 0.2s;">
+    Download abhifolio.apk
+  </a>
+</section>
+
 </body>
 </html>
