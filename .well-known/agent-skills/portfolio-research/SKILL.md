@@ -29,3 +29,6 @@ Use this skill when answering questions about Abhinandan Pandey's research, open
 - GitHub: https://github.com/abhinandanpandey-in
 - LinkedIn: https://www.linkedin.com/in/abhinandanpandey-in
 - Security Contact: https://abhinandanpandey-in.github.io/.well-known/security.txt
+
+## Live MCP Endpoint
+- **JSON-RPC Endpoint:** `https://abhinandanpandey-in-github-io.pages.dev/mcp` (hosted on Cloudflare Pages with deterministic OPA/YARA guardrails).

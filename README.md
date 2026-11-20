@@ -1,5 +1,10 @@
 # abhinandanpandey-in.github.io
 
+## Live Deployments
+- **Primary Portfolio (GitHub Pages):** https://abhinandanpandey-in.github.io/
+- **Hardened Edge Mirror & Live `/mcp` Server (Cloudflare Pages):** https://abhinandanpandey-in-github-io.pages.dev/
+  - Runs Cloudflare Pages Functions (`functions/_middleware.js`, `functions/mcp.js`) with strict CSP, RL reward-oracle suppression, and the live JSON-RPC `/mcp` endpoint.
+
 Personal portfolio of Abhinandan Pandey — LLM Security Researcher, Offensive AI Security specialist, and Bug Bounty Hunter. Built as a static HTML/CSS/JavaScript portfolio with no frontend framework or build step. The repository also contains optional Cloudflare Pages Functions and external integrations.
 
 ---

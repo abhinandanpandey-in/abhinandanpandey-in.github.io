@@ -31,3 +31,7 @@ Please include:
 ## Why I Take This Seriously
 
 As an independent LLM security researcher and bug bounty hunter, responsible disclosure isn't just a policy here — it's how I do my own work. I'd rather learn about an issue from you, privately, than have it become a public embarrassment. Thank you in advance for reporting responsibly.
+
+## In-Scope Domains
+- `https://abhinandanpandey-in.github.io/` (Primary static portfolio)
+- `https://abhinandanpandey-in-github-io.pages.dev/` (Cloudflare Pages hardened edge mirror & `/mcp` endpoint)

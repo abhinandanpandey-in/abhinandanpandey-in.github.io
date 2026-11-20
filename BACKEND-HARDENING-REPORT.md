@@ -14,3 +14,8 @@ Run: node --test functions/tests/mcp.test.mjs
 
 ## Limitations
 The MCP tools expose public read-only portfolio data, so no authentication was added. CORS is not authentication. Rego policies remain reference files and are not evaluated by the Cloudflare handler. Run a deployed Cloudflare Pages smoke test before calling this production-verified.
+
+## Live Edge Verification Target
+- **Cloudflare Pages Edge Mirror:** https://abhinandanpandey-in-github-io.pages.dev/
+- **Hardened MCP JSON-RPC Endpoint:** `https://abhinandanpandey-in-github-io.pages.dev/mcp`
+- Enforces `TDM-Reservation: 1`, `X-RL-Environment-Policy`, strict `script-src 'self'` CSP, 4KB payload cap, and uniform JSON-RPC error responses.
