@@ -11,6 +11,14 @@ export async function onRequest(context) {
     out.headers.append("Link", '</.well-known/agent-skills/index.json>; rel="describedby"');
     out.headers.set("X-Content-Type-Options", "nosniff");
     out.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+    out.headers.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
+    out.headers.set("X-Frame-Options", "DENY");
+    out.headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=(), payment=(), usb=()");
+    out.headers.set("Cross-Origin-Opener-Policy", "same-origin");
+    out.headers.set(
+      "Content-Security-Policy",
+      "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; frame-ancestors 'none'; base-uri 'self'; form-action 'self';"
+    );
     if (isPagesDev) {
       out.headers.set("X-Robots-Tag", "noindex, follow");
     }
