@@ -711,6 +711,24 @@ nav.open .nav-burger span:nth-child(3){transform:translateY(-7px) rotate(-45deg)
 #rl-sandbox-banner{max-width:none!important;border-radius:12px}
 @media(max-width:600px){#guardrail-lab>div[style]{padding:18px!important;border-radius:14px!important}}
 </style>
+<style id="mirror-ui">
+.mirror-line{opacity:.85;margin-top:10px}
+.mirror-link{color:var(--accent);text-decoration:none;border-bottom:1px dotted rgba(212,168,83,.5);white-space:nowrap;display:inline-flex;align-items:center}
+.mirror-link:hover{border-bottom-style:solid}
+.cf-logo{margin-right:6px;flex:none}
+</style>
+<style id="banner-fix">
+/* Phones: one app banner only (the mobile one). The desktop bar is hidden at the same breakpoint the mobile banner appears. */
+@media(max-width:768px){
+ #apk-promo-bar{display:none!important}
+ body{padding-bottom:96px!important}
+ body:has(#mobileBanner[style*="none"]){padding-bottom:0!important}
+ body:has(#mobileBanner[style*="none"]) #chatToggle{bottom:20px}
+ body:has(#mobileBanner[style*="none"]) #chatPanel{bottom:90px}
+}
+</style>
+
+
 
 
 
@@ -1311,6 +1329,7 @@ nav.open .nav-burger span:nth-child(3){transform:translateY(-7px) rotate(-45deg)
   <div class="section-header"><span class="section-num">10</span><h2 class="section-title">How This Site Is Built</h2><div class="section-line"></div></div>
   <div style="max-width:800px;font-size:13.5px;color:var(--text);line-height:1.8">
     <p style="margin-bottom:16px">Single static HTML file, hosted on GitHub Pages. No framework, no build step, no backend. Everything you see — the terminal, the chatbot, the feedback popup, the stats — is vanilla JavaScript reading and writing to this one page.</p>
+    <p style="margin-bottom:16px"><strong style="color:var(--accent)">Hosting.</strong> Primary on GitHub Pages, mirrored on Cloudflare Pages: <a class="mirror-link" href="https://abhinandanpandey-in-github-io.pages.dev/" target="_blank" rel="noopener noreferrer"><svg class="cf-logo" viewBox="0 0 48 32" width="24" height="16" aria-hidden="true"><path fill="#F6821F" d="M14 28a9 9 0 0 1-1.6-17.9A12.5 12.5 0 0 1 36.4 9a9.5 9.5 0 0 1 .6 19z"/></svg>abhinandanpandey-in-github-io.pages.dev</a>. The Cloudflare deployment also serves real HTTP security headers (CSP, HSTS, X-Frame-Options) through a Pages Function, which GitHub Pages cannot do.</p>
     <p style="margin-bottom:16px"><strong style="color:var(--accent)">The chatbot</strong> doesn't call any LLM API. On page load, it scrapes this page's own DOM into a structured knowledge base, then answers questions using keyword-boundary matching and a scored fuzzy search — no model, no cost per query, and provably private since there's nothing to intercept.</p>
     <p style="margin-bottom:16px"><strong style="color:var(--accent)">The feedback popup</strong> posts to a Formspree endpoint — the only piece of this site with an external write dependency, and it's disclosed in the footer.</p>
     <p style="margin-bottom:16px"><strong style="color:var(--accent)">The GitHub stats and page counter</strong> pull from GitHub's public REST API and CounterAPI respectively — both fail silently if unreachable, so a third-party outage never shows a broken UI to a visitor.</p>
@@ -1497,6 +1516,7 @@ nav.open .nav-burger span:nth-child(3){transform:translateY(-7px) rotate(-45deg)
   <p>All vulnerabilities disclosed responsibly · All research conducted within ethical boundaries and authorized environments.</p>
   <p style="opacity:.6;margin-top:6px">Site assistant runs entirely client-side — no external API calls, no tracking, no data leaves your browser.</p>
   <p style="opacity:.6;margin-top:4px">Downloading the resume will prompt for location access — if allowed, an accurate location is logged; if denied, an approximate IP-based location is used instead. No other browsing on this site is tracked.</p>
+  <p class="mirror-line">Secure edge copy: <a class="mirror-link" href="https://abhinandanpandey-in-github-io.pages.dev/" target="_blank" rel="noopener noreferrer"><svg class="cf-logo" viewBox="0 0 48 32" width="24" height="16" aria-hidden="true"><path fill="#F6821F" d="M14 28a9 9 0 0 1-1.6-17.9A12.5 12.5 0 0 1 36.4 9a9.5 9.5 0 0 1 .6 19z"/></svg>abhinandanpandey-in-github-io.pages.dev</a></p>
 </footer>
 
 <!-- CHATBOT -->
@@ -1587,8 +1607,8 @@ nav.open .nav-burger span:nth-child(3){transform:translateY(-7px) rotate(-45deg)
     <span style="font-size:12px; color:#aaa;">Switch to the app for the best experience.</span>
   </div>
   <div style="display: flex; gap: 12px; align-items: center;">
-    <a href="https://github.com/abhinandanpandey-in/abhinandanpandey-in.github.io/releases/latest/download/abhifolio.apk" download="abhifolio.apk" style="background:#d4a853; color:#000; padding:8px 16px; border-radius:6px; text-decoration:none; font-weight:bold; font-size: 14px;">Install</a>
-    <button onclick="document.getElementById('mobileBanner').style.display='none'" style="background:none; border:none; color:#888; font-size:24px; padding:0;">&times;</button>
+    <a href="abhifolio.apk" download="abhifolio.apk" style="background:#d4a853; color:#000; padding:8px 16px; border-radius:6px; text-decoration:none; font-weight:bold; font-size: 14px;">Install</a>
+    <button id="mobileBannerClose" style="background:none; border:none; color:#888; font-size:24px; padding:0;">&times;</button>
   </div>
 </div>
 
@@ -1603,18 +1623,11 @@ nav.open .nav-burger span:nth-child(3){transform:translateY(-7px) rotate(-45deg)
         <span class="apk-sub">Switch to the app for the best experience.</span>
       </span>
     </div>
-    <a class="apk-cta" href="https://github.com/abhinandanpandey-in/abhinandanpandey-in.github.io/releases/latest/download/abhifolio.apk" download>
+    <a class="apk-cta" href="/abhifolio.apk" download>
       &#8595; DOWNLOAD APK
     </a>
   </aside>
 
-<script id="nav-burger-js">
-(function(){var n=document.querySelector('nav'),b=n&&n.querySelector('.nav-burger');if(!b)return;
-function set(o){n.classList.toggle('open',o);b.setAttribute('aria-expanded',o?'true':'false')}
-b.addEventListener('click',function(){set(!n.classList.contains('open'))});
-n.addEventListener('click',function(e){if(e.target.closest&&e.target.closest('.nav-links a'))set(false)});
-document.addEventListener('keydown',function(e){if(e.key==='Escape')set(false)});
-addEventListener('resize',function(){if(innerWidth>900)set(false)});})();
-</script>
+<script src="/ui-fixes.js" defer></script>
 </body>
 </html>
