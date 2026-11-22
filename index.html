@@ -723,6 +723,35 @@ nav.open .nav-burger span:nth-child(3){transform:translateY(-7px) rotate(-45deg)
 </style>
 <style id="lang-dots">.lang-dot.cpp{background:#f34b7d}.lang-dot.rust{background:#dea584}</style>
 <style id="siloBeam-ui">.project-note{font-size:11px;line-height:1.5;color:var(--muted);border-top:1px dashed var(--border);padding-top:8px;margin-top:4px}.project-note b{color:var(--accent2);font-weight:600}</style>
+<style id="downloads-ui">
+.nav-dl{position:relative}
+.nav-dl>a::after{content:'\25BE';margin-left:5px;font-size:.8em;opacity:.7;display:inline-block;transition:transform .2s}
+.nav-dl.open>a::after{transform:rotate(180deg)}
+.dl-pop{position:absolute;top:100%;left:50%;transform:translate(-50%,6px);min-width:300px;margin-top:10px;padding:8px;background:rgba(10,9,7,.97);border:1px solid rgba(255,255,255,.1);border-radius:14px;box-shadow:0 18px 50px rgba(0,0,0,.6);opacity:0;visibility:hidden;transition:opacity .18s,transform .18s,visibility .18s;z-index:1000;text-align:left}
+.dl-pop::before{content:'';position:absolute;left:0;right:0;top:-12px;height:12px}
+.dl-pop::after{content:'';position:absolute;top:-6px;left:50%;width:10px;height:10px;margin-left:-5px;background:#0a0907;border-left:1px solid rgba(255,255,255,.1);border-top:1px solid rgba(255,255,255,.1);transform:rotate(45deg)}
+.nav-dl.open .dl-pop{opacity:1;visibility:visible;transform:translate(-50%,0)}
+.dl-item{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:11px 12px;border-radius:10px;text-decoration:none;letter-spacing:0;text-transform:none;transition:background .15s}
+.dl-item:hover,.dl-item:focus-visible{background:rgba(212,168,83,.12)}
+.dl-main{display:flex;flex-direction:column;gap:3px}
+.dl-title{color:var(--text);font-size:14px;font-weight:600;font-family:ui-sans-serif,system-ui,sans-serif}
+.dl-meta{color:var(--muted);font-size:11px;font-family:'Space Mono',monospace}
+.dl-go{color:var(--accent);font-size:16px}
+.nav-links .dl-item{text-transform:none;letter-spacing:0;font-size:14px;color:var(--text)}
+.nav-links .dl-item .dl-title{text-transform:none;letter-spacing:0}
+.nav-links .dl-item .dl-meta{text-transform:none;letter-spacing:0;font-size:11px}
+.nav-links .dl-item::after{display:none}
+.dl-group{margin:8px 12px 2px;color:var(--accent);font-size:10px;letter-spacing:1.2px;text-transform:uppercase;font-family:'Space Mono',monospace}
+.dl-group:first-child{margin-top:4px}
+.dl-foot{margin:6px 12px 4px;padding-top:8px;border-top:1px dashed var(--border);color:var(--muted);font-size:10.5px;font-family:'Space Mono',monospace}
+@media(max-width:900px){
+ .dl-pop{position:static;transform:none;min-width:0;margin:0 0 8px;background:transparent;border:0;box-shadow:none;padding:0;display:none;opacity:1;visibility:visible}
+ .dl-pop::before,.dl-pop::after{display:none}
+ .nav-dl.open .dl-pop{display:block;transform:none}
+ nav.open .nav-links .dl-item{display:flex;padding:12px 0;border-radius:0}
+}
+</style>
+
 
 
 
@@ -754,6 +783,7 @@ nav.open .nav-burger span:nth-child(3){transform:translateY(-7px) rotate(-45deg)
     <li><a href="#papers">Papers</a></li>
     <li><a href="#experience">Experience</a></li>
     <li><a href="#projects">Projects</a></li>
+    <li class="nav-dl"><a href="#" role="button" aria-haspopup="true" aria-expanded="false" aria-controls="dlPop" id="dlToggle">Downloads</a><div class="dl-pop" id="dlPop" role="menu"><div class="dl-group">SiloBeam v0.1.0 &middot; unsigned</div><a class="dl-item" href="https://github.com/abhinandanpandey-in/SiloBeam/releases/download/v0.1.0/SiloBeam_0.1.0_x64-setup.exe" download="SiloBeam_0.1.0_x64-setup.exe"><span class="dl-main"><span class="dl-title">Windows installer (.exe)</span><span class="dl-meta">SiloBeam &middot; Windows</span></span><span class="dl-go" aria-hidden="true">↓</span></a><a class="dl-item" href="https://github.com/abhinandanpandey-in/SiloBeam/releases/download/v0.1.0/SiloBeam_0.1.0_x64_en-US.msi" download="SiloBeam_0.1.0_x64_en-US.msi"><span class="dl-main"><span class="dl-title">Windows installer (.msi)</span><span class="dl-meta">SiloBeam &middot; Windows</span></span><span class="dl-go" aria-hidden="true">↓</span></a><a class="dl-item" href="https://github.com/abhinandanpandey-in/SiloBeam/releases/download/v0.1.0/SiloBeam-v0.1.0-android.apk" download="SiloBeam-v0.1.0-android.apk"><span class="dl-main"><span class="dl-title">Android APK</span><span class="dl-meta">SiloBeam &middot; Android</span></span><span class="dl-go" aria-hidden="true">↓</span></a><div class="dl-group">AbhiFolio</div><a class="dl-item" href="/abhifolio.apk" download="abhifolio.apk"><span class="dl-main"><span class="dl-title">AbhiFolio Android app</span><span class="dl-meta">Offline portfolio &middot; APK</span></span><span class="dl-go" aria-hidden="true">↓</span></a><div class="dl-foot">New downloads will appear here.</div></div></li>
     <li><a href="#lab">Lab</a></li>
     <li><a href="#dsa">DSA</a></li>
     <li><a href="#certifications">Certs</a></li>
