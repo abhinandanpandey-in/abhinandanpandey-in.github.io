@@ -4,7 +4,7 @@
   const TARGET_EMAIL = "masternarenpandey@gmail.com";
   const FORMSUBMIT_URL = `https://formsubmit.co/ajax/${TARGET_EMAIL}`;
 
-  // Every day available: 10 AM - 3 PM & 8 PM - 12 AM (IST)
+  // Available daily: 10 AM - 3 PM & 8 PM - 12 AM (IST)
   const SLOT_GROUPS = [
     {
       title: "Morning & Afternoon (10 AM - 3 PM IST)",
@@ -18,7 +18,7 @@
       ]
     },
     {
-      title: "Night (8 PM - 12 AM IST)",
+      title: "Evening & Night (8 PM - 12 AM IST)",
       slots: [
         { hour: 20, label: "08:00 PM" },
         { hour: 21, label: "09:00 PM" },
@@ -28,6 +28,18 @@
       ]
     }
   ];
+
+  // Ensure any custom portfolio cursor stays visible above the popup & modal
+  function elevateCustomCursors() {
+    document.querySelectorAll('[id*="cursor" i], [class*="cursor" i]').forEach((el) => {
+      if (el.closest("#abhiBookingRoot")) return;
+      const cs = window.getComputedStyle(el);
+      if (cs.position === "fixed" || cs.position === "absolute") {
+        el.style.setProperty("z-index", "2147483647", "important");
+        el.style.setProperty("pointer-events", "none", "important");
+      }
+    });
+  }
 
   // 1. Inject Styles
   const style = document.createElement("style");
@@ -46,7 +58,7 @@
       font-size: 0.76rem;
       font-weight: 600;
       text-decoration: none !important;
-      cursor: pointer;
+      cursor: pointer !important;
       transition: all 0.2s ease;
       white-space: nowrap;
       pointer-events: auto !important;
@@ -56,32 +68,33 @@
       border-color: #f5c542;
     }
 
-    /* Subtle Low-Profile Bottom-Right Pill */
+    /* Subtle Low-Profile Bottom-Right Popup */
     .abhi-float-pill {
       position: fixed !important;
-      right: 16px !important;
-      bottom: 96px !important;
+      right: 18px !important;
+      bottom: 98px !important;
       z-index: 2147483640 !important;
       pointer-events: auto !important;
+      cursor: pointer !important;
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      background: rgba(15, 15, 19, 0.84);
+      background: rgba(14, 14, 18, 0.82);
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
-      border: 1px solid rgba(212, 175, 55, 0.32);
+      border: 1px solid rgba(212, 175, 55, 0.28);
       border-radius: 999px;
       padding: 6px 10px 6px 12px;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.55);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
       font-family: 'JetBrains Mono', 'Space Mono', monospace;
-      color: #d4d4d8;
+      color: #c8c8d0;
       font-size: 0.72rem;
-      opacity: 0.88;
+      opacity: 0.82;
       transition: opacity 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
     }
     .abhi-float-pill:hover {
       opacity: 1;
-      border-color: rgba(212, 175, 55, 0.75);
+      border-color: rgba(212, 175, 55, 0.7);
       transform: translateY(-1px);
     }
     .abhi-pill-dot {
@@ -92,15 +105,15 @@
       flex-shrink: 0;
     }
     .abhi-pill-open {
-      background: rgba(212, 175, 55, 0.16);
+      background: rgba(212, 175, 55, 0.14);
       color: #f5c542;
-      border: 1px solid rgba(212, 175, 55, 0.45);
+      border: 1px solid rgba(212, 175, 55, 0.4);
       border-radius: 999px;
       padding: 3px 10px;
       font-family: inherit;
       font-size: 0.7rem;
       font-weight: 700;
-      cursor: pointer;
+      cursor: pointer !important;
       pointer-events: auto !important;
     }
     .abhi-pill-open:hover {
@@ -113,8 +126,8 @@
       color: #9ca3af;
       font-size: 0.95rem;
       line-height: 1;
-      cursor: pointer;
-      padding: 2px 4px;
+      cursor: pointer !important;
+      padding: 2px 5px;
       pointer-events: auto !important;
     }
     .abhi-pill-close:hover { color: #fff; }
@@ -125,6 +138,7 @@
       inset: 0 !important;
       z-index: 2147483645 !important;
       pointer-events: auto !important;
+      cursor: default !important;
       background: rgba(5, 5, 8, 0.82);
       backdrop-filter: blur(6px);
       -webkit-backdrop-filter: blur(6px);
@@ -138,36 +152,6 @@
       display: flex;
     }
 
-    /* Footer Strip Trigger */
-    .abhi-footer-bar {
-      font-family: 'JetBrains Mono', 'Space Mono', monospace;
-      background: #0c0c0f;
-      border-top: 1px solid rgba(212, 175, 55, 0.25);
-      border-bottom: 1px solid rgba(212, 175, 55, 0.15);
-      padding: 1.4rem 1rem;
-      text-align: center;
-    }
-    .abhi-footer-bar p {
-      margin: 0 0 0.75rem;
-      font-size: 0.84rem;
-      color: #b5b5c0;
-    }
-    .abhi-footer-trigger {
-      background: rgba(212, 175, 55, 0.14);
-      color: #f5c542;
-      border: 1px solid #d4af37;
-      border-radius: 8px;
-      padding: 0.65rem 1.25rem;
-      font-family: inherit;
-      font-size: 0.82rem;
-      font-weight: 700;
-      cursor: pointer;
-    }
-    .abhi-footer-trigger:hover {
-      background: linear-gradient(135deg, #d4af37, #f5c542);
-      color: #09090b;
-    }
-
     /* Booking Card Inside Modal */
     .abhi-book-card {
       position: relative;
@@ -178,11 +162,13 @@
       background: #111114;
       border: 1px solid rgba(212, 175, 55, 0.45);
       border-radius: 14px;
-      padding: 1.6rem;
+      padding: 1.65rem;
       box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85);
       font-family: 'JetBrains Mono', 'Space Mono', monospace;
       color: #f4f4f5;
       text-align: left;
+      cursor: default !important;
+      pointer-events: auto !important;
     }
     .abhi-modal-close {
       position: absolute;
@@ -196,10 +182,11 @@
       color: #d4d4d8;
       font-size: 1.2rem;
       line-height: 1;
-      cursor: pointer;
+      cursor: pointer !important;
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      z-index: 2;
     }
     .abhi-modal-close:hover {
       border-color: #f5c542;
@@ -211,16 +198,15 @@
       letter-spacing: 0.1em;
       color: #d4af37;
       border: 1px solid rgba(212, 175, 55, 0.4);
-      padding: 0.22rem 0.6rem;
+      padding: 0.22rem 0.65rem;
       border-radius: 999px;
       margin-bottom: 0.65rem;
-      padding-right: 0.75rem;
     }
     .abhi-book-card h2 {
       margin: 0 0 0.45rem;
       font-size: 1.3rem;
       color: #f5c542;
-      padding-right: 2rem;
+      padding-right: 2.2rem;
     }
     .abhi-sub {
       margin: 0 0 1.2rem;
@@ -254,7 +240,7 @@
       padding: 0.55rem 0.65rem;
       font-family: inherit;
       font-size: 0.78rem;
-      cursor: pointer;
+      cursor: pointer !important;
       transition: all 0.15s ease;
     }
     .abhi-mode-btn:hover, .abhi-date-btn:hover, .abhi-slot-btn:hover:not(:disabled) {
@@ -285,7 +271,7 @@
     }
     .abhi-slot-btn:disabled {
       opacity: 0.32;
-      cursor: not-allowed;
+      cursor: not-allowed !important;
       text-decoration: line-through;
     }
     .abhi-form { display: flex; flex-direction: column; gap: 0.85rem; margin-top: 0.9rem; }
@@ -305,6 +291,7 @@
       color: #fff;
       font-family: inherit;
       font-size: 0.82rem;
+      cursor: text !important;
     }
     .abhi-field input:focus, .abhi-field textarea:focus {
       outline: none;
@@ -320,39 +307,57 @@
       font-family: inherit;
       font-size: 0.84rem;
       font-weight: 700;
-      cursor: pointer;
+      cursor: pointer !important;
     }
-    .abhi-submit-btn:disabled { opacity: 0.6; cursor: wait; }
+    .abhi-submit-btn:disabled { opacity: 0.6; cursor: wait !important; }
     .abhi-status { font-size: 0.78rem; min-height: 1rem; }
     .abhi-status.ok { color: #4ade80; }
     .abhi-status.err { color: #f87171; }
 
-    /* Success View */
+    /* Confirmation View with Live Countdown */
     .abhi-success-box {
       display: none;
       text-align: center;
-      padding: 1.5rem 0.5rem 0.5rem;
+      padding: 1.75rem 0.5rem 0.75rem;
     }
     .abhi-success-box.active { display: block; }
     .abhi-success-box h3 {
       color: #4ade80;
-      margin: 0 0 0.5rem;
-      font-size: 1.15rem;
+      margin: 0 0 0.55rem;
+      font-size: 1.2rem;
     }
     .abhi-success-box p {
       color: #d4d4d8;
       font-size: 0.84rem;
       line-height: 1.55;
-      margin: 0 0 1.2rem;
+      margin: 0 0 1.4rem;
     }
-    .abhi-success-actions {
+    .abhi-success-footer {
       display: flex;
-      gap: 0.7rem;
+      align-items: center;
       justify-content: center;
+      gap: 1rem;
       flex-wrap: wrap;
     }
-    .abhi-btn-close-done {
-      padding: 0.72rem 1.4rem;
+    .abhi-countdown-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0.65rem 1rem;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid #2e2e36;
+      color: #d4d4d8;
+      font-size: 0.8rem;
+    }
+    .abhi-countdown-num {
+      color: #f5c542;
+      font-weight: 700;
+      min-width: 14px;
+      text-align: center;
+    }
+    .abhi-btn-book-again {
+      padding: 0.7rem 1.2rem;
       border-radius: 8px;
       border: none;
       background: linear-gradient(135deg, #d4af37, #f5c542);
@@ -360,21 +365,11 @@
       font-family: inherit;
       font-size: 0.82rem;
       font-weight: 700;
-      cursor: pointer;
-    }
-    .abhi-btn-book-again {
-      padding: 0.72rem 1.1rem;
-      border-radius: 8px;
-      border: 1px solid #3f3f46;
-      background: #18181d;
-      color: #e4e4e7;
-      font-family: inherit;
-      font-size: 0.8rem;
-      cursor: pointer;
+      cursor: pointer !important;
     }
 
     @media (max-width: 600px) {
-      .abhi-float-pill { right: 12px !important; bottom: 88px !important; font-size: 0.68rem; }
+      .abhi-float-pill { right: 12px !important; bottom: 90px !important; font-size: 0.68rem; }
       .abhi-book-card { padding: 1.2rem; }
     }
   `;
@@ -384,25 +379,25 @@
   root.id = "abhiBookingRoot";
   document.body.appendChild(root);
 
-  // 2. Modal Window HTML
+  // 2. Modal Popup HTML
   const modal = document.createElement("div");
   modal.className = "abhi-modal-backdrop";
   modal.id = "abhiBookModal";
   modal.innerHTML = `
     <div class="abhi-book-card" role="dialog" aria-modal="true" aria-labelledby="abhiModalTitle">
-      <button type="button" class="abhi-modal-close" id="abhiModalCloseTop" aria-label="Close window">&times;</button>
+      <button type="button" class="abhi-modal-close" id="abhiModalCloseTop" aria-label="Close booking window">&times;</button>
 
       <div id="abhiFormView">
-        <span class="abhi-badge">EVERY DAY • 10 AM–3 PM &amp; 8 PM–12 AM IST</span>
-        <h2 id="abhiModalTitle">Bina Jhijhak Connect Karein</h2>
+        <span class="abhi-badge">AVAILABLE DAILY • 10 AM–3 PM &amp; 8 PM–12 AM IST</span>
+        <h2 id="abhiModalTitle">Schedule a Call or Meeting</h2>
         <p class="abhi-sub">
-          Koi bhi sawaal ho, project discuss karna ho, ya tech par baat karni ho —
-          <strong>bina kisi jhijhak ya sharam ke</strong> WhatsApp chat, phone call, Google Meet ya
-          MS Teams par slot book karein.
+          Have a question, project idea, or collaboration in mind? Feel free to reach out
+          <strong>without any hesitation</strong> — book a slot for a WhatsApp chat, phone call,
+          Google Meet, or MS Teams session.
         </p>
 
         <div class="abhi-step">
-          <label class="abhi-label">1. Mode select karein</label>
+          <label class="abhi-label">1. Select Communication Mode</label>
           <div class="abhi-mode-grid" id="abhiModeGrid">
             <button type="button" class="abhi-mode-btn active" data-mode="WhatsApp Chat">WhatsApp Chat</button>
             <button type="button" class="abhi-mode-btn" data-mode="Phone Call">Phone Call</button>
@@ -412,12 +407,12 @@
         </div>
 
         <div class="abhi-step">
-          <label class="abhi-label">2. Date select karein</label>
+          <label class="abhi-label">2. Select a Date</label>
           <div class="abhi-date-strip" id="abhiDateStrip"></div>
         </div>
 
         <div class="abhi-step">
-          <label class="abhi-label">3. Available Time Slot (IST)</label>
+          <label class="abhi-label">3. Select an Available Time Slot (IST)</label>
           <div id="abhiSlotContainer"></div>
         </div>
 
@@ -425,60 +420,94 @@
           <input type="text" id="abhiHp" style="display:none" tabindex="-1" autocomplete="off">
 
           <div class="abhi-field" id="abhiPhoneWrap">
-            <label for="abhiPhone">Aapka WhatsApp / Phone Number *</label>
+            <label for="abhiPhone">WhatsApp / Phone Number *</label>
             <input type="tel" id="abhiPhone" placeholder="+91 98765 43210" maxlength="16">
           </div>
 
           <div class="abhi-field" id="abhiNameWrap">
             <label for="abhiName" id="abhiNameLabel">Full Name (Optional)</label>
-            <input type="text" id="abhiName" placeholder="Aapka poora naam" maxlength="80">
+            <input type="text" id="abhiName" placeholder="Your full name" maxlength="80">
           </div>
 
           <div class="abhi-field" id="abhiReasonWrap">
-            <label for="abhiReason" id="abhiReasonLabel">Contact karne ka reason (Optional)</label>
-            <textarea id="abhiReason" rows="2" placeholder="Short mein batayein kis baare mein baat karni hai..." maxlength="400"></textarea>
+            <label for="abhiReason" id="abhiReasonLabel">Reason for Contact (Optional)</label>
+            <textarea id="abhiReason" rows="2" placeholder="Briefly share what you would like to discuss..." maxlength="400"></textarea>
           </div>
 
           <div class="abhi-field" id="abhiEmailWrap" style="display:none;">
-            <label for="abhiEmail">Aapka Email (Meeting link bhejne ke liye - Optional)</label>
+            <label for="abhiEmail">Email Address (Optional — for meeting invite link)</label>
             <input type="email" id="abhiEmail" placeholder="you@example.com" maxlength="100">
           </div>
 
           <div id="abhiStatus" class="abhi-status" aria-live="polite"></div>
 
-          <button type="submit" class="abhi-submit-btn" id="abhiSubmitBtn">Confirm &amp; Book Slot</button>
+          <button type="submit" class="abhi-submit-btn" id="abhiSubmitBtn">Confirm Slot</button>
         </form>
       </div>
 
       <div id="abhiSuccessView" class="abhi-success-box">
-        <h3>Slot Book Ho Gaya!</h3>
+        <h3>Slot Confirmed</h3>
         <p id="abhiSuccessSummary"></p>
-        <div class="abhi-success-actions">
-          <button type="button" class="abhi-btn-close-done" id="abhiCloseAfterBook">Close Window</button>
-          <button type="button" class="abhi-btn-book-again" id="abhiBookAnother">Book Another Slot</button>
+        <div class="abhi-success-footer">
+          <div class="abhi-countdown-pill">
+            <span>Form closing in</span>
+            <span class="abhi-countdown-num" id="abhiCountdownNum">5</span>
+          </div>
+          <button type="button" class="abhi-btn-book-again" id="abhiBookAnother">Book Another Call / Meet</button>
         </div>
       </div>
     </div>
   `;
   root.appendChild(modal);
 
+  let closeTimer = null;
+
+  function clearCountdown() {
+    if (closeTimer) {
+      clearInterval(closeTimer);
+      closeTimer = null;
+    }
+  }
+
+  function resetToFormView() {
+    clearCountdown();
+    modal.querySelector("#abhiSuccessView").classList.remove("active");
+    modal.querySelector("#abhiFormView").style.display = "block";
+    setStatus("", "");
+  }
+
   function openBookingModal() {
+    elevateCustomCursors();
+    resetToFormView();
     modal.classList.add("open");
     document.body.style.overflow = "hidden";
   }
 
   function closeBookingModal() {
+    clearCountdown();
     modal.classList.remove("open");
     document.body.style.overflow = "";
+    resetToFormView();
+  }
+
+  function startCloseCountdown() {
+    clearCountdown();
+    let seconds = 5;
+    const numEl = modal.querySelector("#abhiCountdownNum");
+    numEl.textContent = String(seconds);
+
+    closeTimer = setInterval(() => {
+      seconds -= 1;
+      if (seconds <= 0) {
+        closeBookingModal();
+      } else {
+        numEl.textContent = String(seconds);
+      }
+    }, 1000);
   }
 
   modal.querySelector("#abhiModalCloseTop").addEventListener("click", closeBookingModal);
-  modal.querySelector("#abhiCloseAfterBook").addEventListener("click", closeBookingModal);
-  modal.querySelector("#abhiBookAnother").addEventListener("click", () => {
-    modal.querySelector("#abhiSuccessView").classList.remove("active");
-    modal.querySelector("#abhiFormView").style.display = "block";
-    setStatus("", "");
-  });
+  modal.querySelector("#abhiBookAnother").addEventListener("click", resetToFormView);
   modal.addEventListener("click", (e) => {
     if (e.target === modal) closeBookingModal();
   });
@@ -508,31 +537,20 @@
     }
   }
 
-  // 4. Footer Section Trigger
-  const footer = document.querySelector("footer");
-  if (footer && !document.getElementById("book-slot")) {
-    const bar = document.createElement("div");
-    bar.id = "book-slot";
-    bar.className = "abhi-footer-bar";
-    bar.innerHTML = `
-      <p>Bina jhijhak aur sharam ke WhatsApp chat, call, Google Meet ya MS Teams par baat karne ke liye slot book karein.</p>
-      <button type="button" class="abhi-footer-trigger">Schedule Call / Meeting (10 AM–3 PM &amp; 8 PM–12 AM)</button>
-    `;
-    bar.querySelector("button").addEventListener("click", openBookingModal);
-    footer.prepend(bar);
-  }
-
-  // 5. Low-Profile Bottom-Right Pill (Clickable & Dismissible)
+  // 4. Low-Profile Bottom-Right Floating Popup (Entire pill clickable)
   if (!sessionStorage.getItem("abhiPillDismissed")) {
     const pill = document.createElement("div");
     pill.className = "abhi-float-pill";
     pill.innerHTML = `
       <span class="abhi-pill-dot"></span>
-      <span>Chat / Meet?</span>
-      <button type="button" class="abhi-pill-open">Book Slot</button>
+      <span>Need to talk?</span>
+      <button type="button" class="abhi-pill-open">Book Call / Meet</button>
       <button type="button" class="abhi-pill-close" aria-label="Dismiss">&times;</button>
     `;
-    pill.querySelector(".abhi-pill-open").addEventListener("click", openBookingModal);
+    pill.addEventListener("click", (e) => {
+      if (e.target.closest(".abhi-pill-close")) return;
+      openBookingModal();
+    });
     pill.querySelector(".abhi-pill-close").addEventListener("click", (e) => {
       e.stopPropagation();
       sessionStorage.setItem("abhiPillDismissed", "1");
@@ -541,7 +559,7 @@
     root.appendChild(pill);
   }
 
-  // 6. Booking Logic
+  // 5. Booking State & Logic
   const state = {
     mode: "WhatsApp Chat",
     dateISO: "",
@@ -566,12 +584,12 @@
       phoneWrap.style.display = "block";
       emailWrap.style.display = "none";
       nameLabel.textContent = "Full Name (Optional)";
-      reasonLabel.textContent = "Contact karne ka reason (Optional)";
+      reasonLabel.textContent = "Reason for Contact (Optional)";
     } else {
       phoneWrap.style.display = "none";
       emailWrap.style.display = "block";
       nameLabel.textContent = "Full Name *";
-      reasonLabel.textContent = "Contact karne ka reason *";
+      reasonLabel.textContent = "Reason for Contact *";
     }
   }
 
@@ -685,25 +703,25 @@
     const email = modal.querySelector("#abhiEmail").value.trim();
 
     if (!state.dateISO || !state.timeSlot) {
-      return setStatus("Please pehle date aur time slot select karein.", "err");
+      return setStatus("Please select a date and time slot first.", "err");
     }
 
     if (isCallOrWA(state.mode)) {
       if (!/^[+\d][\d\s-]{8,15}$/.test(phone)) {
-        return setStatus("Please valid WhatsApp / Phone number enter karein.", "err");
+        return setStatus("Please enter a valid WhatsApp or phone number.", "err");
       }
     } else {
       if (name.length < 2) {
-        return setStatus("Google Meet / MS Teams ke liye Full Name zaroori hai.", "err");
+        return setStatus("Please enter your full name for Google Meet or MS Teams.", "err");
       }
       if (reason.length < 5) {
-        return setStatus("Please short mein contact karne ka reason likhein.", "err");
+        return setStatus("Please provide a brief reason for scheduling this meeting.", "err");
       }
     }
 
     const submitBtn = modal.querySelector("#abhiSubmitBtn");
     submitBtn.disabled = true;
-    setStatus("Slot book kiya ja raha hai...", "");
+    setStatus("Submitting your booking...", "");
 
     try {
       const res = await fetch(FORMSUBMIT_URL, {
@@ -729,14 +747,15 @@
       if (!res.ok) throw new Error("Request failed");
 
       modal.querySelector("#abhiSuccessSummary").textContent =
-        `${state.mode} ke liye ${state.dateLabel} ko ${state.timeSlot} IST ka slot book ho gaya hai. Details Abhinandan ke mail par bhej di gayi hain.`;
+        `Your ${state.mode} request for ${state.dateLabel} at ${state.timeSlot} IST has been sent. You will receive a confirmation shortly.`;
       modal.querySelector("#abhiFormView").style.display = "none";
       modal.querySelector("#abhiSuccessView").classList.add("active");
       form.reset();
       state.timeSlot = "";
       renderSlots();
+      startCloseCountdown();
     } catch {
-      setStatus("Network issue aaya — please thodi der baad try karein.", "err");
+      setStatus("Unable to submit right now. Please try again in a moment.", "err");
     } finally {
       submitBtn.disabled = false;
     }
@@ -745,4 +764,6 @@
   updateFields();
   renderDates();
   renderSlots();
+  elevateCustomCursors();
+  setTimeout(elevateCustomCursors, 800);
 })();
