@@ -16,3 +16,19 @@ t.addEventListener('click',function(e){e.preventDefault();set(!li.classList.cont
 document.addEventListener('click',function(e){if(!li.contains(e.target))set(false)});
 document.addEventListener('keydown',function(e){if(e.key==='Escape'){set(false)}});
 })();
+/* Welcome voice: browsers block speech until the visitor interacts, so it speaks once per session on the first click, tap or key press. */
+(function(){
+ if(!('speechSynthesis' in window)||typeof SpeechSynthesisUtterance==='undefined')return;
+ try{if(sessionStorage.getItem('welcomeSpoken'))return}catch(e){}
+ var ev=['click','keydown','touchend'],done=false;
+ function speak(e){
+  if(done||(e&&e.type==='keydown'&&e.key==='Escape'))return;
+  done=true;ev.forEach(function(t){document.removeEventListener(t,speak,true)});
+  try{sessionStorage.setItem('welcomeSpoken','1')}catch(x){}
+  var u=new SpeechSynthesisUtterance('Welcome');u.lang='en-US';u.rate=.95;u.pitch=1;u.volume=.9;
+  var vs=speechSynthesis.getVoices(),v=vs.filter(function(x){return /^en[-_](US|IN|GB)/i.test(x.lang)&&/natural|google|neural|online/i.test(x.name)})[0]||vs.filter(function(x){return /^en/i.test(x.lang)})[0];
+  if(v)u.voice=v;
+  speechSynthesis.cancel();speechSynthesis.speak(u);
+ }
+ ev.forEach(function(t){document.addEventListener(t,speak,true)});
+})();
