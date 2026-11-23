@@ -232,18 +232,6 @@
     ["ZW","Zimbabwe","+263",9,9]
   ].map(([iso, name, dial, min = 6, max = 14]) => ({ iso, name, dial, min, max }));
 
-  // Keep custom portfolio cursor above all widgets without blocking clicks
-  function elevateCustomCursors() {
-    document.querySelectorAll('[id*="cursor" i], [class*="cursor" i]').forEach((el) => {
-      if (el.closest("#abhiBookingRoot")) return;
-      const cs = window.getComputedStyle(el);
-      if (cs.position === "fixed" || cs.position === "absolute") {
-        el.style.setProperty("z-index", "2147483647", "important");
-        el.style.setProperty("pointer-events", "none", "important");
-      }
-    });
-  }
-
   // 1. Inject Styles
   const style = document.createElement("style");
   style.textContent = `
@@ -261,7 +249,7 @@
       font-size: 0.76rem;
       font-weight: 600;
       text-decoration: none !important;
-      cursor: pointer !important;
+      cursor: pointer;
       transition: all 0.2s ease;
       white-space: nowrap;
       pointer-events: auto !important;
@@ -271,12 +259,12 @@
       border-color: #f5c542;
     }
 
-    /* Bottom-Left Stack (Right above Native Android App bar) */
+    /* Bottom-Left Stack (Right above Native Android App bar, ALWAYS below custom animated cursor) */
     .abhi-left-dock {
       position: fixed !important;
       left: 18px !important;
       bottom: 84px !important;
-      z-index: 2147483640 !important;
+      z-index: 9000;
       display: flex;
       flex-direction: column;
       align-items: flex-start;
@@ -290,7 +278,7 @@
     /* Mini Cute Robot Tip Bubble */
     .abhi-robot-tip {
       pointer-events: auto !important;
-      cursor: pointer !important;
+      cursor: pointer;
       position: relative;
       display: flex;
       align-items: flex-start;
@@ -337,7 +325,7 @@
       color: #8b8b96;
       font-size: 0.9rem;
       line-height: 1;
-      cursor: pointer !important;
+      cursor: pointer;
       padding: 2px 4px;
       pointer-events: auto !important;
     }
@@ -346,7 +334,7 @@
     /* Main Bottom-Left Connect Popup */
     .abhi-connect-card {
       pointer-events: auto !important;
-      cursor: pointer !important;
+      cursor: pointer;
       position: relative;
       width: 100%;
       box-sizing: border-box;
@@ -405,7 +393,7 @@
       font-family: inherit;
       font-size: 0.73rem;
       font-weight: 700;
-      cursor: pointer !important;
+      cursor: pointer;
       pointer-events: auto !important;
       transition: all 0.18s ease;
     }
@@ -419,7 +407,7 @@
       color: #9ca3af;
       font-size: 1rem;
       line-height: 1;
-      cursor: pointer !important;
+      cursor: pointer;
       padding: 0 4px;
       pointer-events: auto !important;
     }
@@ -431,7 +419,7 @@
       top: 50% !important;
       left: 50% !important;
       transform: translate(-50%, -50%) !important;
-      z-index: 2147483644 !important;
+      z-index: 9010;
       width: 470px;
       max-width: calc(100vw - 24px);
       max-height: 84vh;
@@ -445,12 +433,18 @@
       font-family: 'JetBrains Mono', 'Space Mono', monospace;
       color: #f4f4f5;
       text-align: left;
-      cursor: default !important;
       pointer-events: auto !important;
       box-sizing: border-box;
     }
     .abhi-book-popup.open {
       display: flex;
+    }
+
+    /* If portfolio hides native OS cursor, match it seamlessly across our widget */
+    body.abhi-hide-native-cursor #abhiBookingRoot,
+    body.abhi-hide-native-cursor #abhiBookingRoot *,
+    body.abhi-hide-native-cursor .abhi-nav-book-btn {
+      cursor: none !important;
     }
 
     /* Pinned Header Bar so Close X is ALWAYS visible */
@@ -518,7 +512,7 @@
       font-size: 1.2rem;
       font-weight: 700;
       line-height: 1;
-      cursor: pointer !important;
+      cursor: pointer;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -574,7 +568,7 @@
       padding: 0.45rem 0.55rem;
       font-family: inherit;
       font-size: 0.72rem;
-      cursor: pointer !important;
+      cursor: pointer;
       transition: all 0.15s ease;
     }
     .abhi-mode-btn:hover, .abhi-date-btn:hover, .abhi-slot-btn:hover:not(:disabled) {
@@ -607,7 +601,7 @@
     }
     .abhi-slot-btn:disabled {
       opacity: 0.3;
-      cursor: not-allowed !important;
+      cursor: not-allowed;
       text-decoration: line-through;
     }
     .abhi-form { display: flex; flex-direction: column; gap: 0.72rem; margin-top: 0.7rem; }
@@ -673,7 +667,7 @@
       font-family: inherit;
       font-size: 0.74rem;
       font-weight: 700;
-      cursor: pointer !important;
+      cursor: pointer;
       display: inline-flex;
       align-items: center;
       justify-content: space-between;
@@ -710,7 +704,7 @@
       font-size: 0.72rem;
       padding: 0.5rem 0.65rem;
       outline: none;
-      cursor: text !important;
+      cursor: text;
     }
     .abhi-cc-list {
       max-height: 180px;
@@ -732,7 +726,7 @@
       font-family: inherit;
       font-size: 0.71rem;
       text-align: left;
-      cursor: pointer !important;
+      cursor: pointer;
     }
     .abhi-cc-item:hover, .abhi-cc-item.selected {
       background: rgba(212, 175, 55, 0.16);
@@ -760,7 +754,7 @@
       color: #fff;
       font-family: inherit;
       font-size: 0.76rem;
-      cursor: text !important;
+      cursor: text;
       scrollbar-width: thin;
       scrollbar-color: #d4af37 #09090b;
       transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
@@ -801,9 +795,9 @@
       font-family: inherit;
       font-size: 0.78rem;
       font-weight: 700;
-      cursor: pointer !important;
+      cursor: pointer;
     }
-    .abhi-submit-btn:disabled { opacity: 0.6; cursor: wait !important; }
+    .abhi-submit-btn:disabled { opacity: 0.6; cursor: wait; }
     .abhi-status { font-size: 0.72rem; min-height: 0.9rem; }
     .abhi-status.ok { color: #4ade80; }
     .abhi-status.err { color: #ef4444; font-weight: 600; }
@@ -859,7 +853,7 @@
       font-family: inherit;
       font-size: 0.75rem;
       font-weight: 700;
-      cursor: pointer !important;
+      cursor: pointer;
     }
 
     @media (max-width: 600px) {
@@ -992,6 +986,83 @@
 
   let closeTimer = null;
   let dockEl = null;
+
+  // Smart Z-Index & Custom Animated Cursor Layering
+  function getApkBarZIndex() {
+    let apkZ = 0;
+    document.querySelectorAll("div, section, aside, footer, header").forEach((el) => {
+      if (el.closest("#abhiBookingRoot")) return;
+      const cs = window.getComputedStyle(el);
+      if (cs.position === "fixed") {
+        const txt = (el.textContent || "").toLowerCase();
+        if (txt.includes("native android app") || txt.includes("download apk")) {
+          const z = parseInt(cs.zIndex, 10);
+          if (!Number.isNaN(z) && z > apkZ) apkZ = z;
+        }
+      }
+    });
+    return apkZ;
+  }
+
+  function syncCursorLayer(mouseX, mouseY) {
+    const apkZ = getApkBarZIndex();
+    const dockZ = Math.max(9000, apkZ + 5);
+    const popupZ = dockZ + 10;
+
+    if (dockEl) dockEl.style.setProperty("z-index", String(dockZ), "important");
+    popupWindow.style.setProperty("z-index", String(popupZ), "important");
+
+    const bodyCursor = window.getComputedStyle(document.body).cursor;
+    const htmlCursor = window.getComputedStyle(document.documentElement).cursor;
+    if (bodyCursor === "none" || htmlCursor === "none") {
+      document.body.classList.add("abhi-hide-native-cursor");
+    }
+
+    const cursorZ = String(popupZ + 100000);
+    const all = document.body.querySelectorAll("*");
+    for (let i = 0; i < all.length; i++) {
+      const el = all[i];
+      if (el.closest("#abhiBookingRoot")) continue;
+      const cs = window.getComputedStyle(el);
+      if (cs.position !== "fixed" && cs.position !== "absolute") continue;
+      if (cs.pointerEvents !== "none") continue;
+
+      const rect = el.getBoundingClientRect();
+      const isSmallOverlay = rect.width <= 160 && rect.height <= 160 && (rect.width > 0 || rect.height > 0);
+      const isZeroAnchor = rect.width === 0 && rect.height === 0;
+      const tag = el.tagName;
+      const idClass = `${el.id || ""} ${typeof el.className === "string" ? el.className : ""}`;
+      const nameHint = /(cursor|cur|pointer|ring|dot|arrow|mouse|trail|follower)/i.test(idClass);
+      const zVal = parseInt(cs.zIndex, 10) || 0;
+      const aboveApk = (apkZ > 0 && zVal > apkZ) || zVal >= 9990;
+      const nearMouse =
+        typeof mouseX === "number" &&
+        typeof mouseY === "number" &&
+        (isSmallOverlay || isZeroAnchor) &&
+        Math.abs(rect.left + rect.width / 2 - mouseX) < 120 &&
+        Math.abs(rect.top + rect.height / 2 - mouseY) < 120;
+
+      const isCursorCandidate =
+        (cs.position === "fixed" && (isSmallOverlay || nameHint || aboveApk || nearMouse || (tag === "CANVAS" && aboveApk))) ||
+        (cs.position === "absolute" && (nameHint || nearMouse) && (isSmallOverlay || isZeroAnchor));
+
+      if (!isCursorCandidate) continue;
+      if (tag === "CANVAS" && !nameHint && !aboveApk) continue;
+
+      el.style.setProperty("z-index", cursorZ, "important");
+      el.style.setProperty("pointer-events", "none", "important");
+
+      // Also lift any fixed pointer-events:none wrapper that could trap z-index
+      let p = el.parentElement;
+      while (p && p !== document.body) {
+        const pcs = window.getComputedStyle(p);
+        if (pcs.position === "fixed" && pcs.pointerEvents === "none") {
+          p.style.setProperty("z-index", cursorZ, "important");
+        }
+        p = p.parentElement;
+      }
+    }
+  }
 
   // Booking State
   const state = {
@@ -1222,10 +1293,10 @@
 
   function openBookingPopup(e) {
     if (e) e.stopPropagation();
-    elevateCustomCursors();
     resetToFormView();
     popupWindow.classList.add("open");
     if (dockEl) dockEl.style.display = "none";
+    syncCursorLayer(e ? e.clientX : undefined, e ? e.clientY : undefined);
   }
 
   function closeBookingPopup() {
@@ -1236,6 +1307,7 @@
     if (dockEl && !sessionStorage.getItem("abhiDockDismissed")) {
       dockEl.style.display = "flex";
     }
+    syncCursorLayer();
   }
 
   function startCloseCountdown() {
@@ -1547,6 +1619,8 @@
 
   renderDates();
   renderSlots();
-  elevateCustomCursors();
-  setTimeout(elevateCustomCursors, 800);
+  syncCursorLayer();
+  setTimeout(() => syncCursorLayer(), 600);
+  setTimeout(() => syncCursorLayer(), 1800);
+  window.addEventListener("mousemove", (e) => syncCursorLayer(e.clientX, e.clientY), { once: true });
 })();
