@@ -232,6 +232,17 @@
     ["ZW","Zimbabwe","+263",9,9]
   ].map(([iso, name, dial, min = 6, max = 14]) => ({ iso, name, dial, min, max }));
 
+  const ROBOT_SVG = `
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <line x1="12" y1="2.5" x2="12" y2="5.5" stroke="#f5c542" stroke-width="1.8" stroke-linecap="round"/>
+      <circle cx="12" cy="2" r="1.4" fill="#f5c542"/>
+      <rect x="4" y="6" width="16" height="13" rx="4" fill="#09090b" stroke="#f5c542" stroke-width="1.6"/>
+      <circle cx="9.2" cy="11.5" r="1.5" fill="#f5c542"/>
+      <circle cx="14.8" cy="11.5" r="1.5" fill="#f5c542"/>
+      <path d="M9.3 15.2C10.1 16.2 13.9 16.2 14.7 15.2" stroke="#f5c542" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+  `;
+
   // 1. Inject Styles
   const style = document.createElement("style");
   style.textContent = `
@@ -259,7 +270,7 @@
       border-color: #f5c542;
     }
 
-    /* Bottom-Left Stack (Right above Native Android App bar, ALWAYS below custom animated cursor) */
+    /* Desktop Bottom-Left Stack */
     .abhi-left-dock {
       position: fixed !important;
       left: 18px !important;
@@ -412,6 +423,87 @@
       pointer-events: auto !important;
     }
     .abhi-pill-close:hover { color: #fff; }
+
+    /* Mobile-Only Dock (Option C: Scroll Trigger -> Option A: 5s Teaser -> Compact Mini Pill) */
+    .abhi-mobile-dock {
+      display: none;
+      position: fixed !important;
+      left: 14px !important;
+      bottom: 84px !important;
+      z-index: 9000;
+      max-width: calc(100vw - 88px);
+      pointer-events: none;
+      font-family: 'JetBrains Mono', 'Space Mono', monospace;
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    .abhi-mobile-dock.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .abhi-mobile-teaser {
+      pointer-events: auto !important;
+      cursor: pointer;
+      position: relative;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      background: rgba(14, 14, 19, 0.94);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(212, 175, 55, 0.5);
+      border-radius: 12px;
+      padding: 8px 24px 8px 9px;
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.65);
+      color: #d4d4d8;
+      font-size: 0.68rem;
+      line-height: 1.4;
+      max-width: 270px;
+    }
+    .abhi-mobile-teaser strong { color: #f5c542; }
+    .abhi-mobile-pill {
+      pointer-events: auto !important;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 12px 7px 8px;
+      border-radius: 999px;
+      background: rgba(14, 14, 19, 0.92);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(212, 175, 55, 0.55);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.65);
+      color: #f5c542;
+      font-family: inherit;
+      font-size: 0.72rem;
+      font-weight: 700;
+    }
+    .abhi-mobile-dock.compact .abhi-mobile-teaser { display: none; }
+    .abhi-mobile-dock.compact .abhi-mobile-pill { display: inline-flex; }
+
+    /* Mobile Header Fix: Header scrolls away, ONLY hamburger stays fixed top-right */
+    @media (max-width: 768px) {
+      .abhi-left-dock { display: none !important; }
+      .abhi-mobile-dock { display: block; }
+      .abhi-mobile-unstick {
+        position: relative !important;
+        top: auto !important;
+      }
+      .abhi-mobile-hamburger-pin {
+        position: fixed !important;
+        top: 14px !important;
+        right: 16px !important;
+        z-index: 9020 !important;
+        background: rgba(12, 12, 16, 0.85) !important;
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border: 1px solid rgba(212, 175, 55, 0.45) !important;
+        border-radius: 8px !important;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.55);
+      }
+    }
 
     /* Compact Floating Booking Popup (Fixed Top Bar + Scrollable Body) */
     .abhi-book-popup {
@@ -857,12 +949,28 @@
     }
 
     @media (max-width: 600px) {
-      .abhi-left-dock { left: 12px !important; bottom: 82px !important; width: calc(100vw - 24px); }
       .abhi-book-popup { width: calc(100vw - 20px); max-height: 84vh; }
       .abhi-cc-btn { min-width: 96px; font-size: 0.7rem; }
     }
   `;
   document.head.appendChild(style);
+
+  // Mobile Header Adjustment: Unstick top bar & pin ONLY the hamburger button
+  function setupMobileHeader() {
+    const header = document.querySelector("header") || document.querySelector("nav");
+    if (!header) return;
+    header.classList.add("abhi-mobile-unstick");
+    const innerNav = header.querySelector("nav");
+    if (innerNav) innerNav.classList.add("abhi-mobile-unstick");
+
+    const hamburger =
+      header.querySelector('button[aria-label*="menu" i], button[aria-label*="nav" i], [class*="hamburger" i], [id*="hamburger" i], [class*="menu-toggle" i], [id*="menu-toggle" i], [class*="mobile-menu" i]') ||
+      Array.from(header.querySelectorAll("button")).find((b) => !b.classList.contains("abhi-nav-book-btn"));
+
+    if (hamburger) {
+      hamburger.classList.add("abhi-mobile-hamburger-pin");
+    }
+  }
 
   const root = document.createElement("div");
   root.id = "abhiBookingRoot";
@@ -986,6 +1094,7 @@
 
   let closeTimer = null;
   let dockEl = null;
+  let mobileDockEl = null;
 
   // Smart Z-Index & Custom Animated Cursor Layering
   function getApkBarZIndex() {
@@ -1010,6 +1119,7 @@
     const popupZ = dockZ + 10;
 
     if (dockEl) dockEl.style.setProperty("z-index", String(dockZ), "important");
+    if (mobileDockEl) mobileDockEl.style.setProperty("z-index", String(dockZ), "important");
     popupWindow.style.setProperty("z-index", String(popupZ), "important");
 
     const bodyCursor = window.getComputedStyle(document.body).cursor;
@@ -1052,7 +1162,6 @@
       el.style.setProperty("z-index", cursorZ, "important");
       el.style.setProperty("pointer-events", "none", "important");
 
-      // Also lift any fixed pointer-events:none wrapper that could trap z-index
       let p = el.parentElement;
       while (p && p !== document.body) {
         const pcs = window.getComputedStyle(p);
@@ -1251,7 +1360,6 @@
     return { valid: true, provided: true, value: raw };
   }
 
-  // Real-time validation on typing & blur
   nameInput.addEventListener("input", () => {
     if (nameErr.classList.contains("show")) validateNameField();
   });
@@ -1296,6 +1404,7 @@
     resetToFormView();
     popupWindow.classList.add("open");
     if (dockEl) dockEl.style.display = "none";
+    if (mobileDockEl) mobileDockEl.style.visibility = "hidden";
     syncCursorLayer(e ? e.clientX : undefined, e ? e.clientY : undefined);
   }
 
@@ -1307,6 +1416,7 @@
     if (dockEl && !sessionStorage.getItem("abhiDockDismissed")) {
       dockEl.style.display = "flex";
     }
+    if (mobileDockEl) mobileDockEl.style.visibility = "visible";
     syncCursorLayer();
   }
 
@@ -1376,7 +1486,7 @@
     }
   }
 
-  // 4. Bottom-Left Dock (Cute Robot Tip Bubble + Wide Main Connect Popup)
+  // 4A. Desktop Bottom-Left Dock
   if (!sessionStorage.getItem("abhiDockDismissed")) {
     dockEl = document.createElement("div");
     dockEl.className = "abhi-left-dock";
@@ -1385,16 +1495,7 @@
       const robotTip = document.createElement("div");
       robotTip.className = "abhi-robot-tip";
       robotTip.innerHTML = `
-        <div class="abhi-robot-face" aria-hidden="true">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <line x1="12" y1="2.5" x2="12" y2="5.5" stroke="#f5c542" stroke-width="1.8" stroke-linecap="round"/>
-            <circle cx="12" cy="2" r="1.4" fill="#f5c542"/>
-            <rect x="4" y="6" width="16" height="13" rx="4" fill="#09090b" stroke="#f5c542" stroke-width="1.6"/>
-            <circle cx="9.2" cy="11.5" r="1.5" fill="#f5c542"/>
-            <circle cx="14.8" cy="11.5" r="1.5" fill="#f5c542"/>
-            <path d="M9.3 15.2C10.1 16.2 13.9 16.2 14.7 15.2" stroke="#f5c542" stroke-width="1.5" stroke-linecap="round"/>
-          </svg>
-        </div>
+        <div class="abhi-robot-face" aria-hidden="true">${ROBOT_SVG}</div>
         <div>
           <strong>Did you know?</strong> You can now book a WhatsApp chat with me even for your doubts and knowledge sharing — <strong>book your slot now!</strong>
         </div>
@@ -1438,6 +1539,66 @@
 
     root.appendChild(dockEl);
   }
+
+  // 4B. Mobile-Only Dock (Option C: Scroll Trigger -> Option A: 5s Teaser -> Compact Mini Pill)
+  mobileDockEl = document.createElement("div");
+  mobileDockEl.className = "abhi-mobile-dock";
+  if (sessionStorage.getItem("abhiMobileTeaserShown")) {
+    mobileDockEl.classList.add("compact");
+  }
+  mobileDockEl.innerHTML = `
+    <div class="abhi-mobile-teaser" id="abhiMobTeaser">
+      <div class="abhi-robot-face" aria-hidden="true">${ROBOT_SVG}</div>
+      <div>
+        <strong>Did you know?</strong> Book a WhatsApp chat, call, or meet without hesitation — <strong>tap to book!</strong>
+      </div>
+      <button type="button" class="abhi-mini-close" id="abhiMobTeaserClose" aria-label="Minimize">&times;</button>
+    </div>
+    <button type="button" class="abhi-mobile-pill" id="abhiMobPill">
+      <span class="abhi-robot-face" style="width:22px;height:22px;border-radius:50%;margin:0;" aria-hidden="true">${ROBOT_SVG}</span>
+      <span>Book Call / Meet</span>
+    </button>
+  `;
+  root.appendChild(mobileDockEl);
+
+  let mobileTriggered = false;
+  let mobileShrinkTimer = null;
+
+  function shrinkMobileToPill() {
+    if (mobileShrinkTimer) {
+      clearTimeout(mobileShrinkTimer);
+      mobileShrinkTimer = null;
+    }
+    mobileDockEl.classList.add("compact");
+    sessionStorage.setItem("abhiMobileTeaserShown", "1");
+  }
+
+  mobileDockEl.querySelector("#abhiMobTeaser").addEventListener("click", (e) => {
+    if (e.target.closest("#abhiMobTeaserClose")) return;
+    shrinkMobileToPill();
+    openBookingPopup(e);
+  });
+  mobileDockEl.querySelector("#abhiMobTeaserClose").addEventListener("click", (e) => {
+    e.stopPropagation();
+    shrinkMobileToPill();
+  });
+  mobileDockEl.querySelector("#abhiMobPill").addEventListener("click", openBookingPopup);
+
+  function handleMobileScroll() {
+    if (window.innerWidth > 768) return;
+    if (window.scrollY >= 140) {
+      mobileDockEl.classList.add("visible");
+      if (!mobileTriggered) {
+        mobileTriggered = true;
+        if (!mobileDockEl.classList.contains("compact")) {
+          mobileShrinkTimer = setTimeout(shrinkMobileToPill, 5000);
+        }
+      }
+    } else if (!mobileTriggered) {
+      mobileDockEl.classList.remove("visible");
+    }
+  }
+  window.addEventListener("scroll", handleMobileScroll, { passive: true });
 
   // 5. Date & Slot Renderers
   function getISTNow() {
@@ -1617,6 +1778,7 @@
     }
   });
 
+  setupMobileHeader();
   renderDates();
   renderSlots();
   syncCursorLayer();
