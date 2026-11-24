@@ -2324,3 +2324,58 @@
   setTimeout(relocateDesktopApkPill, 1200);
   setTimeout(relocateDesktopApkPill, 2600);
 })();
+
+/* === ABHI V15 FIXED MOBILE MENU === */
+(() => {
+  if (document.getElementById("abhiV15Style")) return;
+
+  const s = document.createElement("style");
+  s.id = "abhiV15Style";
+  s.textContent = `
+    @media (max-width: 768px) {
+      /* Lock mobile menu drawer to viewport so it never scrolls away with hero */
+      .abhi-mobile-menu-fixed {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        width: 100vw !important;
+        max-height: 100vh !important;
+        overflow-y: auto !important;
+        z-index: 9015 !important;
+        background: rgba(9, 9, 12, 0.96) !important;
+        backdrop-filter: blur(12px) !important;
+        -webkit-backdrop-filter: blur(12px) !important;
+        padding: 68px 24px 28px !important;
+        margin: 0 !important;
+        box-sizing: border-box !important;
+        border-bottom: 1px solid rgba(212, 175, 55, 0.28) !important;
+        box-shadow: 0 14px 36px rgba(0, 0, 0, 0.85) !important;
+      }
+    }
+  `;
+  document.head.appendChild(s);
+
+  function pinMobileMenuDrawer() {
+    const bookBtn = document.querySelector(".abhi-nav-book-btn");
+    let menuEl = null;
+
+    if (bookBtn) {
+      menuEl = bookBtn.closest("ul") || bookBtn.closest("nav > div") || bookBtn.parentElement;
+    }
+    if (!menuEl) {
+      const header = document.querySelector("header") || document.querySelector("nav");
+      if (header) {
+        menuEl = header.querySelector("ul, .nav-links, .mobile-menu, [class*='menu' i]");
+      }
+    }
+
+    if (menuEl && menuEl.tagName !== "HEADER") {
+      menuEl.classList.add("abhi-mobile-menu-fixed");
+    }
+  }
+
+  pinMobileMenuDrawer();
+  setTimeout(pinMobileMenuDrawer, 400);
+  setTimeout(pinMobileMenuDrawer, 1200);
+})();
