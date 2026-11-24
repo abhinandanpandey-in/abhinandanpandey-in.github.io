@@ -181,9 +181,12 @@ function filterProjects(cat,btn){
   const KB = buildKB().kb;
 
   const STOP = new Set([
-    'the','a','an','is','are','and','or','of','to','in','on','for','with','what','whats',
-    'how','tell','me','about','your','you','do','does','can','it','was','be','have','has',
-    'his','show','give','explain','details','info','project','projects','paper','papers',
+    'the','a','an','is','are','am','and','or','of','to','in','on','at','by','for','with','from',
+    'what','whats','who','where','when','why','which','how','tell','me','about','your','you',
+    'he','she','him','her','his','they','them','their','we','us','our','my','this','that','these','those',
+    'do','does','did','can','could','will','would','should','it','its','was','were','be','been','being',
+    'have','has','had','not','no','yes','any','some','all','much','many','very','just','also',
+    'show','give','explain','details','info','project','projects','paper','papers',
     'cert','certs','certification','certifications','skill','skills'
   ]);
   function tokenize(s){
@@ -248,13 +251,19 @@ function filterProjects(cat,btn){
     };
   }
 
+  const SHORT_ALLOW = new Set(['ai','ml','go','js','py','ui','ux','os','db','ip','ci','cd']);
   function search(query, limit){
-    const qTokens = tokenize(query);
+    const qTokens = tokenize(query).filter(t => t.length >= 3 || SHORT_ALLOW.has(t));
     if(!qTokens.length) return [];
     const scored = KB.map(item=>{
+      const titleLow = item.title.toLowerCase();
       const hay = (item.title + ' ' + item.text + ' ' + item.section).toLowerCase();
       let score = 0;
-      qTokens.forEach(t=>{ if(hay.includes(t)) score += (item.title.toLowerCase().includes(t) ? 3 : 1); });
+      qTokens.forEach(t=>{
+        if(wordMatch(hay, t)){
+          score += wordMatch(titleLow, t) ? 3 : 1;
+        }
+      });
       return {item, score};
     }).filter(x=>x.score>0).sort((a,b)=>b.score-a.score);
     return scored.slice(0, limit||3).map(x=>x.item);
