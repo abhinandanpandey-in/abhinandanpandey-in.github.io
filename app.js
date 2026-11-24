@@ -428,10 +428,9 @@ function filterProjects(cat,btn){
     const results = search(query, 3);
     if(!results.length){
       return {
-        text: "I couldn't find anything about that on this page. Try asking about a specific project, papers, skills, DSA stats, or booking a slot.",
+        text: "I only have knowledge of what's published on this website. For anything outside this, please contact Abhinandan Pandey directly.",
         actions: [
-          { label: 'Show Projects', type: 'query', target: 'projects' },
-          { label: 'Research Papers', type: 'query', target: 'papers' },
+          { label: 'Contact Abhinandan', type: 'scroll', target: '#contact' },
           { label: 'Book Call / Meet', type: 'booking' }
         ]
       };
