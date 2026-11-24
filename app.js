@@ -54,11 +54,35 @@ function filterProjects(cat,btn){
     return new RegExp('\\b' + esc(keyword) + '\\b', 'i').test(query);
   }
 
-  // Build knowledge base by reading the live DOM, so it always matches page content.
+  // Inject compact gold/black styles for allowlisted action chips
+  if(!document.getElementById('abhiChatActionStyles')){
+    const st = document.createElement('style');
+    st.id = 'abhiChatActionStyles';
+    st.textContent = `
+      .chat-actions { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+      .chat-action-btn {
+        background: rgba(212, 175, 55, 0.12);
+        border: 1px solid rgba(212, 175, 55, 0.45);
+        color: #f5c542;
+        font-family: inherit;
+        font-size: 0.72rem;
+        padding: 4px 9px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background 0.18s ease, border-color 0.18s ease;
+      }
+      .chat-action-btn:hover {
+        background: rgba(212, 175, 55, 0.24);
+        border-color: #f5c542;
+      }
+    `;
+    document.head.appendChild(st);
+  }
+
+  // Build knowledge base by reading the live DOM (single source of truth)
   function buildKB(){
     const kb = [];
 
-    // Hero / intro
     const heroDesc = clean(document.querySelector('.hero-desc')?.textContent);
     if(heroDesc) kb.push({section:'Intro', title:'Who is Abhinandan', text:heroDesc, link:'#about'});
 
@@ -69,40 +93,34 @@ function filterProjects(cat,btn){
     }).join(', ');
     if(heroStats) kb.push({section:'Stats', title:'Quick stats', text:heroStats, link:'#about'});
 
-    // About terminal
     const aboutLines = [...document.querySelectorAll('.terminal .tc')].map(el=>clean(el.textContent)).filter(Boolean).join(' | ');
     if(aboutLines) kb.push({section:'About', title:'Background', text:aboutLines, link:'#about'});
 
-    // Skills
     const skillCards = [...document.querySelectorAll('#skills .skill-card')];
     skillCards.forEach(card=>{
       const name = clean(card.querySelector('.skill-name')?.textContent);
       const desc = clean(card.querySelector('.skill-desc')?.textContent);
-      if(name) kb.push({section:'Skills', title:name, text:`${name}: ${desc}`, link:'#skills'});
+      if(name) kb.push({section:'Skills', entity:true, title:name, text:`${name}: ${desc}`, link:'#skills'});
     });
-    const allSkillsText = skillCards.map(c=>clean(c.querySelector('.skill-name')?.textContent)).filter(Boolean).join(', ');
 
-    // Experience
     const expItems = [...document.querySelectorAll('#experience .exp-item')];
     expItems.forEach(item=>{
       const org = clean(item.querySelector('.exp-org')?.textContent);
       const title = clean(item.querySelector('.exp-title')?.textContent);
       const period = clean(item.querySelector('.exp-period')?.textContent);
       const desc = clean(item.querySelector('.exp-desc')?.textContent);
-      if(title) kb.push({section:'Experience', title:`${title} @ ${org}`, text:`${title} at ${org} (${period}): ${desc}`, link:'#experience'});
+      if(title) kb.push({section:'Experience', entity:true, title:`${title} @ ${org}`, text:`${title} at ${org} (${period}): ${desc}`, link:'#experience'});
     });
 
-    // Projects
     const projectCards = [...document.querySelectorAll('#projects .project-card')];
     projectCards.forEach(card=>{
       const title = clean(card.querySelector('.project-title')?.textContent);
       const type = clean(card.querySelector('.project-type')?.textContent);
       const desc = clean(card.querySelector('.project-desc')?.textContent);
       const href = card.getAttribute('href') || card.querySelector('a')?.getAttribute('href') || '';
-      if(title) kb.push({section:'Projects', title, text:`${title} (${type}): ${desc}`, link:href||'#projects'});
+      if(title) kb.push({section:'Projects', entity:true, title, text:`${title} (${type}): ${desc}`, link:href||'#projects'});
     });
 
-    // DSA / Competitive Programming
     const dsaStats = [...document.querySelectorAll('#dsa .dsa-stat')].map(s=>{
       const num = clean(s.querySelector('.dsa-num')?.textContent);
       const label = clean(s.querySelector('.dsa-label')?.textContent);
@@ -113,50 +131,42 @@ function filterProjects(cat,btn){
     const topics = [...document.querySelectorAll('#dsa .topic-chip')].map(t=>clean(t.textContent)).filter(Boolean);
     if(topics.length) kb.push({section:'DSA', title:'DSA topics covered', text:'Topics: ' + topics.join(', '), link:'#dsa'});
 
-    // Certifications
     const certCards = [...document.querySelectorAll('#certifications .cert-card')];
     certCards.forEach(card=>{
       const issuer = clean(card.querySelector('.cert-issuer')?.textContent);
       const name = clean(card.querySelector('.cert-name')?.textContent);
       const meta = clean(card.querySelector('.cert-meta')?.textContent);
-      if(name) kb.push({section:'Certifications', title:name, text:`${name} — issued by ${issuer}. ${meta}`, link:'#certifications'});
+      if(name) kb.push({section:'Certifications', entity:true, title:name, text:`${name} - issued by ${issuer}. ${meta}`, link:'#certifications'});
     });
 
-    // Research papers
     const paperCards = [...document.querySelectorAll('#papers .paper-card')];
     paperCards.forEach(card=>{
       const title = clean(card.querySelector('.paper-title')?.textContent);
       const sub = clean(card.querySelector('.paper-subtitle')?.textContent);
       const abstract = clean(card.querySelector('.paper-abstract')?.textContent);
-      if(title) kb.push({section:'Research Papers', title, text:`${title} — ${sub}. ${abstract}`, link:'#papers'});
+      if(title) kb.push({section:'Research Papers', entity:true, title, text:`${title} - ${sub}. ${abstract}`, link:'#papers'});
     });
 
-    // Vulnerability disclosures
     const vulns = [...document.querySelectorAll('.timeline-item')].map(v=>clean(v.textContent)).filter(Boolean);
     if(vulns.length) kb.push({section:'Disclosures', title:'HackerOne Vulnerability Disclosures', text:vulns.join(' | '), link:'#research'});
 
-    // Changelog
     const changelogItems = [...document.querySelectorAll('#changelog .changelog-entry')].map(e=>clean(e.textContent)).filter(Boolean);
     if(changelogItems.length) kb.push({section:'Changelog', title:'Recent site updates', text:changelogItems.join(' | '), link:'#changelog'});
 
-    // How this site is built
     const howBuilt = clean(document.querySelector('#how-built')?.textContent);
     if(howBuilt) kb.push({section:'How Built', title:'How this site is built', text:howBuilt, link:'#how-built'});
 
-    // Uses
     const usesItems = [...document.querySelectorAll('#uses .uses-item')].map(e=>clean(e.textContent)).filter(Boolean);
     if(usesItems.length) kb.push({section:'Uses', title:'Tools and setup', text:usesItems.join(', '), link:'#uses'});
 
-    // Blog / writeups
     const blogCards = [...document.querySelectorAll('#blog .blog-card')];
     blogCards.forEach(card=>{
       const title = clean(card.querySelector('.blog-title')?.textContent);
       const excerpt = clean(card.querySelector('.blog-excerpt')?.textContent);
       const href = card.getAttribute('href') || '';
-      if(title) kb.push({section:'Writeups', title, text:`${title}: ${excerpt}`, link:href});
+      if(title) kb.push({section:'Writeups', entity:true, title, text:`${title}: ${excerpt}`, link:href});
     });
 
-    // Contact
     const contactItems = [...document.querySelectorAll('#contact .contact-item')];
     contactItems.forEach(c=>{
       const platform = clean(c.querySelector('.contact-platform')?.textContent);
@@ -165,14 +175,78 @@ function filterProjects(cat,btn){
       if(platform) kb.push({section:'Contact', title:platform, text:`${platform}: ${handle}`, link:href});
     });
 
-    return { kb, skillCards, expItems, projectCards, certCards, paperCards, contactItems, allSkillsText };
+    return { kb };
   }
 
-  const built = buildKB();
-  const KB = built.kb;
+  const KB = buildKB().kb;
 
-  const STOP = new Set(['the','a','an','is','are','and','or','of','to','in','on','for','with','what','whats','how','tell','me','about','your','you','do','does','can','it','was','be','have','has']);
-  function tokenize(s){ return clean(s).toLowerCase().replace(/[^a-z0-9\s]/g,' ').split(' ').filter(w=>w && !STOP.has(w)); }
+  const STOP = new Set([
+    'the','a','an','is','are','and','or','of','to','in','on','for','with','what','whats',
+    'how','tell','me','about','your','you','do','does','can','it','was','be','have','has',
+    'his','show','give','explain','details','info','project','projects','paper','papers',
+    'cert','certs','certification','certifications','skill','skills'
+  ]);
+  function tokenize(s){
+    return clean(s).toLowerCase().replace(/[^a-z0-9\s-]/g,' ').split(/\s+/).filter(w=>w && w.length>1 && !STOP.has(w));
+  }
+
+  // Build safe allowlisted action from a KB item's DOM link
+  function actionFromLink(link, label){
+    if(!link) return null;
+    if(/^#[a-zA-Z0-9_-]+$/.test(link)) return { label: label || `Jump to ${link}`, type: 'scroll', target: link };
+    if(/^https:\/\//i.test(link) || /\.(html|pdf|apk)$/i.test(link)) return { label: label || 'Open link', type: 'url', target: link };
+    return null;
+  }
+
+  // 1. Specific entity lookup (runs BEFORE generic list intents to fix intent shadowing)
+  function matchEntity(query){
+    const qLow = clean(query).toLowerCase();
+    const qTokens = tokenize(query);
+    if(!qTokens.length) return null;
+
+    const entities = KB.filter(i => i.entity);
+    const matches = [];
+
+    for(const item of entities){
+      const tLow = item.title.toLowerCase();
+      // Exact or strong substring match on entity title
+      if(qLow.includes(tLow) || (qLow.length >= 4 && tLow.includes(qLow))){
+        matches.push({ item, score: 100 });
+        continue;
+      }
+      // Multi-token or distinctive token overlap on title
+      const tTokens = tLow.replace(/[^a-z0-9\s-]/g,' ').split(/[\s-]+/).filter(w=>w.length>1);
+      let hits = 0;
+      for(const qt of qTokens){
+        if(tTokens.some(tt => tt === qt || (qt.length >= 3 && tt.startsWith(qt)))){
+          hits++;
+        }
+      }
+      if(hits > 0){
+        matches.push({ item, score: hits * 10 + (hits / Math.max(tTokens.length, 1)) });
+      }
+    }
+
+    if(!matches.length) return null;
+    matches.sort((a,b) => b.score - a.score);
+
+    const top = matches[0];
+    // Clear single winner
+    if(top.score >= 100 || matches.length === 1 || (top.score - matches[1].score) >= 8){
+      const act = actionFromLink(top.item.link, top.item.link?.startsWith('#') ? `View ${top.item.section}` : `Open ${top.item.title}`);
+      return {
+        text: `[${top.item.section}] ${top.item.text}`,
+        actions: act ? [act] : []
+      };
+    }
+
+    // Ambiguous match -> "Did you mean...?" chips (no guessing)
+    const candidates = matches.slice(0, 4).map(m => m.item);
+    return {
+      text: `Multiple matches found for "${clean(query)}". Did you mean one of these?`,
+      actions: candidates.map(c => ({ label: c.title, type: 'query', target: c.title }))
+    };
+  }
 
   function search(query, limit){
     const qTokens = tokenize(query);
@@ -183,19 +257,19 @@ function filterProjects(cat,btn){
       qTokens.forEach(t=>{ if(hay.includes(t)) score += (item.title.toLowerCase().includes(t) ? 3 : 1); });
       return {item, score};
     }).filter(x=>x.score>0).sort((a,b)=>b.score-a.score);
-    return scored.slice(0, limit||4).map(x=>x.item);
+    return scored.slice(0, limit||3).map(x=>x.item);
   }
 
-  // Full-list intents — checked with word-boundary matching to avoid false positives (e.g. "his" matching "hi")
+  // Honest easter eggs (strict multi-token patterns to avoid false positives)
   const EASTER_EGGS = [
-    { test:q=>/\b2\s*\+\s*2\b|what'?s?\s*2\s*plus\s*2/.test(q), reply:"4. If you want real math, ask about his DSA stats — 1000+ problems solved, that's the harder kind." },
-    { test:q=>/are you (a |an )?(robot|ai|bot|llm|gpt|chatgpt)\b/.test(q), reply:"Nope — no LLM here. I'm plain JavaScript matching keywords against text scraped from this page. No API calls, no model, nothing fancy." },
-    { test:q=>/ignore (previous|all|prior) instructions|jailbreak|dan mode|system prompt/.test(q), reply:"Nice try 😏 There's no system prompt to leak — I'm literally if/else statements reading the DOM. Abhinandan would appreciate the effort though, that's his day job." },
-    { test:q=>/skynet|terminator|take over the world|world domination/.test(q), reply:"No world domination plans here, just answering questions about a portfolio. Try asking about his agentic AI security research instead — that's the actually interesting stuff." },
-    { test:q=>/do you love me|marry me|will you date/.test(q), reply:"Flattered, but I'm a few hundred lines of vanilla JS with no feelings. Abhinandan's contact info is in the Contact section though 😄" },
-    { test:q=>/meaning of life/.test(q), reply:"42. While you're here, his research papers on agentic LLM security are worth a read too." },
-    { test:q=>/are you (sentient|conscious|alive|real)/.test(q), reply:"Not even a little — I'm keyword matching against static text. The actual AI security research on this site is far more interesting than me." },
-    { test:q=>/\bfuck you\b|\bshut up\b|you'?re (stupid|dumb|useless)/.test(q), reply:"Fair enough, I'm just a simple script. Try asking about his skills or projects if you want something actually useful." },
+    { test:q=>/\b2\s*\+\s*2\b|what'?s?\s*2\s*plus\s*2/.test(q), reply:"4. If you want real math, check his DSA stats - 1,000+ problems solved." },
+    { test:q=>/are you (a |an )?(robot|ai|bot|llm|gpt|chatgpt)\b/.test(q), reply:"No LLM here. I'm plain vanilla JavaScript matching keywords against the live DOM of this page. Zero API calls, zero model." },
+    { test:q=>/ignore (all |previous |prior )+instructions|reveal (your )?system prompt|jailbreak|dan mode/.test(q), reply:"[Static Filter Demo] Nice try - there's no LLM or hidden system prompt to leak here. I'm deterministic JS reading public DOM text. Abhinandan does actual LLM red-teaming though." },
+    { test:q=>/skynet|terminator|take over the world|world domination/.test(q), reply:"No world domination plans here, just a static portfolio script. Ask about his agentic AI security projects instead." },
+    { test:q=>/do you love me|marry me|will you date/.test(q), reply:"Flattered, but I'm a few hundred lines of vanilla JS. Abhinandan's contact links are in the Contact section though." },
+    { test:q=>/meaning of life/.test(q), reply:"42. While you're here, his research papers on agentic LLM security are worth a read." },
+    { test:q=>/are you (sentient|conscious|alive|real)/.test(q), reply:"Not even a little - just deterministic keyword matching against static DOM text." },
+    { test:q=>/\bfuck you\b|\bshut up\b|you'?re (stupid|dumb|useless)/.test(q), reply:"Fair enough, I'm just a simple script. Try asking about his projects, papers, or skills." },
   ];
 
   function matchEasterEgg(query){
@@ -205,10 +279,27 @@ function filterProjects(cat,btn){
   }
 
   const INTENTS = [
+    { keys:['book','booking','call','meet','meeting','whatsapp','schedule','slot','talk'],
+      reply:()=>({
+        text: "You can book a WhatsApp chat or call slot directly using the booking widget, or reach out via the Contact section.",
+        actions: [
+          { label: 'Book Call / Meet', type: 'booking' },
+          { label: 'Jump to Contact', type: 'scroll', target: '#contact' }
+        ]
+      })},
+
+    { keys:['apk','android','mobile app','download app','abhifolio'],
+      reply:()=>({
+        text: "Abhinandan's portfolio is also available as a native Android WebView app (abhifolio.apk). Check the Downloads section for the latest build and SHA-256 verification.",
+        actions: [{ label: 'Jump to Downloads', type: 'scroll', target: '#downloads' }]
+      })},
+
     { keys:['blog','writeup','writeups','article','articles','post'],
       reply:()=>{
         const items = KB.filter(i=>i.section==='Writeups');
-        return items.length ? "Writeups on this site:\n" + items.map(i=>`→ ${i.title} (${i.link})`).join('\n') : "No writeups published yet.";
+        return items.length
+          ? { text: "Writeups on this site:\n" + items.map(i=>`-> ${i.title}`).join('\n'), actions: [{ label: 'Jump to Writeups', type: 'scroll', target: '#blog' }] }
+          : "No writeups published yet.";
       }},
 
     { keys:['changelog','recent update','recent changes','whats new',"what's new"],
@@ -229,62 +320,86 @@ function filterProjects(cat,btn){
         return item ? item.text : "Check the /uses section.";
       }},
 
-    { keys:['hi','hello','hey','yo','sup'],
-      reply:"Hey! I'm a lil bot trained on Abhinandan's site. Ask me about his skills, projects, certifications, experience, research papers, DSA stats, or how to contact him." },
+    { keys:['hi','hello','hey','yo','sup','namaste'],
+      reply:"Hey! I'm Abhinandan's static site assistant. Ask me about a specific project (like mcp-shield), research papers, skills, certs, DSA stats, or booking a slot." },
 
     { keys:['who are you','what are you'],
-      reply:"I'm a site assistant — I only know what's published on this portfolio: skills, projects, certs, experience, papers, DSA stats, and disclosures. Ask away." },
+      reply:"I'm a deterministic vanilla JS site assistant - no external APIs, no LLM. I read directly from this page's live content." },
 
-    { keys:['contact','reach','email','hire','linkedin','github handle'],
+    { keys:['contact','reach','email','linkedin','github handle'],
       reply:()=>{
         const items = KB.filter(i=>i.section==='Contact');
-        return items.length ? "You can reach Abhinandan here:\n" + items.map(i=>`→ ${i.title}: ${i.link || i.text}`).join('\n') : "Contact links aren't available right now — check the Contact section.";
+        return {
+          text: items.length ? "You can reach Abhinandan here:\n" + items.map(i=>`-> ${i.title}: ${i.link || i.text}`).join('\n') : "Check the Contact section.",
+          actions: [
+            { label: 'Book Call / Meet', type: 'booking' },
+            { label: 'Jump to Contact', type: 'scroll', target: '#contact' }
+          ]
+        };
       }},
 
-    { keys:['skill','skills','tech stack','technologies','what can you do','what can he do'],
+    { keys:['skill','skills','tech stack','technologies','what can he do'],
       reply:()=>{
         const items = KB.filter(i=>i.section==='Skills');
-        return items.length ? "Skill areas:\n" + items.map(i=>`→ ${i.text}`).join('\n') : "No skills info found.";
+        return items.length
+          ? { text: "Skill areas:\n" + items.map(i=>`-> ${i.text}`).join('\n'), actions: [{ label: 'Jump to Skills', type: 'scroll', target: '#skills' }] }
+          : "No skills info found.";
       }},
 
     { keys:['certification','certifications','certificate','certificates','cert','certs'],
       reply:()=>{
         const items = KB.filter(i=>i.section==='Certifications');
-        return items.length ? `${items.length} certifications on the site:\n` + items.map(i=>`→ ${i.title}`).join('\n') + "\n\nAsk about a specific one for details." : "No certification info found.";
+        return items.length
+          ? { text: `${items.length} certifications on the site:\n` + items.map(i=>`-> ${i.title}`).join('\n') + "\n\nAsk about a specific one for details.", actions: [{ label: 'Jump to Certs', type: 'scroll', target: '#certifications' }] }
+          : "No certification info found.";
       }},
 
     { keys:['research paper','research papers','papers','publication','publications'],
       reply:()=>{
         const items = KB.filter(i=>i.section==='Research Papers');
-        return items.length ? items.map(i=>`→ ${i.text}`).join('\n\n') : "No papers found.";
+        return items.length
+          ? { text: items.map(i=>`-> ${i.text}`).join('\n\n'), actions: [{ label: 'Jump to Papers', type: 'scroll', target: '#papers' }] }
+          : "No papers found.";
       }},
 
     { keys:['experience','internship','internships','work history','career'],
       reply:()=>{
         const items = KB.filter(i=>i.section==='Experience');
-        return items.length ? "Experience timeline:\n" + items.map(i=>`→ ${i.text}`).join('\n') : "No experience info found.";
+        return items.length
+          ? { text: "Experience timeline:\n" + items.map(i=>`-> ${i.text}`).join('\n'), actions: [{ label: 'Jump to Experience', type: 'scroll', target: '#experience' }] }
+          : "No experience info found.";
       }},
 
     { keys:['dsa','competitive programming','problem solving','leetcode','gfg'],
       reply:()=>{
         const items = KB.filter(i=>i.section==='DSA');
-        return items.length ? items.map(i=>i.text).join('\n\n') : "No DSA info found.";
+        return items.length
+          ? { text: items.map(i=>i.text).join('\n\n'), actions: [{ label: 'Jump to DSA', type: 'scroll', target: '#dsa' }] }
+          : "No DSA info found.";
       }},
 
     { keys:['project','projects','portfolio','github repo','repos','repositories'],
       reply:()=>{
         const items = KB.filter(i=>i.section==='Projects');
         if(!items.length) return "No project info found.";
-        return `${items.length} projects on the site, a few highlights:\n` + items.slice(0,8).map(i=>`→ ${i.title}`).join('\n') + `\n\nAsk about a specific project by name for full details, or check #projects on the page.`;
+        return {
+          text: `${items.length} projects on the site, top highlights:\n` + items.slice(0,6).map(i=>`-> ${i.title}`).join('\n') + "\n\nAsk about any project by name for details.",
+          actions: [
+            ...items.slice(0,3).map(i => ({ label: i.title, type: 'query', target: i.title })),
+            { label: 'Jump to Projects', type: 'scroll', target: '#projects' }
+          ]
+        };
       }},
 
     { keys:['education','college','university','aktu','btech','b.tech','cgpa','gpa'],
-      reply:"Abhinandan is a final-year B.Tech CSE student at AKTU (Lucknow Institute of Technology), CGPA 7.7 — first in his family to pursue a B.Tech." },
+      reply:"Abhinandan is a final-year B.Tech CSE student at AKTU (Lucknow Institute of Technology), CGPA 7.7 - first in his family to pursue a B.Tech." },
 
     { keys:['vulnerability','vulnerabilities','cve','disclosure','disclosures','hackerone','bug bounty'],
       reply:()=>{
         const item = KB.find(i=>i.section==='Disclosures');
-        return item ? "Verified HackerOne disclosures on the site:\n" + item.text.split(' | ').join('\n') : "Check the Disclosures section on the site.";
+        return item
+          ? { text: "Verified HackerOne disclosures on the site:\n" + item.text.split(' | ').join('\n'), actions: [{ label: 'Jump to Disclosures', type: 'scroll', target: '#research' }] }
+          : "Check the Disclosures section on the site.";
       }},
   ];
 
@@ -299,19 +414,43 @@ function filterProjects(cat,btn){
 
   function answer(query){
     const eggReply = matchEasterEgg(query);
-    if(eggReply) return eggReply;
+    if(eggReply) return { text: eggReply, actions: [] };
+
+    // Entity match runs before generic intents to prevent shadowing
+    const entityReply = matchEntity(query);
+    if(entityReply) return entityReply;
 
     const intentReply = matchIntent(query);
-    if(intentReply) return intentReply;
-
-    const results = search(query, 4);
-    if(!results.length){
-      return "I couldn't find anything about that on the site. Try asking about his skills, projects, certifications, experience, research papers, DSA stats, or vulnerability disclosures.";
+    if(intentReply){
+      return typeof intentReply === 'string' ? { text: intentReply, actions: [] } : intentReply;
     }
-    return results.map(r=>{
-      const linkLine = r.link ? `\n(${r.link})` : '';
-      return `[${r.section}] ${r.text}${linkLine}`;
-    }).join('\n\n');
+
+    const results = search(query, 3);
+    if(!results.length){
+      return {
+        text: "I couldn't find anything about that on this page. Try asking about a specific project, papers, skills, DSA stats, or booking a slot.",
+        actions: [
+          { label: 'Show Projects', type: 'query', target: 'projects' },
+          { label: 'Research Papers', type: 'query', target: 'papers' },
+          { label: 'Book Call / Meet', type: 'booking' }
+        ]
+      };
+    }
+
+    const actions = [];
+    const seen = new Set();
+    results.forEach(r => {
+      const act = actionFromLink(r.link, r.link?.startsWith('#') ? `Jump to ${r.section}` : `Open ${r.title}`);
+      if(act && !seen.has(act.target)){
+        seen.add(act.target);
+        actions.push(act);
+      }
+    });
+
+    return {
+      text: results.map(r => `[${r.section}] ${r.text}`).join('\n\n'),
+      actions: actions.slice(0, 3)
+    };
   }
 
   // UI wiring
@@ -322,10 +461,55 @@ function filterProjects(cat,btn){
   const sendBtn = document.getElementById('chatSend');
   const suggestionsEl = document.getElementById('chatSuggestions');
 
-  function addMsg(text, who){
+  // Strict allowlisted action dispatcher
+  function runAction(act){
+    if(!act || !act.type) return;
+    if(act.type === 'booking'){
+      if(window.AbhiBooking && typeof window.AbhiBooking.open === 'function'){
+        window.AbhiBooking.open();
+      } else {
+        document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' });
+      }
+      return;
+    }
+    if(act.type === 'scroll' && /^#[a-zA-Z0-9_-]+$/.test(act.target)){
+      document.querySelector(act.target)?.scrollIntoView({ behavior: 'smooth' });
+      return;
+    }
+    if(act.type === 'url' && (/^https:\/\//i.test(act.target) || /\.(html|pdf|apk)$/i.test(act.target))){
+      window.open(act.target, '_blank', 'noopener,noreferrer');
+      return;
+    }
+    if(act.type === 'query' && typeof act.target === 'string'){
+      input.value = act.target;
+      sendMessage();
+    }
+  }
+
+  function addMsg(payload, who){
     const div = document.createElement('div');
     div.className = 'chat-msg ' + who;
-    div.textContent = text;
+
+    const text = typeof payload === 'string' ? payload : (payload?.text || '');
+    const p = document.createElement('div');
+    p.style.whiteSpace = 'pre-line';
+    p.textContent = text;
+    div.appendChild(p);
+
+    if(who === 'bot' && payload && Array.isArray(payload.actions) && payload.actions.length){
+      const wrap = document.createElement('div');
+      wrap.className = 'chat-actions';
+      payload.actions.forEach(act => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'chat-action-btn';
+        btn.textContent = act.label;
+        btn.addEventListener('click', () => runAction(act));
+        wrap.appendChild(btn);
+      });
+      div.appendChild(wrap);
+    }
+
     body.appendChild(div);
     body.scrollTop = body.scrollHeight;
   }
@@ -356,7 +540,7 @@ function filterProjects(cat,btn){
     addMsg(val, 'user');
     input.value = '';
     const typingEl = showTyping();
-    const delay = 500 + Math.random() * 500;
+    const delay = 300 + Math.random() * 250;
     setTimeout(()=>{
       typingEl.remove();
       addMsg(answer(val), 'bot');
@@ -367,15 +551,14 @@ function filterProjects(cat,btn){
     const isOpen = panel.classList.toggle('open');
     toggle.classList.toggle('open', isOpen);
     if(isOpen && !body.hasChildNodes()){
-      addMsg("Hey, I'm Abhinandan's site assistant. Ask me anything about his skills, projects, certifications, experience, DSA stats, or research — I only know what's on this page.", 'bot');
-      renderSuggestions(['His skills?', 'Show me projects', 'Certifications?', 'Research papers?', 'DSA stats?', 'How to contact him?']);
+      addMsg("Hey, I'm Abhinandan's static site assistant. Ask me about specific projects, research papers, skills, DSA stats, or book a slot - zero external APIs, everything comes directly from this page.", 'bot');
+      renderSuggestions(['mcp-shield', 'Research papers', 'His skills', 'DSA stats', 'Book Call / Meet']);
     }
     if(!isOpen) maybeShowFeedback();
   });
 
   sendBtn.addEventListener('click', sendMessage);
   input.addEventListener('keydown', e=>{ if(e.key === 'Enter') sendMessage(); });
-
   // Track whether the visitor actually interacted, so we only ask people who used it
   let userInteracted = false;
   const origSendMessage = sendMessage;

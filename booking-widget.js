@@ -2632,3 +2632,22 @@
   `;
   document.head.appendChild(s);
 })();
+
+/* === ABHI PUBLIC BOOKING HOOK === */
+(() => {
+  window.AbhiBooking = {
+    open: () => {
+      const trigger =
+        document.querySelector(".abhi-nav-book-btn") ||
+        document.querySelector(".abhi-connect-cta") ||
+        document.querySelector(".abhi-mobile-pill");
+      if (trigger) {
+        trigger.click();
+        return true;
+      }
+      const contact = document.querySelector("#contact");
+      if (contact) contact.scrollIntoView({ behavior: "smooth" });
+      return false;
+    }
+  };
+})();
