@@ -567,14 +567,14 @@ function filterProjects(cat,btn){
     if(!isOpen) maybeShowFeedback();
   });
 
-  sendBtn.addEventListener('click', sendMessage);
+  sendBtn.addEventListener('click', () => sendMessage());
   input.addEventListener('keydown', e=>{ if(e.key === 'Enter') sendMessage(); });
   // Track whether the visitor actually interacted, so we only ask people who used it
   let userInteracted = false;
   const origSendMessage = sendMessage;
   sendMessage = function(){ userInteracted = true; origSendMessage(); };
   sendBtn.removeEventListener('click', origSendMessage);
-  sendBtn.addEventListener('click', sendMessage);
+  sendBtn.addEventListener('click', () => sendMessage());
   input.removeEventListener('keydown', ()=>{});
   input.addEventListener('keydown', e=>{ if(e.key === 'Enter') sendMessage(); });
 

@@ -1065,13 +1065,26 @@
       const origPlaceholder = input.getAttribute('placeholder') || 'Ask about skills, projects, certs';
       let activeRec = null;
 
-      micBtn.addEventListener('click', () => {
+      micBtn.addEventListener('click', async () => {
         if (activeRec) {
           activeRec.stop();
           return;
         }
         // Stop TTS so mic doesn't get blocked
         if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+
+        // Wake up OS/browser microphone and force permission prompt first
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+          try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            stream.getTracks().forEach(t => t.stop());
+          } catch (err) {
+            engine.setState('error', 1200);
+            input.placeholder = 'Mic access denied - check Edge/Windows mic';
+            setTimeout(() => { input.placeholder = origPlaceholder; }, 3500);
+            return;
+          }
+        }
 
         const rec = new SpeechRec();
         rec.lang = 'en-US';
