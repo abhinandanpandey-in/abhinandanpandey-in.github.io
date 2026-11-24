@@ -1806,14 +1806,48 @@
   const style = document.createElement("style");
   style.id = "abhiApkFixStyle";
   style.textContent = `
-    /* Reclaim bottom space on both desktop & mobile */
-    .abhi-left-dock { bottom: 20px !important; }
+    /* Force-hide the original full-width Native Android App bar */
+    .abhi-hidden-orig-apk {
+      display: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
+
+    /* Desktop dock: hidden in hero & Contact zone, fades in on scroll */
+    .abhi-left-dock {
+      bottom: 20px !important;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(14px);
+      transition: opacity 0.28s ease, transform 0.28s ease, visibility 0.28s ease;
+    }
+    .abhi-left-dock.abhi-dock-show {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    /* Mobile dock: hidden in hero & Contact zone, fades in on scroll */
     .abhi-mobile-dock {
       bottom: 20px !important;
       display: none;
       flex-direction: column;
       align-items: flex-start;
       gap: 8px;
+      opacity: 0 !important;
+      visibility: hidden !important;
+      transform: translateY(14px) !important;
+      transition: opacity 0.28s ease, transform 0.28s ease, visibility 0.28s ease;
+    }
+    .abhi-mobile-dock.abhi-dock-show {
+      opacity: 1 !important;
+      visibility: visible !important;
+      transform: translateY(0) !important;
+    }
+    .abhi-left-dock:not(.abhi-dock-show) *,
+    .abhi-mobile-dock:not(.abhi-dock-show) * {
+      pointer-events: none !important;
     }
 
     /* Compact Get APK Pill (Same sleek style on Desktop & Mobile, stacked on LEFT) */
@@ -1898,22 +1932,26 @@
   document.head.appendChild(style);
 
   let origActionEl = null;
+  let origHref = "";
   let pillsInjected = false;
 
-  function findOriginalApkBar() {
+  function hideOriginalApkBar() {
     const all = document.querySelectorAll("div, section, aside, footer");
-    let best = null;
     for (const el of all) {
       if (el.closest("#abhiBookingRoot") || el.classList.contains("abhi-apk-pill")) continue;
       if (el === document.body || el === document.documentElement) continue;
+      const cs = window.getComputedStyle(el);
+      if (cs.position !== "fixed") continue;
       const txt = (el.textContent || "").toLowerCase();
-      if (txt.includes("native android app") && (txt.includes("download apk") || txt.includes("install"))) {
-        if (!best || el.textContent.length < best.textContent.length) {
-          best = el;
+      if (txt.includes("native android app") || txt.includes("download apk")) {
+        const action = el.querySelector("a, button");
+        if (action && !origActionEl) {
+          origActionEl = action;
+          if (action.tagName === "A" && action.href) origHref = action.href;
         }
+        el.classList.add("abhi-hidden-orig-apk");
       }
     }
-    return best;
   }
 
   function createApkPill() {
@@ -1929,7 +1967,11 @@
     pill.addEventListener("click", (e) => {
       if (e.target.closest(".abhi-apk-pill-close")) return;
       e.stopPropagation();
-      if (origActionEl) origActionEl.click();
+      if (origActionEl) {
+        origActionEl.click();
+      } else if (origHref) {
+        window.open(origHref, "_blank", "noopener");
+      }
     });
     pill.querySelector(".abhi-apk-pill-close").addEventListener("click", (e) => {
       e.stopPropagation();
@@ -1940,15 +1982,8 @@
   }
 
   function applyApkFix() {
-    const origBar = findOriginalApkBar();
-    if (origBar) {
-      if (!origActionEl) {
-        origActionEl = origBar.querySelector("a, button");
-      }
-      origBar.style.setProperty("display", "none", "important");
-    }
-
-    if (pillsInjected || sessionStorage.getItem("abhiApkDismissed") || !origActionEl) return;
+    hideOriginalApkBar();
+    if (pillsInjected || sessionStorage.getItem("abhiApkDismissed") || (!origActionEl && !origHref)) return;
 
     const desktopDock = document.querySelector(".abhi-left-dock");
     if (desktopDock && !desktopDock.querySelector(".abhi-apk-pill")) {
@@ -1963,11 +1998,49 @@
     pillsInjected = true;
   }
 
-  // Run immediately + retries + observer in case desktop APK bar renders late
+  // Find Contact section reliably
+  function findContactSection() {
+    const byId = document.getElementById("contact") || document.querySelector('[id*="contact" i]');
+    if (byId) return byId;
+    const headings = document.querySelectorAll("h1, h2, h3");
+    for (const h of headings) {
+      if ((h.textContent || "").trim().toLowerCase() === "contact") {
+        return h.closest("section") || h.parentElement || h;
+      }
+    }
+    return document.querySelector("footer");
+  }
+
+  // Unified visibility: hidden in Hero (< 140px) AND hidden at/below Contact section
+  function updateDockVisibility() {
+    const pastHero = window.scrollY >= 140;
+    let inOrBelowContact = false;
+
+    const contactEl = findContactSection();
+    if (contactEl) {
+      const rect = contactEl.getBoundingClientRect();
+      if (rect.top <= window.innerHeight - 60) {
+        inOrBelowContact = true;
+      }
+    }
+
+    const shouldShow = pastHero && !inOrBelowContact;
+
+    const desktopDock = document.querySelector(".abhi-left-dock");
+    if (desktopDock) desktopDock.classList.toggle("abhi-dock-show", shouldShow);
+
+    const mobileDock = document.querySelector(".abhi-mobile-dock");
+    if (mobileDock) mobileDock.classList.toggle("abhi-dock-show", shouldShow);
+  }
+
   applyApkFix();
-  setTimeout(applyApkFix, 300);
-  setTimeout(applyApkFix, 1000);
-  setTimeout(applyApkFix, 2500);
+  updateDockVisibility();
+  setTimeout(() => { applyApkFix(); updateDockVisibility(); }, 300);
+  setTimeout(() => { applyApkFix(); updateDockVisibility(); }, 1000);
+  setTimeout(() => { applyApkFix(); updateDockVisibility(); }, 2500);
+
+  window.addEventListener("scroll", updateDockVisibility, { passive: true });
+  window.addEventListener("resize", updateDockVisibility, { passive: true });
 
   const obs = new MutationObserver(() => applyApkFix());
   obs.observe(document.body, { childList: true, subtree: true });
