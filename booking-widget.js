@@ -2046,3 +2046,118 @@
   obs.observe(document.body, { childList: true, subtree: true });
   setTimeout(() => obs.disconnect(), 8000);
 })();
+
+/* === ABHI COMPACT POPUP SIZING === */
+(() => {
+  if (document.getElementById("abhiCompactSizeStyle")) return;
+
+  const s = document.createElement("style");
+  s.id = "abhiCompactSizeStyle";
+  s.textContent = `
+    /* Desktop Compact Sizing (Full content intact, ~30% smaller footprint) */
+    .abhi-left-dock {
+      left: 14px !important;
+      bottom: 14px !important;
+      width: 280px !important;
+      gap: 5px !important;
+    }
+
+    .abhi-apk-pill {
+      padding: 4px 8px 4px 6px !important;
+      gap: 5px !important;
+      font-size: 0.64rem !important;
+    }
+    .abhi-apk-pill-icon {
+      width: 18px !important;
+      height: 18px !important;
+    }
+    .abhi-apk-pill-icon svg {
+      width: 12px !important;
+      height: 12px !important;
+    }
+    .abhi-apk-pill-close {
+      font-size: 0.8rem !important;
+    }
+
+    .abhi-robot-tip {
+      padding: 6px 20px 6px 8px !important;
+      gap: 7px !important;
+      border-radius: 9px !important;
+      font-size: 0.61rem !important;
+      line-height: 1.35 !important;
+      max-width: 100% !important;
+    }
+    .abhi-robot-face {
+      width: 22px !important;
+      height: 22px !important;
+      border-radius: 6px !important;
+    }
+    .abhi-robot-face svg {
+      width: 15px !important;
+      height: 15px !important;
+    }
+    .abhi-mini-close {
+      top: 3px !important;
+      right: 5px !important;
+      font-size: 0.8rem !important;
+    }
+
+    .abhi-connect-card {
+      padding: 8px 10px !important;
+      border-radius: 9px !important;
+    }
+    .abhi-connect-head {
+      margin-bottom: 3px !important;
+    }
+    .abhi-connect-tag {
+      font-size: 0.6rem !important;
+      gap: 5px !important;
+    }
+    .abhi-pill-dot {
+      width: 6px !important;
+      height: 6px !important;
+    }
+    .abhi-pill-close {
+      font-size: 0.85rem !important;
+    }
+    .abhi-connect-text {
+      margin: 0 0 6px !important;
+      font-size: 0.62rem !important;
+      line-height: 1.36 !important;
+    }
+    .abhi-connect-cta {
+      padding: 4px 10px !important;
+      border-radius: 6px !important;
+      font-size: 0.64rem !important;
+    }
+
+    /* Mobile Compact Sizing */
+    .abhi-mobile-dock {
+      left: 12px !important;
+      bottom: 14px !important;
+      gap: 5px !important;
+    }
+    .abhi-mobile-teaser {
+      padding: 6px 20px 6px 8px !important;
+      gap: 7px !important;
+      border-radius: 9px !important;
+      font-size: 0.61rem !important;
+      line-height: 1.35 !important;
+      max-width: 235px !important;
+    }
+    .abhi-mobile-pill {
+      padding: 5px 10px 5px 7px !important;
+      gap: 5px !important;
+      font-size: 0.64rem !important;
+    }
+    .abhi-mobile-pill .abhi-robot-face {
+      width: 18px !important;
+      height: 18px !important;
+    }
+    .abhi-mobile-pill .abhi-robot-face svg {
+      width: 13px !important;
+      height: 13px !important;
+    }
+  `;
+  document.head.appendChild(s);
+})();
