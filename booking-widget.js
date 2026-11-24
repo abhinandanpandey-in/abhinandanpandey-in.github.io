@@ -1080,6 +1080,7 @@
           <div id="abhiStatus" class="abhi-status" aria-live="polite"></div>
 
           <button type="submit" class="abhi-submit-btn" id="abhiSubmitBtn">Confirm Slot</button>
+          <p class="abhi-privacy-note">Details are sent only to Abhinandan via FormSubmit and not stored on this site.</p>
         </form>
       </div>
 
@@ -1675,7 +1676,16 @@
         const btn = document.createElement("button");
         btn.type = "button";
         btn.className = "abhi-slot-btn";
-        btn.textContent = slot.label;
+        const isNonIST = new Date().getTimezoneOffset() !== -330;
+        if (isNonIST && state.dateISO) {
+          const istBase = new Date(`${state.dateISO}T00:00:00+05:30`);
+          const slotDate = new Date(istBase.getTime() + slot.hour * 3600000);
+          const localTime = slotDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: true });
+          const tzShort = (slotDate.toLocaleTimeString([], { timeZoneName: "short" }).split(" ").pop() || "Local");
+          btn.innerHTML = `<span>${slot.label}</span><small class="abhi-slot-local">${localTime} ${tzShort}</small>`;
+        } else {
+          btn.textContent = slot.label;
+        }
 
         const isPast = state.dateISO === todayISO && slot.hour <= currentHour;
         if (isPast) btn.disabled = true;
@@ -1753,6 +1763,8 @@
           _subject: `[Slot Booked] ${state.mode} | ${state.dateLabel} @ ${state.timeSlot} IST`,
           _template: "table",
           _captcha: "false",
+          _honey: popupWindow.querySelector("#abhiHp").value || "",
+          Visitor_Timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "Unknown",
           Mode: state.mode,
           Date: `${state.dateLabel} (${state.dateISO})`,
           Time: `${state.timeSlot} IST`,
@@ -2585,4 +2597,38 @@
 
   mountDesktopWatch();
   setTimeout(mountDesktopWatch, 400);
+})();
+
+/* === ABHI V19 PRIVACY & TZ STYLES === */
+(() => {
+  if (document.getElementById("abhiV19Style")) return;
+  const s = document.createElement("style");
+  s.id = "abhiV19Style";
+  s.textContent = `
+    .abhi-privacy-note {
+      margin: 2px 0 0;
+      font-size: 0.64rem;
+      line-height: 1.4;
+      color: #8b8b96;
+      text-align: center;
+    }
+    .abhi-slot-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+    }
+    .abhi-slot-local {
+      display: block;
+      font-size: 0.56rem;
+      color: #9ca3af;
+      font-weight: 400;
+      letter-spacing: 0.01em;
+    }
+    .abhi-slot-btn.active .abhi-slot-local {
+      color: rgba(245, 197, 66, 0.85);
+    }
+  `;
+  document.head.appendChild(s);
 })();
