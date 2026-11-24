@@ -382,7 +382,7 @@
       width: 7px;
       height: 7px;
       border-radius: 50%;
-      background: #4ade80;
+      background: #f5c542;
       flex-shrink: 0;
     }
     .abhi-connect-text {
@@ -2240,7 +2240,7 @@
         width: 6px;
         height: 6px;
         border-radius: 50%;
-        background: #4ade80;
+        background: #f5c542;
         flex-shrink: 0;
       }
     }
@@ -2429,7 +2429,7 @@
         text-shadow: 0 0 8px rgba(245, 197, 66, 0.45) !important;
       }
       .abhi-clock-dot {
-        box-shadow: 0 0 6px #4ade80 !important;
+        box-shadow: 0 0 6px rgba(245, 197, 66, 0.75) !important;
       }
       .abhi-desktop-watch {
         display: none !important;

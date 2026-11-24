@@ -35,3 +35,8 @@ As an independent LLM security researcher and bug bounty hunter, responsible dis
 ## In-Scope Domains
 - `https://abhinandanpandey-in.github.io/` (Primary static portfolio)
 - `https://abhinandanpandey-in-github-io.pages.dev/` (Cloudflare Pages hardened edge mirror & `/mcp` endpoint)
+
+## Android APK Verification (bhifolio.apk)
+
+- **SHA-256:** `c39bd65d0484f0d9a7307e3d1695036fde17d30b611c461bff4e424b28185de6`
+- **Verify (PowerShell):** `Get-FileHash .\abhifolio.apk -Algorithm SHA256`
