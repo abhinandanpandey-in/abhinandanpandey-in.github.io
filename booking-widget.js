@@ -490,6 +490,12 @@
       .abhi-mobile-unstick {
         position: relative !important;
         top: auto !important;
+        transform: none !important;
+        filter: none !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        will-change: auto !important;
+        contain: none !important;
       }
       .abhi-mobile-hamburger-pin {
         position: fixed !important;
@@ -965,7 +971,7 @@
 
     const hamburger =
       header.querySelector('button[aria-label*="menu" i], button[aria-label*="nav" i], [class*="hamburger" i], [id*="hamburger" i], [class*="menu-toggle" i], [id*="menu-toggle" i], [class*="mobile-menu" i]') ||
-      Array.from(header.querySelectorAll("button")).find((b) => !b.classList.contains("abhi-nav-book-btn"));
+      Array.from(header.querySelectorAll("button, [role='button'], .menu-btn, .nav-toggle")).find((b) => !b.classList.contains("abhi-nav-book-btn"));
 
     if (hamburger) {
       hamburger.classList.add("abhi-mobile-hamburger-pin");
