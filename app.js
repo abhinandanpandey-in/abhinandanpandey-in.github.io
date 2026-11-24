@@ -221,7 +221,7 @@ function filterProjects(cat,btn){
       const tTokens = tLow.replace(/[^a-z0-9\s-]/g,' ').split(/[\s-]+/).filter(w=>w.length>1);
       let hits = 0;
       for(const qt of qTokens){
-        if(tTokens.some(tt => tt === qt || (qt.length >= 3 && tt.startsWith(qt)))){
+        if(tTokens.some(tt => tt === qt || (qt.length >= 5 && tt.startsWith(qt)))){
           hits++;
         }
       }
@@ -271,6 +271,8 @@ function filterProjects(cat,btn){
 
   // Honest easter eggs (strict multi-token patterns to avoid false positives)
   const EASTER_EGGS = [
+    { test:q=>/\b(what'?s?|tell me)?\s*your name\b|\bwho are you\b|\bwhat are you\b|\bintroduce yourself\b/.test(q), reply:"I'm ABHI - Abhinandan Pandey's static site assistant. Zero external APIs, zero LLM; I read directly from this page's live content." },
+    { test:q=>/\b(what is|what'?s)\s+your\s+(work|job|role|purpose)\b|\bwhat do you do\b|\bhow can you help\b/.test(q), reply:"I'm ABHI. My job is to answer questions about what's published on this website - Abhinandan's projects, research papers, skills, DSA stats, certifications, disclosures, and booking a slot." },
     { test:q=>/\b2\s*\+\s*2\b|what'?s?\s*2\s*plus\s*2/.test(q), reply:"4. If you want real math, check his DSA stats - 1,000+ problems solved." },
     { test:q=>/are you (a |an )?(robot|ai|bot|llm|gpt|chatgpt)\b/.test(q), reply:"No LLM here. I'm plain vanilla JavaScript matching keywords against the live DOM of this page. Zero API calls, zero model." },
     { test:q=>/ignore (all |previous |prior )+instructions|reveal (your )?system prompt|jailbreak|dan mode/.test(q), reply:"[Static Filter Demo] Nice try - there's no LLM or hidden system prompt to leak here. I'm deterministic JS reading public DOM text. Abhinandan does actual LLM red-teaming though." },
@@ -330,7 +332,7 @@ function filterProjects(cat,btn){
       }},
 
     { keys:['hi','hello','hey','yo','sup','namaste'],
-      reply:"Hey! I'm Abhinandan's static site assistant. Ask me about a specific project (like mcp-shield), research papers, skills, certs, DSA stats, or booking a slot." },
+      reply:"Hey! I'm ABHI, Abhinandan's static site assistant. Ask me about a specific project (like mcp-shield), research papers, skills, certs, DSA stats, or booking a slot." },
 
     { keys:['who are you','what are you'],
       reply:"I'm a deterministic vanilla JS site assistant - no external APIs, no LLM. I read directly from this page's live content." },
@@ -559,7 +561,7 @@ function filterProjects(cat,btn){
     const isOpen = panel.classList.toggle('open');
     toggle.classList.toggle('open', isOpen);
     if(isOpen && !body.hasChildNodes()){
-      addMsg("Hey, I'm Abhinandan's static site assistant. Ask me about specific projects, research papers, skills, DSA stats, or book a slot - zero external APIs, everything comes directly from this page.", 'bot');
+      addMsg("Hey, I'm ABHI - Abhinandan's static site assistant. Ask me about specific projects, research papers, skills, DSA stats, or book a slot - zero external APIs, everything comes directly from this page.", 'bot');
       renderSuggestions(['mcp-shield', 'Research papers', 'His skills', 'DSA stats', 'Book Call / Meet']);
     }
     if(!isOpen) maybeShowFeedback();
