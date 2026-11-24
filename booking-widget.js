@@ -2383,3 +2383,123 @@
   setTimeout(pinMobileMenuDrawer, 400);
   setTimeout(pinMobileMenuDrawer, 1200);
 })();
+
+/* === ABHI V17 DESKTOP ANALOG WATCH === */
+(() => {
+  if (document.getElementById("abhiDesktopWatch")) return;
+
+  const s = document.createElement("style");
+  s.id = "abhiV17WatchStyle";
+  s.textContent = `
+    .abhi-desktop-watch {
+      position: absolute;
+      top: 96px;
+      right: 52px;
+      z-index: 6;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 12px 8px;
+      border-radius: 14px;
+      background: rgba(12, 12, 16, 0.72);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(212, 175, 55, 0.35);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.55), inset 0 0 12px rgba(212, 175, 55, 0.06);
+      font-family: 'JetBrains Mono', 'Space Mono', monospace;
+      pointer-events: none;
+      user-select: none;
+    }
+    .abhi-watch-svg {
+      width: 96px;
+      height: 96px;
+      display: block;
+    }
+    .abhi-watch-meta {
+      font-size: 0.6rem;
+      letter-spacing: 0.08em;
+      color: #d4af37;
+      text-transform: uppercase;
+      opacity: 0.9;
+    }
+    @media (max-width: 768px) {
+      .abhi-desktop-watch {
+        display: none !important;
+      }
+    }
+  `;
+  document.head.appendChild(s);
+
+  function mountDesktopWatch() {
+    if (document.getElementById("abhiDesktopWatch")) return;
+
+    const h1 = document.querySelector("h1");
+    const heroSection =
+      (h1 && h1.closest("section")) ||
+      document.querySelector("#hero, .hero, main > section:first-of-type, section:first-of-type");
+
+    if (!heroSection) return;
+
+    const cs = window.getComputedStyle(heroSection);
+    if (cs.position === "static") {
+      heroSection.style.position = "relative";
+    }
+
+    // Build 12 hour tick marks
+    let ticks = "";
+    for (let i = 0; i < 12; i++) {
+      const isQuarter = i % 3 === 0;
+      const y1 = isQuarter ? 9 : 11;
+      const y2 = 16;
+      const sw = isQuarter ? 2 : 1.1;
+      const col = isQuarter ? "#f5c542" : "rgba(212, 175, 55, 0.5)";
+      ticks += `<line x1="50" y1="${y1}" x2="50" y2="${y2}" stroke="${col}" stroke-width="${sw}" stroke-linecap="round" transform="rotate(${i * 30} 50 50)"/>`;
+    }
+
+    const watch = document.createElement("div");
+    watch.id = "abhiDesktopWatch";
+    watch.className = "abhi-desktop-watch";
+    watch.setAttribute("aria-label", "Live Analog Clock");
+    watch.innerHTML = `
+      <svg class="abhi-watch-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="50" r="46" fill="#09090b" stroke="rgba(212, 175, 55, 0.65)" stroke-width="1.6"/>
+        <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(212, 175, 55, 0.16)" stroke-width="0.8"/>
+        ${ticks}
+        <line id="abhiWatchHour" x1="50" y1="50" x2="50" y2="27" stroke="#f5c542" stroke-width="2.6" stroke-linecap="round"/>
+        <line id="abhiWatchMin" x1="50" y1="50" x2="50" y2="19" stroke="#e4e4e7" stroke-width="1.8" stroke-linecap="round"/>
+        <line id="abhiWatchSec" x1="50" y1="56" x2="50" y2="15" stroke="#ef4444" stroke-width="1" stroke-linecap="round"/>
+        <circle cx="50" cy="50" r="3" fill="#f5c542"/>
+        <circle cx="50" cy="50" r="1.2" fill="#09090b"/>
+      </svg>
+      <div class="abhi-watch-meta" id="abhiWatchDate"></div>
+    `;
+
+    heroSection.appendChild(watch);
+
+    const hourHand = watch.querySelector("#abhiWatchHour");
+    const minHand = watch.querySelector("#abhiWatchMin");
+    const secHand = watch.querySelector("#abhiWatchSec");
+    const dateEl = watch.querySelector("#abhiWatchDate");
+
+    function tick() {
+      const now = new Date();
+      const s = now.getSeconds();
+      const m = now.getMinutes() + s / 60;
+      const h = (now.getHours() % 12) + m / 60;
+
+      hourHand.setAttribute("transform", `rotate(${h * 30} 50 50)`);
+      minHand.setAttribute("transform", `rotate(${m * 6} 50 50)`);
+      secHand.setAttribute("transform", `rotate(${s * 6} 50 50)`);
+
+      const dStr = now.toLocaleDateString("en-IN", { day: "2-digit", month: "short" });
+      dateEl.textContent = `${dStr} • LOCAL`;
+    }
+
+    tick();
+    setInterval(tick, 1000);
+  }
+
+  mountDesktopWatch();
+  setTimeout(mountDesktopWatch, 400);
+})();
