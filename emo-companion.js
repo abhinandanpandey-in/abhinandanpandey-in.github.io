@@ -918,41 +918,55 @@
   }
 
   /* ---------------------- 4. OPTIONAL REAL VOICE / MIC SYNC ---------------------- */
+  let cachedVoices = [];
+  if ('speechSynthesis' in window) {
+    const loadVoices = () => { cachedVoices = window.speechSynthesis.getVoices() || []; };
+    loadVoices();
+    window.speechSynthesis.onvoiceschanged = loadVoices;
+  }
+
   function playEmoChirp(type) {
-    if (!window.__ABHI_TTS_ON__) return;
+    if (!window.__ABHI_TTS_ON__ && type !== 'listen') return;
     try {
       const AudioCtx = window.AudioContext || window.webkitAudioContext;
       if (!AudioCtx) return;
       const ctx = new AudioCtx();
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
-      osc.type = 'sine';
+      osc.type = 'triangle';
       const now = ctx.currentTime;
       if (type === 'listen') {
-        osc.frequency.setValueAtTime(520, now);
-        osc.frequency.exponentialRampToValueAtTime(780, now + 0.09);
+        osc.frequency.setValueAtTime(580, now);
+        osc.frequency.exponentialRampToValueAtTime(980, now + 0.08);
       } else {
-        osc.frequency.setValueAtTime(640, now);
-        osc.frequency.exponentialRampToValueAtTime(920, now + 0.07);
-        osc.frequency.exponentialRampToValueAtTime(760, now + 0.14);
+        // Cute 3-note EMO chirp
+        osc.frequency.setValueAtTime(720, now);
+        osc.frequency.exponentialRampToValueAtTime(1120, now + 0.06);
+        osc.frequency.exponentialRampToValueAtTime(880, now + 0.12);
+        osc.frequency.exponentialRampToValueAtTime(1240, now + 0.18);
       }
       gain.gain.setValueAtTime(0.001, now);
-      gain.gain.exponentialRampToValueAtTime(0.06, now + 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
+      gain.gain.exponentialRampToValueAtTime(0.07, now + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
       osc.connect(gain);
       gain.connect(ctx.destination);
       osc.start(now);
-      osc.stop(now + 0.17);
-      setTimeout(() => ctx.close().catch(() => {}), 250);
+      osc.stop(now + 0.21);
+      setTimeout(() => ctx.close().catch(() => {}), 300);
     } catch (_) {}
   }
 
-  function pickCuteVoice(voices) {
-    if (!voices || !voices.length) return null;
+  function pickCuteVoice() {
+    const voices = cachedVoices.length ? cachedVoices : (window.speechSynthesis?.getVoices() || []);
+    if (!voices.length) return null;
     const en = voices.filter(v => /^en/i.test(v.lang));
+    // Priority 1: Cute / child-like Edge Natural voices (Ana, Maisie)
     return (
-      en.find(v => /ana|aria|jenny|samantha|victoria|zira|google us english|female/i.test(v.name)) ||
-      en.find(v => !/david|mark|guy|george|male/i.test(v.name)) ||
+      en.find(v => /\b(ana|maisie)\b/i.test(v.name)) ||
+      // Priority 2: Soft friendly female voices
+      en.find(v => /\b(aria|jenny|sonia|samantha|victoria|zira|google us english)\b/i.test(v.name)) ||
+      // Priority 3: Any non-male English voice
+      en.find(v => !/\b(david|mark|guy|george|ryan|christopher|eric|male)\b/i.test(v.name)) ||
       en[0] ||
       voices[0]
     );
@@ -965,17 +979,19 @@
       synth.cancel();
       if (synth.paused) synth.resume();
 
-      const cleanText = text.replace(/->/g, ', ').replace(/\[[^\]]+\]/g, '').replace(/\s+/g, ' ').trim().slice(0, 300);
+      const cleanText = text.replace(/->/g, ', ').replace(/\[[^\]]+\]/g, '').replace(/\s+/g, ' ').trim().slice(0, 280);
       if (!cleanText) return;
 
       playEmoChirp('speak');
       setTimeout(() => {
         const utt = new SpeechSynthesisUtterance(cleanText);
-        const voice = pickCuteVoice(synth.getVoices());
+        const voice = pickCuteVoice();
         if (voice) utt.voice = voice;
         utt.lang = voice?.lang || 'en-US';
-        utt.pitch = 1.45; // Cute EMO-like higher pitch
-        utt.rate = 1.08;  // Lively, friendly cadence
+        // Online child voices (Ana/Maisie) already sound cute; local voices get higher pitch
+        const isChildVoice = voice && /\b(ana|maisie)\b/i.test(voice.name);
+        utt.pitch = isChildVoice ? 1.18 : 1.65;
+        utt.rate = 1.12;
         utt.volume = 0.95;
         utt.onstart = () => engine.setState('speaking');
         utt.onend = () => engine.setState('idle');
@@ -995,7 +1011,7 @@
     const sendBtn = document.getElementById('chatSend');
     const inputRow = sendBtn ? sendBtn.parentElement : (input ? input.parentElement : null);
 
-    // 1. Keep header clean: only Close (×) button
+    // 1. Header Close (×) button
     if (header && !header.querySelector('.emo-close-btn')) {
       const bar = document.createElement('div');
       bar.className = 'emo-voice-bar';
@@ -1029,7 +1045,6 @@
 
     // 2. Sound (TTS) icon button next to SEND
     if (hasTTS) {
-      window.speechSynthesis.getVoices();
       const soundBtn = document.createElement('button');
       soundBtn.type = 'button';
       soundBtn.className = 'emo-icon-btn';
@@ -1053,51 +1068,38 @@
       inputRow.insertBefore(soundBtn, sendBtn || null);
     }
 
-    // 3. Mic icon button next to SEND
+    // 3. Mic icon button next to SEND (live dictation directly into input box)
     if (SpeechRec && input) {
       const micBtn = document.createElement('button');
       micBtn.type = 'button';
       micBtn.className = 'emo-icon-btn';
       micBtn.innerHTML = ICON_MIC;
-      micBtn.title = 'Speak to ABHI';
+      micBtn.title = 'Speak to type in box';
       micBtn.setAttribute('aria-label', 'Voice input');
 
       const origPlaceholder = input.getAttribute('placeholder') || 'Ask about skills, projects, certs';
       let activeRec = null;
 
-      micBtn.addEventListener('click', async () => {
+      micBtn.addEventListener('click', () => {
         if (activeRec) {
           activeRec.stop();
           return;
         }
-        // Stop TTS so mic doesn't get blocked
         if ('speechSynthesis' in window) window.speechSynthesis.cancel();
 
-        // Wake up OS/browser microphone and force permission prompt first
-        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-          try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            stream.getTracks().forEach(t => t.stop());
-          } catch (err) {
-            engine.setState('error', 1200);
-            input.placeholder = 'Mic access denied - check Edge/Windows mic';
-            setTimeout(() => { input.placeholder = origPlaceholder; }, 3500);
-            return;
-          }
-        }
-
         const rec = new SpeechRec();
-        rec.lang = 'en-US';
+        rec.lang = navigator.language || 'en-IN';
         rec.interimResults = true;
-        rec.continuous = false;
+        rec.continuous = true;
         rec.maxAlternatives = 1;
         activeRec = rec;
 
-        let finalTranscript = '';
+        let finalText = '';
 
         rec.onstart = () => {
           micBtn.classList.add('recording');
           input.placeholder = 'Listening... speak now';
+          input.focus();
           engine.setState('listening');
           playEmoChirp('listen');
         };
@@ -1105,24 +1107,24 @@
         rec.onresult = (ev) => {
           let interim = '';
           for (let i = ev.resultIndex; i < ev.results.length; i++) {
-            const chunk = ev.results[i][0].transcript;
+            const transcript = ev.results[i][0].transcript;
             if (ev.results[i].isFinal) {
-              finalTranscript += chunk;
+              finalText += transcript + ' ';
             } else {
-              interim += chunk;
+              interim += transcript;
             }
           }
-          input.value = (finalTranscript || interim).trim();
+          input.value = (finalText + interim).trim();
         };
 
         rec.onerror = (ev) => {
           const reason = ev?.error || 'error';
           engine.setState('error', 1100);
           input.placeholder =
-            reason === 'not-allowed' ? 'Mic blocked - allow in browser' :
-            reason === 'no-speech' ? 'No speech heard - tap mic & speak' :
+            reason === 'not-allowed' ? 'Mic blocked - allow in Edge settings' :
+            reason === 'no-speech' ? 'No mic input - check Edge mic device' :
             `Mic error (${reason}) - type instead`;
-          setTimeout(() => { input.placeholder = origPlaceholder; }, 3200);
+          setTimeout(() => { input.placeholder = origPlaceholder; }, 3500);
         };
 
         rec.onend = () => {
@@ -1131,11 +1133,7 @@
           if (input.placeholder === 'Listening... speak now') {
             input.placeholder = origPlaceholder;
           }
-          if (input.value.trim()) {
-            sendBtn?.click();
-          } else if (engine.getState() === 'listening') {
-            engine.setState('idle');
-          }
+          if (engine.getState() === 'listening') engine.setState('idle');
         };
 
         try {
@@ -1144,6 +1142,11 @@
           activeRec = null;
           engine.setState('error', 1000);
         }
+      });
+
+      // Stop mic automatically when user clicks SEND
+      sendBtn?.addEventListener('click', () => {
+        if (activeRec) activeRec.stop();
       });
 
       inputRow.insertBefore(micBtn, sendBtn || null);
