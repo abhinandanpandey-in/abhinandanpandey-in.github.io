@@ -979,7 +979,7 @@
       synth.cancel();
       if (synth.paused) synth.resume();
 
-      const cleanText = text.replace(/->/g, ', ').replace(/\[[^\]]+\]/g, '').replace(/\s+/g, ' ').trim().slice(0, 280);
+      const cleanText = text.replace(/\bABHI\b/g, 'Abhi').replace(/->/g, ', ').replace(/\[[^\]]+\]/g, '').replace(/\s+/g, ' ').trim().slice(0, 280);
       if (!cleanText) return;
 
       playEmoChirp('speak');
@@ -1088,9 +1088,9 @@
         if ('speechSynthesis' in window) window.speechSynthesis.cancel();
 
         const rec = new SpeechRec();
-        rec.lang = navigator.language || 'en-IN';
+        rec.lang = 'en-US';
         rec.interimResults = true;
-        rec.continuous = true;
+        rec.continuous = false;
         rec.maxAlternatives = 1;
         activeRec = rec;
 
