@@ -2202,9 +2202,11 @@
       .abhi-hero-trimmed {
         min-height: auto !important;
         height: auto !important;
-        padding-top: 14px !important;
+        padding-top: 12px !important;
         padding-bottom: 18px !important;
         margin-bottom: 0 !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
         justify-content: flex-start !important;
       }
 
@@ -2291,11 +2293,13 @@
     clockEl.className = "abhi-mobile-clock";
     clockEl.innerHTML = `<span class="abhi-clock-dot"></span><span id="abhiClockText"></span>`;
 
-    const firstChild = heroSection.firstElementChild;
-    if (firstChild) {
-      heroSection.insertBefore(clockEl, firstChild);
+    const targetParent = (h1 && h1.parentElement) ? h1.parentElement : heroSection;
+    clockEl.style.width = "fit-content";
+    clockEl.style.whiteSpace = "nowrap";
+    if (targetParent.firstElementChild) {
+      targetParent.insertBefore(clockEl, targetParent.firstElementChild);
     } else {
-      heroSection.appendChild(clockEl);
+      targetParent.appendChild(clockEl);
     }
 
     const clockText = clockEl.querySelector("#abhiClockText");
