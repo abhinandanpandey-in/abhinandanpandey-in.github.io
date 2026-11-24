@@ -1,7 +1,7 @@
 (() => {
   if (document.getElementById("abhiBookingRoot")) return;
 
-  const TARGET_EMAIL = "masternarenpandey@gmail.com";
+  const TARGET_EMAIL = "2e12a1319feb24ee5d95f8e4e30bca31";
   const FORMSUBMIT_URL = `https://formsubmit.co/ajax/${TARGET_EMAIL}`;
 
   // Available daily: 10 AM - 3 PM & 8 PM - 12 AM (IST)
