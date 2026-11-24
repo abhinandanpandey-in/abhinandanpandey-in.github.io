@@ -2386,53 +2386,82 @@
 
 /* === ABHI V17 DESKTOP ANALOG WATCH === */
 (() => {
-  if (document.getElementById("abhiDesktopWatch")) return;
+  if (document.getElementById("abhiV18WatchStyle")) return;
+
+  // Load Orbitron (digital watch LCD font) & Cinzel (aristocratic Roman serif)
+  if (!document.getElementById("abhiWatchFonts")) {
+    const link = document.createElement("link");
+    link.id = "abhiWatchFonts";
+    link.rel = "stylesheet";
+    link.href = "https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Orbitron:wght@600;700&display=swap";
+    document.head.appendChild(link);
+  }
 
   const s = document.createElement("style");
-  s.id = "abhiV17WatchStyle";
+  s.id = "abhiV18WatchStyle";
   s.textContent = `
+    /* 1. Mobile Digital Watch LCD/LED Styling */
+    @media (max-width: 768px) {
+      .abhi-mobile-clock {
+        font-family: 'Orbitron', 'JetBrains Mono', monospace !important;
+        font-variant-numeric: tabular-nums !important;
+        font-size: 0.7rem !important;
+        font-weight: 700 !important;
+        letter-spacing: 0.1em !important;
+        color: #f5c542 !important;
+        background: linear-gradient(180deg, #0b0b0f 0%, #131319 100%) !important;
+        border: 1px solid rgba(212, 175, 55, 0.5) !important;
+        border-radius: 6px !important;
+        padding: 6px 11px !important;
+        box-shadow: inset 0 1px 6px rgba(0, 0, 0, 0.9), 0 0 12px rgba(212, 175, 55, 0.14) !important;
+        text-shadow: 0 0 8px rgba(245, 197, 66, 0.45) !important;
+      }
+      .abhi-clock-dot {
+        box-shadow: 0 0 6px #4ade80 !important;
+      }
+      .abhi-desktop-watch {
+        display: none !important;
+      }
+    }
+
+    /* 2. Desktop Aristocratic Luxury Timepiece */
     .abhi-desktop-watch {
       position: absolute;
-      top: 96px;
-      right: 52px;
+      top: 90px;
+      right: 46px;
       z-index: 6;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 6px;
-      padding: 10px 12px 8px;
-      border-radius: 14px;
-      background: rgba(12, 12, 16, 0.72);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      border: 1px solid rgba(212, 175, 55, 0.35);
-      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.55), inset 0 0 12px rgba(212, 175, 55, 0.06);
-      font-family: 'JetBrains Mono', 'Space Mono', monospace;
+      gap: 7px;
       pointer-events: none;
       user-select: none;
     }
     .abhi-watch-svg {
-      width: 96px;
-      height: 96px;
+      width: 122px;
+      height: 122px;
       display: block;
+      filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.8)) drop-shadow(0 0 14px rgba(212, 175, 55, 0.16));
     }
     .abhi-watch-meta {
-      font-size: 0.6rem;
-      letter-spacing: 0.08em;
-      color: #d4af37;
+      padding: 2px 10px;
+      border-radius: 999px;
+      background: rgba(10, 10, 14, 0.85);
+      border: 1px solid rgba(212, 175, 55, 0.38);
+      font-family: 'Cinzel', Georgia, serif;
+      font-size: 0.58rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      color: #e6c667;
       text-transform: uppercase;
-      opacity: 0.9;
-    }
-    @media (max-width: 768px) {
-      .abhi-desktop-watch {
-        display: none !important;
-      }
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
     }
   `;
   document.head.appendChild(s);
 
   function mountDesktopWatch() {
-    if (document.getElementById("abhiDesktopWatch")) return;
+    const existing = document.getElementById("abhiDesktopWatch");
+    if (existing) existing.remove();
 
     const h1 = document.querySelector("h1");
     const heroSection =
@@ -2446,31 +2475,85 @@
       heroSection.style.position = "relative";
     }
 
-    // Build 12 hour tick marks
+    // Build 60 railway minute ticks + 8 diamond hour batons (quarters have Roman numerals)
     let ticks = "";
-    for (let i = 0; i < 12; i++) {
-      const isQuarter = i % 3 === 0;
-      const y1 = isQuarter ? 9 : 11;
-      const y2 = 16;
-      const sw = isQuarter ? 2 : 1.1;
-      const col = isQuarter ? "#f5c542" : "rgba(212, 175, 55, 0.5)";
-      ticks += `<line x1="50" y1="${y1}" x2="50" y2="${y2}" stroke="${col}" stroke-width="${sw}" stroke-linecap="round" transform="rotate(${i * 30} 50 50)"/>`;
+    for (let i = 0; i < 60; i++) {
+      const isHour = i % 5 === 0;
+      const isQuarter = i % 15 === 0;
+      if (isQuarter) continue;
+      if (isHour) {
+        ticks += `<polygon points="50,11.5 51.3,16 50,18.2 48.7,16" fill="url(#abhiGoldGrad)" transform="rotate(${i * 6} 50 50)"/>`;
+      } else {
+        ticks += `<line x1="50" y1="11.2" x2="50" y2="13.2" stroke="rgba(212, 175, 55, 0.42)" stroke-width="0.65" transform="rotate(${i * 6} 50 50)"/>`;
+      }
     }
 
     const watch = document.createElement("div");
     watch.id = "abhiDesktopWatch";
     watch.className = "abhi-desktop-watch";
-    watch.setAttribute("aria-label", "Live Analog Clock");
+    watch.setAttribute("aria-label", "Luxury Analog Watch");
     watch.innerHTML = `
-      <svg class="abhi-watch-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="50" cy="50" r="46" fill="#09090b" stroke="rgba(212, 175, 55, 0.65)" stroke-width="1.6"/>
-        <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(212, 175, 55, 0.16)" stroke-width="0.8"/>
+      <svg class="abhi-watch-svg" viewBox="0 0 108 100" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="abhiGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#fff0b3"/>
+            <stop offset="35%" stop-color="#d4af37"/>
+            <stop offset="70%" stop-color="#9e7b1b"/>
+            <stop offset="100%" stop-color="#f5d469"/>
+          </linearGradient>
+          <radialGradient id="abhiDialGrad" cx="42%" cy="35%" r="65%">
+            <stop offset="0%" stop-color="#1b1a22"/>
+            <stop offset="65%" stop-color="#0b0b0f"/>
+            <stop offset="100%" stop-color="#050507"/>
+          </radialGradient>
+        </defs>
+
+        <!-- Sculpted Watch Crown at 3 o'clock -->
+        <rect x="96.5" y="45.2" width="5.2" height="9.6" rx="1.6" fill="url(#abhiGoldGrad)" stroke="#5c450d" stroke-width="0.6"/>
+        <line x1="98.2" y1="46.2" x2="98.2" y2="53.8" stroke="#5c450d" stroke-width="0.6"/>
+        <line x1="100" y1="46.2" x2="100" y2="53.8" stroke="#5c450d" stroke-width="0.6"/>
+
+        <!-- Outer & Inner Metallic Gold Bezels -->
+        <circle cx="50" cy="50" r="47.5" fill="url(#abhiGoldGrad)"/>
+        <circle cx="50" cy="50" r="44.2" fill="#09090c"/>
+        <circle cx="50" cy="50" r="42.8" fill="url(#abhiDialGrad)" stroke="rgba(212, 175, 55, 0.55)" stroke-width="0.7"/>
+        <circle cx="50" cy="50" r="39.2" fill="none" stroke="rgba(212, 175, 55, 0.22)" stroke-width="0.5"/>
+        <circle cx="50" cy="50" r="24" fill="none" stroke="rgba(212, 175, 55, 0.1)" stroke-width="0.5" stroke-dasharray="1.2 1.8"/>
+
+        <!-- Ticks & Batons -->
         ${ticks}
-        <line id="abhiWatchHour" x1="50" y1="50" x2="50" y2="27" stroke="#f5c542" stroke-width="2.6" stroke-linecap="round"/>
-        <line id="abhiWatchMin" x1="50" y1="50" x2="50" y2="19" stroke="#e4e4e7" stroke-width="1.8" stroke-linecap="round"/>
-        <line id="abhiWatchSec" x1="50" y1="56" x2="50" y2="15" stroke="#ef4444" stroke-width="1" stroke-linecap="round"/>
-        <circle cx="50" cy="50" r="3" fill="#f5c542"/>
-        <circle cx="50" cy="50" r="1.2" fill="#09090b"/>
+
+        <!-- Aristocratic Roman Numerals -->
+        <g fill="#f5d469" font-family="Cinzel, Georgia, serif" font-weight="700" font-size="7.6" text-anchor="middle">
+          <text x="50" y="20.2">XII</text>
+          <text x="82.5" y="52.6">III</text>
+          <text x="50" y="85.2">VI</text>
+          <text x="17.5" y="52.6">IX</text>
+        </g>
+
+        <!-- Subtle Dial Engraving -->
+        <text x="50" y="34.5" fill="rgba(212, 175, 55, 0.72)" font-family="Cinzel, Georgia, serif" font-size="4.1" letter-spacing="1.4" text-anchor="middle">CHRONO</text>
+        <text x="50" y="69.5" fill="rgba(212, 175, 55, 0.55)" font-family="Cinzel, Georgia, serif" font-size="3.6" letter-spacing="1.1" text-anchor="middle">MMXXVI</text>
+
+        <!-- Faceted Dauphine Hour Hand -->
+        <g id="abhiWatchHour">
+          <polygon points="50,24 52.3,50 50,55 47.7,50" fill="url(#abhiGoldGrad)" stroke="#4a3709" stroke-width="0.35"/>
+        </g>
+
+        <!-- Faceted Dauphine Minute Hand -->
+        <g id="abhiWatchMin">
+          <polygon points="50,15.5 51.6,50 50,56 48.4,50" fill="#f4f4f5" stroke="#3f3f46" stroke-width="0.3"/>
+        </g>
+
+        <!-- Aristocratic Counterweight Second Hand -->
+        <g id="abhiWatchSec">
+          <line x1="50" y1="61" x2="50" y2="14" stroke="#d4af37" stroke-width="0.85" stroke-linecap="round"/>
+          <circle cx="50" cy="58.5" r="1.5" fill="none" stroke="#d4af37" stroke-width="0.8"/>
+        </g>
+
+        <!-- Center Jewel Pinion -->
+        <circle cx="50" cy="50" r="3.1" fill="url(#abhiGoldGrad)"/>
+        <circle cx="50" cy="50" r="1.1" fill="#09090b"/>
       </svg>
       <div class="abhi-watch-meta" id="abhiWatchDate"></div>
     `;
@@ -2492,8 +2575,8 @@
       minHand.setAttribute("transform", `rotate(${m * 6} 50 50)`);
       secHand.setAttribute("transform", `rotate(${s * 6} 50 50)`);
 
-      const dStr = now.toLocaleDateString("en-IN", { day: "2-digit", month: "short" });
-      dateEl.textContent = `${dStr} • LOCAL`;
+      const dStr = now.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
+      dateEl.textContent = dStr;
     }
 
     tick();
