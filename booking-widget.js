@@ -1792,3 +1792,186 @@
   setTimeout(() => syncCursorLayer(), 1800);
   window.addEventListener("mousemove", (e) => syncCursorLayer(e.clientX, e.clientY), { once: true });
 })();
+
+/* === ABHI COMPACT APK POPUP === */
+(() => {
+  if (document.getElementById("abhiApkPopup")) return;
+
+  const ANDROID_SVG = `
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M17.6 9.48L19.44 6.3C19.6 6.02 19.5 5.66 19.22 5.5C18.94 5.34 18.58 5.44 18.42 5.72L16.54 8.96C15.16 8.33 13.62 7.98 12 7.98C10.38 7.98 8.84 8.33 7.46 8.96L5.58 5.72C5.42 5.44 5.06 5.34 4.78 5.5C4.5 5.66 4.4 6.02 4.56 6.3L6.4 9.48C3.86 10.88 2.15 13.43 2 16.4H22C21.85 13.43 20.14 10.88 17.6 9.48ZM8.5 13.8C7.95 13.8 7.5 13.35 7.5 12.8C7.5 12.25 7.95 11.8 8.5 11.8C9.05 11.8 9.5 12.25 9.5 12.8C9.5 13.35 9.05 13.8 8.5 13.8ZM15.5 13.8C14.95 13.8 14.5 13.35 14.5 12.8C14.5 12.25 14.95 11.8 15.5 11.8C16.05 11.8 16.5 12.25 16.5 12.8C16.5 13.35 16.05 13.8 15.5 13.8Z" fill="#f5c542"/>
+    </svg>
+  `;
+
+  function findOriginalApkBar() {
+    const candidates = document.querySelectorAll("div, section, aside, footer");
+    for (const el of candidates) {
+      if (el.closest("#abhiBookingRoot") || el.id === "abhiApkPopup") continue;
+      const cs = window.getComputedStyle(el);
+      if (cs.position !== "fixed") continue;
+      const txt = (el.textContent || "").toLowerCase();
+      if (txt.includes("native android app") && (txt.includes("download apk") || txt.includes("install"))) {
+        return el;
+      }
+    }
+    return null;
+  }
+
+  function initApkPopup() {
+    const origBar = findOriginalApkBar();
+    if (!origBar) return;
+
+    const origAction = origBar.querySelector("a, button");
+    origBar.style.setProperty("display", "none", "important");
+
+    const style = document.createElement("style");
+    style.textContent = `
+      /* Reclaim bottom space since full-width bar is now a compact popup */
+      .abhi-left-dock { bottom: 20px !important; }
+      .abhi-mobile-dock { bottom: 20px !important; }
+
+      .abhi-apk-popup {
+        position: fixed !important;
+        left: 50% !important;
+        bottom: 18px !important;
+        transform: translateX(-50%) !important;
+        z-index: 8995 !important;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 7px 10px 7px 12px;
+        border-radius: 999px;
+        background: rgba(14, 14, 18, 0.9);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(212, 175, 55, 0.45);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.65);
+        font-family: 'JetBrains Mono', 'Space Mono', monospace;
+        color: #e4e4e7;
+        font-size: 0.72rem;
+        white-space: nowrap;
+        transition: all 0.25s ease;
+        pointer-events: auto !important;
+      }
+      .abhi-apk-popup:hover {
+        border-color: #f5c542;
+      }
+      .abhi-apk-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: rgba(212, 175, 55, 0.14);
+        border: 1px solid rgba(212, 175, 55, 0.35);
+        flex-shrink: 0;
+      }
+      .abhi-apk-text strong {
+        color: #f5c542;
+        font-weight: 700;
+      }
+      .abhi-apk-btn {
+        padding: 4px 10px;
+        border-radius: 999px;
+        border: none;
+        background: linear-gradient(135deg, #d4af37, #f5c542);
+        color: #09090b;
+        font-family: inherit;
+        font-size: 0.69rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: transform 0.15s ease;
+      }
+      .abhi-apk-btn:hover { transform: scale(1.04); }
+      .abhi-apk-close {
+        background: transparent;
+        border: none;
+        color: #9ca3af;
+        font-size: 0.95rem;
+        line-height: 1;
+        cursor: pointer;
+        padding: 0 3px;
+      }
+      .abhi-apk-close:hover { color: #fff; }
+
+      body.abhi-hide-native-cursor #abhiApkPopup,
+      body.abhi-hide-native-cursor #abhiApkPopup * {
+        cursor: none !important;
+      }
+
+      /* Mobile: 4s mini-toast -> shrinks to compact floating badge above chatbot */
+      @media (max-width: 768px) {
+        .abhi-apk-popup {
+          bottom: 18px !important;
+          max-width: calc(100vw - 28px);
+          padding: 7px 10px;
+          gap: 8px;
+          font-size: 0.68rem;
+        }
+        .abhi-apk-popup.compact {
+          left: auto !important;
+          right: 16px !important;
+          bottom: 78px !important;
+          transform: none !important;
+          padding: 7px 11px 7px 8px;
+          gap: 6px;
+        }
+        .abhi-apk-popup.compact .abhi-apk-text,
+        .abhi-apk-popup.compact .abhi-apk-close {
+          display: none;
+        }
+        .abhi-apk-popup.compact .abhi-apk-btn {
+          background: transparent;
+          color: #f5c542;
+          padding: 0;
+          font-size: 0.7rem;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+
+    if (sessionStorage.getItem("abhiApkDismissed")) return;
+
+    const popup = document.createElement("div");
+    popup.id = "abhiApkPopup";
+    popup.className = "abhi-apk-popup";
+    popup.innerHTML = `
+      <span class="abhi-apk-icon" aria-hidden="true">${ANDROID_SVG}</span>
+      <span class="abhi-apk-text"><strong>Android App</strong> • Best experience</span>
+      <button type="button" class="abhi-apk-btn" id="abhiApkActionBtn">↓ Get APK</button>
+      <button type="button" class="abhi-apk-close" id="abhiApkCloseBtn" aria-label="Dismiss app popup">&times;</button>
+    `;
+    document.body.appendChild(popup);
+
+    const triggerDownload = (e) => {
+      e.stopPropagation();
+      if (origAction) origAction.click();
+    };
+
+    popup.querySelector("#abhiApkActionBtn").addEventListener("click", triggerDownload);
+    popup.addEventListener("click", (e) => {
+      if (e.target.closest("#abhiApkCloseBtn")) return;
+      if (popup.classList.contains("compact")) triggerDownload(e);
+    });
+
+    popup.querySelector("#abhiApkCloseBtn").addEventListener("click", (e) => {
+      e.stopPropagation();
+      sessionStorage.setItem("abhiApkDismissed", "1");
+      popup.remove();
+    });
+
+    // Mobile auto-shrink after 4 seconds
+    if (window.innerWidth <= 768) {
+      setTimeout(() => {
+        if (document.body.contains(popup)) popup.classList.add("compact");
+      }, 4000);
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => setTimeout(initApkPopup, 250));
+  } else {
+    setTimeout(initApkPopup, 250);
+  }
+})();
