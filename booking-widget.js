@@ -2161,3 +2161,166 @@
   `;
   document.head.appendChild(s);
 })();
+
+/* === ABHI V14 LAYOUT POLISH === */
+(() => {
+  if (document.getElementById("abhiV14Style")) return;
+
+  const s = document.createElement("style");
+  s.id = "abhiV14Style";
+  s.textContent = `
+    /* 1. Desktop-only: Move Get APK pill right under the bottom-right robot chatbot */
+    @media (min-width: 769px) {
+      .abhi-apk-under-robot {
+        position: fixed !important;
+        right: 16px !important;
+        bottom: 14px !important;
+        left: auto !important;
+        z-index: 9000 !important;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(10px);
+        transition: opacity 0.28s ease, transform 0.28s ease, visibility 0.28s ease;
+      }
+      .abhi-apk-under-robot.abhi-dock-show {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+    }
+
+    /* 2. Mobile-only: Remove excess top/bottom hero space + live terminal clock */
+    .abhi-mobile-clock {
+      display: none;
+    }
+
+    @media (max-width: 768px) {
+      .abhi-apk-under-robot {
+        display: none !important;
+      }
+
+      .abhi-hero-trimmed {
+        min-height: auto !important;
+        height: auto !important;
+        padding-top: 14px !important;
+        padding-bottom: 18px !important;
+        margin-bottom: 0 !important;
+        justify-content: flex-start !important;
+      }
+
+      .abhi-mobile-clock {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        margin: 0 0 14px 0;
+        padding: 5px 10px;
+        border-radius: 7px;
+        background: rgba(212, 175, 55, 0.08);
+        border: 1px solid rgba(212, 175, 55, 0.3);
+        font-family: 'JetBrains Mono', 'Space Mono', monospace;
+        font-size: 0.68rem;
+        letter-spacing: 0.05em;
+        color: #f5c542;
+      }
+      .abhi-clock-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #4ade80;
+        flex-shrink: 0;
+      }
+    }
+  `;
+  document.head.appendChild(s);
+
+  // Move desktop APK pill out of left dock and place right under the robot chatbot
+  function relocateDesktopApkPill() {
+    const desktopDock = document.querySelector(".abhi-left-dock");
+    if (!desktopDock) return;
+
+    const pill = desktopDock.querySelector(".abhi-apk-pill");
+    if (pill && !pill.classList.contains("abhi-apk-under-robot")) {
+      pill.classList.add("abhi-apk-under-robot");
+      document.body.appendChild(pill);
+    }
+
+    const floatingPill = document.querySelector(".abhi-apk-under-robot");
+    if (!floatingPill) return;
+
+    // Sync show/hide with desktop dock (hidden in Hero & at/below Contact)
+    const syncVis = () => {
+      floatingPill.classList.toggle("abhi-dock-show", desktopDock.classList.contains("abhi-dock-show"));
+    };
+    syncVis();
+    window.addEventListener("scroll", syncVis, { passive: true });
+    window.addEventListener("resize", syncVis, { passive: true });
+
+    // Ensure robot chatbot button sits cleanly above the APK pill on desktop
+    if (window.innerWidth > 768) {
+      document.querySelectorAll("button, div").forEach((el) => {
+        if (el.closest("#abhiBookingRoot") || el.classList.contains("abhi-apk-under-robot")) return;
+        const cs = window.getComputedStyle(el);
+        if (cs.position !== "fixed") return;
+        const r = el.getBoundingClientRect();
+        const isBottomRightBot =
+          r.width >= 40 && r.width <= 80 &&
+          r.height >= 40 && r.height <= 80 &&
+          (window.innerWidth - r.right) <= 45 &&
+          (window.innerHeight - r.bottom) <= 55;
+        if (isBottomRightBot) {
+          el.style.setProperty("bottom", "56px", "important");
+        }
+      });
+    }
+  }
+
+  // Trim mobile hero top/bottom empty space & inject live Date/Time (HH:MM:SS)
+  function setupMobileHeroTrimAndClock() {
+    const h1 = document.querySelector("h1");
+    const heroSection =
+      (h1 && h1.closest("section")) ||
+      document.querySelector("#hero, .hero, main > section:first-of-type, section:first-of-type");
+
+    if (!heroSection) return;
+    heroSection.classList.add("abhi-hero-trimmed");
+
+    if (document.getElementById("abhiMobileClock")) return;
+
+    const clockEl = document.createElement("div");
+    clockEl.id = "abhiMobileClock";
+    clockEl.className = "abhi-mobile-clock";
+    clockEl.innerHTML = `<span class="abhi-clock-dot"></span><span id="abhiClockText"></span>`;
+
+    const firstChild = heroSection.firstElementChild;
+    if (firstChild) {
+      heroSection.insertBefore(clockEl, firstChild);
+    } else {
+      heroSection.appendChild(clockEl);
+    }
+
+    const clockText = clockEl.querySelector("#abhiClockText");
+    function updateClock() {
+      const now = new Date();
+      const dateStr = now.toLocaleDateString("en-IN", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric"
+      });
+      const timeStr = now.toLocaleTimeString("en-IN", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: true
+      });
+      clockText.textContent = `${dateStr} • ${timeStr}`;
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+  }
+
+  relocateDesktopApkPill();
+  setupMobileHeroTrimAndClock();
+  setTimeout(relocateDesktopApkPill, 400);
+  setTimeout(relocateDesktopApkPill, 1200);
+  setTimeout(relocateDesktopApkPill, 2600);
+})();
