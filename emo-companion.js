@@ -371,6 +371,47 @@
           bottom: 108px !important;
         }
       }
+      .emo-icon-btn {
+        background: transparent;
+        border: 1px solid rgba(212, 169, 67, 0.35);
+        color: #D4A943;
+        width: 30px;
+        height: 30px;
+        padding: 0;
+        border-radius: 6px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        flex-shrink: 0;
+        transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+      }
+      .emo-icon-btn:hover {
+        background: rgba(212, 169, 67, 0.16);
+        color: #F2CC70;
+        border-color: #F2CC70;
+      }
+      .emo-icon-btn.active {
+        background: rgba(242, 204, 112, 0.22);
+        color: #F2CC70;
+        border-color: #F2CC70;
+        box-shadow: 0 0 8px rgba(242, 204, 112, 0.4);
+      }
+      .emo-icon-btn.recording {
+        background: rgba(245, 158, 11, 0.24);
+        color: #F2CC70;
+        border-color: #F2CC70;
+        animation: emoMicPulse 1s ease-in-out infinite;
+      }
+      @keyframes emoMicPulse {
+        0%, 100% { box-shadow: 0 0 0 0 rgba(242, 204, 112, 0.55); }
+        50% { box-shadow: 0 0 0 6px rgba(242, 204, 112, 0); }
+      }
+      .emo-icon-btn svg {
+        width: 15px;
+        height: 15px;
+        display: block;
+      }
       .emo-close-btn {
         background: rgba(212, 169, 67, 0.14);
         border: 1px solid rgba(212, 169, 67, 0.55);
@@ -877,6 +918,46 @@
   }
 
   /* ---------------------- 4. OPTIONAL REAL VOICE / MIC SYNC ---------------------- */
+  function playEmoChirp(type) {
+    if (!window.__ABHI_TTS_ON__) return;
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      const now = ctx.currentTime;
+      if (type === 'listen') {
+        osc.frequency.setValueAtTime(520, now);
+        osc.frequency.exponentialRampToValueAtTime(780, now + 0.09);
+      } else {
+        osc.frequency.setValueAtTime(640, now);
+        osc.frequency.exponentialRampToValueAtTime(920, now + 0.07);
+        osc.frequency.exponentialRampToValueAtTime(760, now + 0.14);
+      }
+      gain.gain.setValueAtTime(0.001, now);
+      gain.gain.exponentialRampToValueAtTime(0.06, now + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.17);
+      setTimeout(() => ctx.close().catch(() => {}), 250);
+    } catch (_) {}
+  }
+
+  function pickCuteVoice(voices) {
+    if (!voices || !voices.length) return null;
+    const en = voices.filter(v => /^en/i.test(v.lang));
+    return (
+      en.find(v => /ana|aria|jenny|samantha|victoria|zira|google us english|female/i.test(v.name)) ||
+      en.find(v => !/david|mark|guy|george|male/i.test(v.name)) ||
+      en[0] ||
+      voices[0]
+    );
+  }
+
   function speakText(text, engine) {
     if (!('speechSynthesis' in window) || !text) return;
     try {
@@ -884,134 +965,55 @@
       synth.cancel();
       if (synth.paused) synth.resume();
 
-      const cleanText = text.replace(/->/g, ', ').replace(/\s+/g, ' ').trim().slice(0, 320);
+      const cleanText = text.replace(/->/g, ', ').replace(/\[[^\]]+\]/g, '').replace(/\s+/g, ' ').trim().slice(0, 300);
+      if (!cleanText) return;
+
+      playEmoChirp('speak');
       setTimeout(() => {
         const utt = new SpeechSynthesisUtterance(cleanText);
-        const voices = synth.getVoices();
-        const preferred = voices.find(v => /en/i.test(v.lang) && /natural|google|zira|david|aria/i.test(v.name)) || voices.find(v => /en/i.test(v.lang));
-        if (preferred) utt.voice = preferred;
-        utt.lang = preferred?.lang || 'en-US';
-        utt.rate = 1.02;
-        utt.pitch = 1.04;
+        const voice = pickCuteVoice(synth.getVoices());
+        if (voice) utt.voice = voice;
+        utt.lang = voice?.lang || 'en-US';
+        utt.pitch = 1.45; // Cute EMO-like higher pitch
+        utt.rate = 1.08;  // Lively, friendly cadence
+        utt.volume = 0.95;
         utt.onstart = () => engine.setState('speaking');
         utt.onend = () => engine.setState('idle');
         utt.onerror = () => engine.setState('idle');
         synth.speak(utt);
-      }, 60);
+      }, 90);
     } catch (_) {}
   }
 
+  const ICON_MIC = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/><line x1="12" y1="19" x2="12" y2="22"/></svg>';
+  const ICON_VOL_OFF = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="22" y1="9" x2="16" y2="15"/><line x1="16" y1="9" x2="22" y2="15"/></svg>';
+  const ICON_VOL_ON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a9 9 0 0 1 0 14"/></svg>';
+
   function wireVoiceControls(panel, body, input, engine) {
     const header = panel.querySelector('.chat-header') || panel.firstElementChild;
-    if (!header || header.querySelector('.emo-voice-bar')) return;
-
     const toggle = document.getElementById('chatToggle');
-    const bar = document.createElement('div');
-    bar.className = 'emo-voice-bar';
+    const sendBtn = document.getElementById('chatSend');
+    const inputRow = sendBtn ? sendBtn.parentElement : (input ? input.parentElement : null);
 
-    const hasTTS = 'speechSynthesis' in window;
-    const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
-
-    if (hasTTS) {
-      // Warm up voice list in Chromium/Edge
-      window.speechSynthesis.getVoices();
-      const ttsBtn = document.createElement('button');
-      ttsBtn.type = 'button';
-      ttsBtn.className = 'emo-vbtn';
-      ttsBtn.textContent = 'TTS: OFF';
-      ttsBtn.title = 'Toggle spoken replies';
-      ttsBtn.addEventListener('click', () => {
-        window.__ABHI_TTS_ON__ = !window.__ABHI_TTS_ON__;
-        ttsBtn.textContent = window.__ABHI_TTS_ON__ ? 'TTS: ON' : 'TTS: OFF';
-        ttsBtn.classList.toggle('active', window.__ABHI_TTS_ON__);
-        if (window.__ABHI_TTS_ON__) {
-          // Immediately speak the latest bot reply so user gets instant confirmation
-          const botMsgs = body ? body.querySelectorAll('.chat-msg.bot:not(.typing)') : [];
-          const lastMsg = botMsgs.length ? botMsgs[botMsgs.length - 1].textContent : 'ABHI voice enabled.';
-          speakText(lastMsg, engine);
-        } else {
-          window.speechSynthesis.cancel();
-          engine.setState('idle');
+    // 1. Keep header clean: only Close (×) button
+    if (header && !header.querySelector('.emo-close-btn')) {
+      const bar = document.createElement('div');
+      bar.className = 'emo-voice-bar';
+      const closeBtn = document.createElement('button');
+      closeBtn.type = 'button';
+      closeBtn.className = 'emo-close-btn';
+      closeBtn.textContent = '×';
+      closeBtn.title = 'Close chat (Esc)';
+      closeBtn.setAttribute('aria-label', 'Close chat');
+      closeBtn.addEventListener('click', () => {
+        if (panel.classList.contains('open')) {
+          if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+          toggle?.click();
         }
       });
-      bar.appendChild(ttsBtn);
+      bar.appendChild(closeBtn);
+      header.appendChild(bar);
     }
-
-    if (SpeechRec && input) {
-      const micBtn = document.createElement('button');
-      micBtn.type = 'button';
-      micBtn.className = 'emo-vbtn';
-      micBtn.textContent = 'MIC';
-      micBtn.title = 'Voice input';
-      let activeRec = null;
-
-      micBtn.addEventListener('click', () => {
-        if (activeRec) {
-          activeRec.stop();
-          return;
-        }
-        const rec = new SpeechRec();
-        rec.lang = 'en-IN';
-        rec.interimResults = false;
-        rec.maxAlternatives = 1;
-        activeRec = rec;
-
-        rec.onstart = () => {
-          micBtn.classList.add('active');
-          micBtn.textContent = 'REC...';
-          engine.setState('listening');
-        };
-        rec.onresult = (ev) => {
-          const transcript = ev.results?.[0]?.[0]?.transcript || '';
-          if (transcript) {
-            input.value = transcript;
-            document.getElementById('chatSend')?.click();
-          }
-        };
-        rec.onerror = (ev) => {
-          engine.setState('error', 1400);
-          const reason = ev?.error || 'unknown';
-          if (body) {
-            const note = document.createElement('div');
-            note.className = 'chat-msg bot';
-            note.textContent =
-              reason === 'not-allowed' ? 'Mic permission blocked in browser. Allow microphone access for this site and retry.' :
-              reason === 'no-speech' ? 'No speech detected. Tap MIC and speak clearly.' :
-              `Voice input unavailable (${reason}). You can type your question below.`;
-            body.appendChild(note);
-            body.scrollTop = body.scrollHeight;
-          }
-        };
-        rec.onend = () => {
-          activeRec = null;
-          micBtn.classList.remove('active');
-          micBtn.textContent = 'MIC';
-          if (engine.getState() === 'listening') engine.setState('idle');
-        };
-        try {
-          rec.start();
-        } catch (err) {
-          activeRec = null;
-          engine.setState('error', 1200);
-        }
-      });
-      bar.appendChild(micBtn);
-    }
-
-    // Dedicated Close (×) button in header + Escape key support
-    const closeBtn = document.createElement('button');
-    closeBtn.type = 'button';
-    closeBtn.className = 'emo-close-btn';
-    closeBtn.textContent = '×';
-    closeBtn.title = 'Close chat (Esc)';
-    closeBtn.setAttribute('aria-label', 'Close chat');
-    closeBtn.addEventListener('click', () => {
-      if (panel.classList.contains('open')) {
-        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-        toggle?.click();
-      }
-    });
-    bar.appendChild(closeBtn);
 
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && panel.classList.contains('open')) {
@@ -1020,7 +1022,119 @@
       }
     });
 
-    header.appendChild(bar);
+    if (!inputRow || inputRow.querySelector('.emo-icon-btn')) return;
+
+    const hasTTS = 'speechSynthesis' in window;
+    const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    // 2. Sound (TTS) icon button next to SEND
+    if (hasTTS) {
+      window.speechSynthesis.getVoices();
+      const soundBtn = document.createElement('button');
+      soundBtn.type = 'button';
+      soundBtn.className = 'emo-icon-btn';
+      soundBtn.innerHTML = ICON_VOL_OFF;
+      soundBtn.title = 'Toggle ABHI voice';
+      soundBtn.setAttribute('aria-label', 'Toggle ABHI voice');
+
+      soundBtn.addEventListener('click', () => {
+        window.__ABHI_TTS_ON__ = !window.__ABHI_TTS_ON__;
+        soundBtn.innerHTML = window.__ABHI_TTS_ON__ ? ICON_VOL_ON : ICON_VOL_OFF;
+        soundBtn.classList.toggle('active', window.__ABHI_TTS_ON__);
+        if (window.__ABHI_TTS_ON__) {
+          const botMsgs = body ? body.querySelectorAll('.chat-msg.bot:not(.typing)') : [];
+          const lastMsg = botMsgs.length ? botMsgs[botMsgs.length - 1].textContent : 'Hi! I am ABHI.';
+          speakText(lastMsg, engine);
+        } else {
+          window.speechSynthesis.cancel();
+          engine.setState('idle');
+        }
+      });
+      inputRow.insertBefore(soundBtn, sendBtn || null);
+    }
+
+    // 3. Mic icon button next to SEND
+    if (SpeechRec && input) {
+      const micBtn = document.createElement('button');
+      micBtn.type = 'button';
+      micBtn.className = 'emo-icon-btn';
+      micBtn.innerHTML = ICON_MIC;
+      micBtn.title = 'Speak to ABHI';
+      micBtn.setAttribute('aria-label', 'Voice input');
+
+      const origPlaceholder = input.getAttribute('placeholder') || 'Ask about skills, projects, certs';
+      let activeRec = null;
+
+      micBtn.addEventListener('click', () => {
+        if (activeRec) {
+          activeRec.stop();
+          return;
+        }
+        // Stop TTS so mic doesn't get blocked
+        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+
+        const rec = new SpeechRec();
+        rec.lang = 'en-US';
+        rec.interimResults = true;
+        rec.continuous = false;
+        rec.maxAlternatives = 1;
+        activeRec = rec;
+
+        let finalTranscript = '';
+
+        rec.onstart = () => {
+          micBtn.classList.add('recording');
+          input.placeholder = 'Listening... speak now';
+          engine.setState('listening');
+          playEmoChirp('listen');
+        };
+
+        rec.onresult = (ev) => {
+          let interim = '';
+          for (let i = ev.resultIndex; i < ev.results.length; i++) {
+            const chunk = ev.results[i][0].transcript;
+            if (ev.results[i].isFinal) {
+              finalTranscript += chunk;
+            } else {
+              interim += chunk;
+            }
+          }
+          input.value = (finalTranscript || interim).trim();
+        };
+
+        rec.onerror = (ev) => {
+          const reason = ev?.error || 'error';
+          engine.setState('error', 1100);
+          input.placeholder =
+            reason === 'not-allowed' ? 'Mic blocked - allow in browser' :
+            reason === 'no-speech' ? 'No speech heard - tap mic & speak' :
+            `Mic error (${reason}) - type instead`;
+          setTimeout(() => { input.placeholder = origPlaceholder; }, 3200);
+        };
+
+        rec.onend = () => {
+          activeRec = null;
+          micBtn.classList.remove('recording');
+          if (input.placeholder === 'Listening... speak now') {
+            input.placeholder = origPlaceholder;
+          }
+          if (input.value.trim()) {
+            sendBtn?.click();
+          } else if (engine.getState() === 'listening') {
+            engine.setState('idle');
+          }
+        };
+
+        try {
+          rec.start();
+        } catch (_) {
+          activeRec = null;
+          engine.setState('error', 1000);
+        }
+      });
+
+      inputRow.insertBefore(micBtn, sendBtn || null);
+    }
   }
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
