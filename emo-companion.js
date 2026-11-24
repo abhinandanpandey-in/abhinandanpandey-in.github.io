@@ -363,6 +363,28 @@
       .emo-stage.is-paused * { animation-play-state: paused !important; }
 
       /* Subtle voice controls inside chat header */
+      #chatPanel {
+        bottom: 132px !important;
+      }
+      @media (max-width: 640px) {
+        #chatPanel {
+          bottom: 108px !important;
+        }
+      }
+      .emo-close-btn {
+        background: rgba(212, 169, 67, 0.14);
+        border: 1px solid rgba(212, 169, 67, 0.55);
+        color: #F2CC70;
+        font-family: inherit;
+        font-size: 0.85rem;
+        line-height: 1;
+        padding: 2px 7px;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      .emo-close-btn:hover {
+        background: rgba(242, 204, 112, 0.28);
+      }
       .emo-voice-bar {
         display: inline-flex;
         align-items: center;
@@ -856,16 +878,26 @@
 
   /* ---------------------- 4. OPTIONAL REAL VOICE / MIC SYNC ---------------------- */
   function speakText(text, engine) {
-    if (!('speechSynthesis' in window)) return;
+    if (!('speechSynthesis' in window) || !text) return;
     try {
-      window.speechSynthesis.cancel();
-      const utt = new SpeechSynthesisUtterance(text.slice(0, 320));
-      utt.rate = 1.05;
-      utt.pitch = 1.05;
-      utt.onstart = () => engine.setState('speaking');
-      utt.onend = () => engine.setState('idle');
-      utt.onerror = () => engine.setState('idle');
-      window.speechSynthesis.speak(utt);
+      const synth = window.speechSynthesis;
+      synth.cancel();
+      if (synth.paused) synth.resume();
+
+      const cleanText = text.replace(/->/g, ', ').replace(/\s+/g, ' ').trim().slice(0, 320);
+      setTimeout(() => {
+        const utt = new SpeechSynthesisUtterance(cleanText);
+        const voices = synth.getVoices();
+        const preferred = voices.find(v => /en/i.test(v.lang) && /natural|google|zira|david|aria/i.test(v.name)) || voices.find(v => /en/i.test(v.lang));
+        if (preferred) utt.voice = preferred;
+        utt.lang = preferred?.lang || 'en-US';
+        utt.rate = 1.02;
+        utt.pitch = 1.04;
+        utt.onstart = () => engine.setState('speaking');
+        utt.onend = () => engine.setState('idle');
+        utt.onerror = () => engine.setState('idle');
+        synth.speak(utt);
+      }, 60);
     } catch (_) {}
   }
 
@@ -873,14 +905,16 @@
     const header = panel.querySelector('.chat-header') || panel.firstElementChild;
     if (!header || header.querySelector('.emo-voice-bar')) return;
 
-    const hasTTS = 'speechSynthesis' in window;
-    const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!hasTTS && !SpeechRec) return;
-
+    const toggle = document.getElementById('chatToggle');
     const bar = document.createElement('div');
     bar.className = 'emo-voice-bar';
 
+    const hasTTS = 'speechSynthesis' in window;
+    const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+
     if (hasTTS) {
+      // Warm up voice list in Chromium/Edge
+      window.speechSynthesis.getVoices();
       const ttsBtn = document.createElement('button');
       ttsBtn.type = 'button';
       ttsBtn.className = 'emo-vbtn';
@@ -890,7 +924,12 @@
         window.__ABHI_TTS_ON__ = !window.__ABHI_TTS_ON__;
         ttsBtn.textContent = window.__ABHI_TTS_ON__ ? 'TTS: ON' : 'TTS: OFF';
         ttsBtn.classList.toggle('active', window.__ABHI_TTS_ON__);
-        if (!window.__ABHI_TTS_ON__ && 'speechSynthesis' in window) {
+        if (window.__ABHI_TTS_ON__) {
+          // Immediately speak the latest bot reply so user gets instant confirmation
+          const botMsgs = body ? body.querySelectorAll('.chat-msg.bot:not(.typing)') : [];
+          const lastMsg = botMsgs.length ? botMsgs[botMsgs.length - 1].textContent : 'ABHI voice enabled.';
+          speakText(lastMsg, engine);
+        } else {
           window.speechSynthesis.cancel();
           engine.setState('idle');
         }
@@ -912,7 +951,7 @@
           return;
         }
         const rec = new SpeechRec();
-        rec.lang = 'en-US';
+        rec.lang = 'en-IN';
         rec.interimResults = false;
         rec.maxAlternatives = 1;
         activeRec = rec;
@@ -929,8 +968,19 @@
             document.getElementById('chatSend')?.click();
           }
         };
-        rec.onerror = () => {
-          engine.setState('error', 1200);
+        rec.onerror = (ev) => {
+          engine.setState('error', 1400);
+          const reason = ev?.error || 'unknown';
+          if (body) {
+            const note = document.createElement('div');
+            note.className = 'chat-msg bot';
+            note.textContent =
+              reason === 'not-allowed' ? 'Mic permission blocked in browser. Allow microphone access for this site and retry.' :
+              reason === 'no-speech' ? 'No speech detected. Tap MIC and speak clearly.' :
+              `Voice input unavailable (${reason}). You can type your question below.`;
+            body.appendChild(note);
+            body.scrollTop = body.scrollHeight;
+          }
         };
         rec.onend = () => {
           activeRec = null;
@@ -938,14 +988,40 @@
           micBtn.textContent = 'MIC';
           if (engine.getState() === 'listening') engine.setState('idle');
         };
-        try { rec.start(); } catch (_) { activeRec = null; }
+        try {
+          rec.start();
+        } catch (err) {
+          activeRec = null;
+          engine.setState('error', 1200);
+        }
       });
       bar.appendChild(micBtn);
     }
 
+    // Dedicated Close (×) button in header + Escape key support
+    const closeBtn = document.createElement('button');
+    closeBtn.type = 'button';
+    closeBtn.className = 'emo-close-btn';
+    closeBtn.textContent = '×';
+    closeBtn.title = 'Close chat (Esc)';
+    closeBtn.setAttribute('aria-label', 'Close chat');
+    closeBtn.addEventListener('click', () => {
+      if (panel.classList.contains('open')) {
+        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+        toggle?.click();
+      }
+    });
+    bar.appendChild(closeBtn);
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && panel.classList.contains('open')) {
+        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+        toggle?.click();
+      }
+    });
+
     header.appendChild(bar);
   }
-
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
