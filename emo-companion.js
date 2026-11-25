@@ -1034,7 +1034,7 @@
       closeBtn.setAttribute('aria-label', 'Close chat');
       closeBtn.addEventListener('click', () => {
         if (panel.classList.contains('open')) {
-          if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+          if ('speechSynthesis' in window) if (window.AbhiAndroid && window.AbhiAndroid.stopSpeak) window.AbhiAndroid.stopSpeak(); if ('speechSynthesis' in window) window.speechSynthesis.cancel();
           toggle?.click();
         }
       });
@@ -1044,14 +1044,14 @@
 
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && panel.classList.contains('open')) {
-        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+        if ('speechSynthesis' in window) if (window.AbhiAndroid && window.AbhiAndroid.stopSpeak) window.AbhiAndroid.stopSpeak(); if ('speechSynthesis' in window) window.speechSynthesis.cancel();
         toggle?.click();
       }
     });
 
     if (!inputRow || inputRow.querySelector('.emo-icon-btn')) return;
 
-    const hasTTS = 'speechSynthesis' in window;
+    const hasTTS = ('speechSynthesis' in window) || !!(window.AbhiAndroid && typeof window.AbhiAndroid.speak === 'function');
     const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
 
     // 2. Sound (TTS) icon button next to SEND
@@ -1059,7 +1059,11 @@
       const soundBtn = document.createElement('button');
       soundBtn.type = 'button';
       soundBtn.className = 'emo-icon-btn';
-      soundBtn.innerHTML = ICON_VOL_OFF;
+      if (window.AbhiAndroid && typeof window.AbhiAndroid.speak === 'function') {
+        window.__ABHI_TTS_ON__ = true;
+      }
+      soundBtn.innerHTML = window.__ABHI_TTS_ON__ ? ICON_VOL_ON : ICON_VOL_OFF;
+      soundBtn.classList.toggle('active', !!window.__ABHI_TTS_ON__);
       soundBtn.title = 'Toggle ABHI voice';
       soundBtn.setAttribute('aria-label', 'Toggle ABHI voice');
 
@@ -1072,7 +1076,7 @@
           const lastMsg = botMsgs.length ? botMsgs[botMsgs.length - 1].textContent : 'Hi! I am ABHI.';
           speakText(lastMsg, engine);
         } else {
-          window.speechSynthesis.cancel();
+          if (window.AbhiAndroid && window.AbhiAndroid.stopSpeak) window.AbhiAndroid.stopSpeak(); if ('speechSynthesis' in window) window.speechSynthesis.cancel();
           engine.setState('idle');
         }
       });
@@ -1118,7 +1122,7 @@
           activeRec.stop();
           return;
         }
-        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+        if ('speechSynthesis' in window) if (window.AbhiAndroid && window.AbhiAndroid.stopSpeak) window.AbhiAndroid.stopSpeak(); if ('speechSynthesis' in window) window.speechSynthesis.cancel();
 
         const rec = new SpeechRec();
         rec.lang = 'en-US';
