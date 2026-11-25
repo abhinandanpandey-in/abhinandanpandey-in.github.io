@@ -272,7 +272,7 @@ function filterProjects(cat,btn){
   // Honest easter eggs (strict multi-token patterns to avoid false positives)
   const EASTER_EGGS = [
     { test:q=>/\b(resume|cv|curriculum vitae)\b/.test(q), reply:"Abhinandan's resume is shared directly on request to keep contact details private. Use the Contact section or Book Call / Meet to request the latest PDF." },
-    { test:q=>/\b(how.*built|tech stack|built with|architecture|backend|cloudflare)\b/.test(q), reply:"This site runs on modular vanilla HTML/CSS/JS, Cloudflare Pages Functions (/mcp and middleware), FormSubmit for contact forms, and locally vendored scripts under a strict CSP." },
+    { test:q=>/\b(how.*built|tech stack|built with|architecture|backend|cloudflare)\b/.test(q), reply:"This site runs on modular vanilla HTML/CSS/JS, Cloudflare Pages Functions (/mcp and middleware), FormSubmit for contact forms, and zero external JS dependencies under a strict 'self' CSP." },
     { test:q=>/\boscp\b/.test(q), reply:"Abhinandan is currently pursuing OSCP alongside his CRTOM certification and hands-on offensive AI / web pentesting work." },
     { test:q=>/\b(hire|hiring|available|open to work|freelance|internship|full[- ]?time|job|recruit)\b/.test(q), reply:"Yes - Abhinandan is open to AI/LLM Security, AppSec, and Red Teaming roles and internships. You can reach out via the Contact section or book a slot directly." },
     { test:q=>/\b(what'?s?|tell me)?\s*your name\b|\bwho are you\b|\bwhat are you\b|\bintroduce yourself\b/.test(q), reply:"I'm ABHI - Abhinandan Pandey's static site assistant. Zero external APIs, zero LLM; I read directly from this page's live content." },

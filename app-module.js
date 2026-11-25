@@ -1,3 +1,12 @@
+// Zero-dependency native fetch wrapper for CounterAPI
+class Counter {
+  constructor({ workspace }) { this.workspace = workspace; }
+  async up(name) {
+    const res = await fetch(`https://api.counterapi.dev/v1/${encodeURIComponent(this.workspace)}/${encodeURIComponent(name)}/up`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.json();
+  }
+}
 /* ================= PAGE VIEW COUNTER ================= */
 (async function(){
   try {
