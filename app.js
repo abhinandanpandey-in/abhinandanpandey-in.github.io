@@ -752,7 +752,7 @@ function filterProjects(cat,btn){
     'about.txt': 'Abhinandan Pandey — Final-year B.Tech CSE (AKTU), LLM Security Researcher & AI Red Teamer. Independent bug bounty hunter, 35+ responsibly disclosed vulnerabilities.',
     'skills.txt': 'Web/API/Network/Mobile/LLM Pentesting · Burp Suite · Metasploit · Nmap · Prompt Injection · Tool Hijacking · Python · Bash · Kali Linux',
     'contact.txt': 'Instagram, Telegram, GeeksforGeeks, X, HackerOne — see the Contact section below.',
-    'Resume is shared directly on request to keep contact details private. Use the Contact section or Book Call / Meet.': 'Binary file. Use the ↓ Resume button above, or run: open resume',
+    'resume.txt': 'Resume is shared on request — use the Contact section or Book Call / Meet.',
     'secrets.txt': 'Nice try. Maybe sudo knows something 😏'
   };
 
