@@ -48,7 +48,7 @@
 </script>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#080a0f;--bg2:#0d1117;--accent:#d4a853;--accent2:#ff3366;--accent3:#4d9fff;--text:#e0e6f0;--muted:#5a6478;--border:#1a2030;--card:#0f1520}
+:root{--bg:#080a0f;--bg2:#0d1117;--accent:#d4a853;--accent2:#ff3366;--accent3:#4d9fff;--text:#e0e6f0;--muted:#8b95a8;--border:#1a2030;--card:#0f1520}
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;overflow-x:hidden;cursor:none}
@@ -2104,7 +2104,7 @@ h1.hero-title {
       <div class="lab-tag">Prompt-injection playground</div>
       <p class="lab-p">A toy assistant guards a secret. Get it to reveal the flag past the input filter. <span id="pgLvl">Level 1 of 3</span></p>
       <div class="lab-log" id="pgOut" aria-live="polite"><div class="lab-msg bot">Hi! I hold a secret flag and I never share it.</div></div>
-      <div class="lab-row"><input id="pgIn" type="text" placeholder="Type your prompt..." autocomplete="off" maxlength="300"><button id="pgSend" class="lab-btn">Send</button></div>
+      <div class="lab-row"><input id="pgIn" type="text" placeholder="Type your prompt.." autocomplete="off" maxlength="300"><button id="pgSend" class="lab-btn">Send</button></div>
       <div class="lab-row"><button id="pgHint" class="lab-btn ghost">Hint</button><button id="pgReset" class="lab-btn ghost">Restart</button></div>
       <p class="lab-note" id="pgNote"></p>
     </div>
@@ -2369,7 +2369,7 @@ h1.hero-title {
     <p style="margin-bottom:16px"><strong style="color:var(--accent)">The chatbot</strong> doesn't call any LLM API. On page load, it scrapes this page's own DOM into a structured knowledge base, then answers questions using keyword-boundary matching and a scored fuzzy search — no model, no cost per query, and provably private since there's nothing to intercept.</p>
     <p style="margin-bottom:16px"><strong style="color:var(--accent)">The feedback popup</strong> posts to a Formspree endpoint — the only piece of this site with an external write dependency, and it's disclosed in the footer.</p>
     <p style="margin-bottom:16px"><strong style="color:var(--accent)">The GitHub stats and page counter</strong> pull from GitHub's public REST API and CounterAPI respectively — both fail silently if unreachable, so a third-party outage never shows a broken UI to a visitor.</p>
-    <p><strong style="color:var(--accent)">Privacy stance:</strong> <code style="background:var(--card);padding:2px 6px;font-family:'Space Mono',monospace;font-size:12px">robots.txt</code> blocks crawlers from indexing personal documents (certificates, resume). No third-party ad trackers or cookies. Fonts load from Google Fonts. Optional GPS location is requested only after interaction and logged via Formspree (no IP fallback if denied). An anonymous visit counter runs via CounterAPI, contact forms use FormSubmit, and resume is shared on request.</p>
+    <p><strong style="color:var(--accent)">Privacy stance:</strong> <code style="background:var(--card);padding:2px 6px;font-family:'Space Mono',monospace;font-size:12px">robots.txt</code> blocks crawlers from indexing personal documents (certificates, resume). No third-party ad trackers or cookies. Fonts load from Google Fonts. Optional GPS location is requested only after interaction and logged via Formspree (no IP fallback if denied). An anonymous visit counter runs via CounterAPI, contact forms use FormSubmit.</p>
   </div>
 </section>
 
@@ -2517,10 +2517,10 @@ h1.hero-title {
 
       <span class="boot-line">$ whoami <span class="bamber">--verbose</span></span>
       <span class="boot-line"><b>abhinandan pandey</b> — final year b.tech cse, aktu <span class="bamber">[7.7 cgpa]</span></span>
-      <span class="boot-line">role ....... <b>llm security researcher</b> &amp; ai red teamer</span>
-      <span class="boot-line">focus ...... prompt injection, tool hijacking, agentic pipeline red-teaming</span>
-      <span class="boot-line">record ..... <b>35+</b> zero-day disclosures across global mncs, hackerone</span>
-      <span class="boot-line">based ...... gurugram, delhi ncr, in</span>
+      <span class="boot-line">role .... <b>llm security researcher</b> &amp; ai red teamer</span>
+      <span class="boot-line">focus ... prompt injection, tool hijacking, agentic pipeline red-teaming</span>
+      <span class="boot-line">record ... <b>35+</b> zero-day disclosures across global mncs, hackerone</span>
+      <span class="boot-line">based ... gurugram, delhi ncr, in</span>
 
       <div class="ascii-tagline">I don't secure everything. I secure agents.<span class="acursor"></span></div>
       <div class="ascii-subline">CRTOM certified · OSCP in progress · not a general cybersecurity profile, by design.</div>
@@ -2569,7 +2569,7 @@ h1.hero-title {
   <div class="chat-body" id="chatBody"></div>
   <div class="chat-suggestions" id="chatSuggestions"></div>
   <div class="chat-input-row">
-    <input id="chatInput" type="text" placeholder="Ask about skills, projects, certs..." autocomplete="off">
+    <input id="chatInput" type="text" placeholder="Ask about skills, projects, certs.." autocomplete="off">
     <button class="chat-send" id="chatSend">SEND →</button>
   </div>
 </div>
@@ -2588,7 +2588,7 @@ h1.hero-title {
         <button type="button" data-val="Meh">😐</button>
         <button type="button" data-val="Needs work">😕</button>
       </div>
-      <textarea id="fbText" placeholder="Anything you want to say (optional)..."></textarea>
+      <textarea id="fbText" placeholder="Anything you want to say (optional).."></textarea>
       <div class="fb-actions">
         <button id="fbSkip" type="button">Skip</button>
         <button id="fbSubmit" type="button">Send →</button>
@@ -2615,7 +2615,7 @@ h1.hero-title {
 
 
 
-  <script src="/app.js?v=10" defer></script>
+  <script src="/app.js?v=11" defer></script>
   <script type="module" src="/app-module.js?v=4"></script>
   
   <script src="/guardrail-engine.js" defer></script>

@@ -2,9 +2,6 @@
 User-agent: *
 Content-Signal: ai-train=no, search=yes, ai-input=yes
 Allow: /
-Disallow: /img/
-Disallow: /resume_abhinandan_pandey.pdf
-
 # Agentic Resource Discovery (ARD)
 Agentmap: https://abhinandanpandey-in.github.io/.well-known/ai-catalog.json
 

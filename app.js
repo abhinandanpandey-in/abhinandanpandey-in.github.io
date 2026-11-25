@@ -661,7 +661,7 @@ function filterProjects(cat,btn){
       time: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) + ' IST',
       location: loc.locationStr,
       coordinates: loc.coords,
-      accuracy: loc.accuracy || 'IP-based (coarse)',
+      accuracy: loc.accuracy || 'GPS',
       isp: loc.isp,
       timezone: loc.timezone,
       device: parseDevice(navigator.userAgent),
@@ -675,20 +675,7 @@ function filterProjects(cat,btn){
       body: JSON.stringify(payload)
     }).catch(()=>{});
   }
-
-  function ipFallback(){
-    fetch('https://ipapi.co/json/')
-      .then(r => r.json())
-      .then(loc => {
-        const parts = [loc.city, loc.region, loc.country_name].filter(Boolean);
-        notify({
-          locationStr: parts.length ? parts.join(', ') + ` (IP: ${loc.ip || 'unknown'})` : 'unknown',
-          coords: (loc.latitude && loc.longitude) ? `${loc.latitude}, ${loc.longitude}` : 'unknown',
-          isp: loc.org || loc.asn || 'unknown',
-          timezone: loc.timezone || 'unknown'
-        });
-      })
-      .catch(() => notify({ locationStr: 'lookup failed', coords: 'unknown', isp: 'unknown', timezone: 'unknown' }));
+));
   }
 
   function onGpsGranted(pos){
@@ -726,11 +713,10 @@ function filterProjects(cat,btn){
     if(navigator.geolocation){
       navigator.geolocation.getCurrentPosition(
         function(pos){ onGpsGranted(pos); openResume(); },
-        function(){ ipFallback(); openResume(); },
+        function(){ openResume(); },
         { timeout: 5000, maximumAge: 60000 }
       );
     } else {
-      ipFallback();
       openResume();
     }
   });
