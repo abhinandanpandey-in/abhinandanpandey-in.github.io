@@ -2363,12 +2363,12 @@ h1.hero-title {
 <section id="how-built">
   <div class="section-header"><span class="section-num">10</span><h2 class="section-title">How This Site Is Built</h2><div class="section-line"></div></div>
   <div style="max-width:800px;font-size:13.5px;color:var(--text);line-height:1.8">
-    <p style="margin-bottom:16px">Single static HTML file, hosted on GitHub Pages. No framework, no build step, no backend. Everything you see — the terminal, the chatbot, the feedback popup, the stats — is vanilla JavaScript reading and writing to this one page.</p>
+    <p style="margin-bottom:16px">Built with modular vanilla HTML, CSS, and JS (zero heavy frameworks), Cloudflare Pages Functions (/mcp and security middleware), FormSubmit for contact handling, and locally vendored scripts under a strict self-hosted CSP.</p>
     <p style="margin-bottom:16px"><strong style="color:var(--accent)">Hosting.</strong> Primary on GitHub Pages, mirrored on Cloudflare Pages: <a class="mirror-link" href="https://abhinandanpandey-in-github-io.pages.dev/" target="_blank" rel="noopener noreferrer"><svg class="cf-logo" viewBox="0 0 48 32" width="24" height="16" aria-hidden="true"><path fill="#F6821F" d="M14 28a9 9 0 0 1-1.6-17.9A12.5 12.5 0 0 1 36.4 9a9.5 9.5 0 0 1 .6 19z"/></svg>abhinandanpandey-in-github-io.pages.dev</a>. The Cloudflare deployment also serves real HTTP security headers (CSP, HSTS, X-Frame-Options) through a Pages Function, which GitHub Pages cannot do.</p>
     <p style="margin-bottom:16px"><strong style="color:var(--accent)">The chatbot</strong> doesn't call any LLM API. On page load, it scrapes this page's own DOM into a structured knowledge base, then answers questions using keyword-boundary matching and a scored fuzzy search — no model, no cost per query, and provably private since there's nothing to intercept.</p>
     <p style="margin-bottom:16px"><strong style="color:var(--accent)">The feedback popup</strong> posts to a Formspree endpoint — the only piece of this site with an external write dependency, and it's disclosed in the footer.</p>
     <p style="margin-bottom:16px"><strong style="color:var(--accent)">The GitHub stats and page counter</strong> pull from GitHub's public REST API and CounterAPI respectively — both fail silently if unreachable, so a third-party outage never shows a broken UI to a visitor.</p>
-    <p><strong style="color:var(--accent)">Privacy stance:</strong> <code style="background:var(--card);padding:2px 6px;font-family:'Space Mono',monospace;font-size:12px">robots.txt</code> blocks crawlers from indexing personal documents (certificates, resume). Resume downloads log an approximate location — with the browser's native permission prompt, never silently.</p>
+    <p><strong style="color:var(--accent)">Privacy stance:</strong> <code style="background:var(--card);padding:2px 6px;font-family:'Space Mono',monospace;font-size:12px">robots.txt</code> blocks crawlers from indexing personal documents (certificates, resume). No third-party ad trackers or cookies. Only an anonymous visit counter runs; contact forms use FormSubmit, and resume is shared directly on request.</p>
   </div>
 </section>
 
@@ -2614,7 +2614,7 @@ h1.hero-title {
 
 
 
-  <script src="/app.js?v=8" defer></script>
+  <script src="/app.js?v=9" defer></script>
   <script type="module" src="/app-module.js"></script>
   
   <script src="/guardrail-engine.js" defer></script>

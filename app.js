@@ -272,8 +272,9 @@ function filterProjects(cat,btn){
   // Honest easter eggs (strict multi-token patterns to avoid false positives)
   const EASTER_EGGS = [
     { test:q=>/\b(resume|cv|curriculum vitae)\b/.test(q), reply:"Abhinandan's resume is shared directly on request to keep contact details private. Use the Contact section or Book Call / Meet to request the latest PDF." },
+    { test:q=>/\b(how.*built|tech stack|built with|architecture|backend|cloudflare)\b/.test(q), reply:"This site runs on modular vanilla HTML/CSS/JS, Cloudflare Pages Functions (/mcp and middleware), FormSubmit for contact forms, and locally vendored scripts under a strict CSP." },
     { test:q=>/\boscp\b/.test(q), reply:"Abhinandan is currently pursuing OSCP alongside his CRTOM certification and hands-on offensive AI / web pentesting work." },
-    { test:q=>/\b(hire|hiring|available|open to work|freelance|internship|full[- ]?time|job|recruit)\b/.test(q), reply:"Yes - Abhinandan is open to AI/LLM Security, AppSec, and Red Teaming roles, internships, and select security consulting. You can reach out via the Contact section or book a slot directly." },
+    { test:q=>/\b(hire|hiring|available|open to work|freelance|internship|full[- ]?time|job|recruit)\b/.test(q), reply:"Yes - Abhinandan is open to AI/LLM Security, AppSec, and Red Teaming roles and internships. You can reach out via the Contact section or book a slot directly." },
     { test:q=>/\b(what'?s?|tell me)?\s*your name\b|\bwho are you\b|\bwhat are you\b|\bintroduce yourself\b/.test(q), reply:"I'm ABHI - Abhinandan Pandey's static site assistant. Zero external APIs, zero LLM; I read directly from this page's live content." },
     { test:q=>/\b(what is|what'?s)\s+your\s+(work|job|role|purpose)\b|\bwhat do you do\b|\bhow can you help\b/.test(q), reply:"I'm ABHI. My job is to answer questions about what's published on this website - Abhinandan's projects, research papers, skills, DSA stats, certifications, disclosures, and booking a slot." },
     { test:q=>/\b2\s*\+\s*2\b|what'?s?\s*2\s*plus\s*2/.test(q), reply:"4. If you want real math, check his DSA stats - 1,000+ problems solved." },
@@ -767,7 +768,7 @@ function filterProjects(cat,btn){
     'about.txt': 'Abhinandan Pandey — Final-year B.Tech CSE (AKTU), LLM Security Researcher & AI Red Teamer. Independent bug bounty hunter, 35+ responsibly disclosed vulnerabilities.',
     'skills.txt': 'Web/API/Network/Mobile/LLM Pentesting · Burp Suite · Metasploit · Nmap · Prompt Injection · Tool Hijacking · Python · Bash · Kali Linux',
     'contact.txt': 'Instagram, Telegram, GeeksforGeeks, X, HackerOne — see the Contact section below.',
-    'resume.pdf': 'Binary file. Use the ↓ Resume button above, or run: open resume',
+    'Resume is shared directly on request to keep contact details private. Use the Contact section or Book Call / Meet.': 'Binary file. Use the ↓ Resume button above, or run: open resume',
     'secrets.txt': 'Nice try. Maybe sudo knows something 😏'
   };
 
