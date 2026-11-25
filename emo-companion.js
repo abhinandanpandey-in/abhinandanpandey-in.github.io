@@ -371,6 +371,21 @@
           bottom: 108px !important;
         }
       }
+      #chatPanel .chat-input-row,
+      #chatInput {
+        box-sizing: border-box;
+      }
+      #chatInput {
+        min-width: 0 !important;
+        flex: 1 1 auto !important;
+        font-size: 0.78rem !important;
+        padding-right: 6px !important;
+      }
+      .emo-icon-btn {
+        width: 26px !important;
+        height: 26px !important;
+        margin: 0 2px;
+      }
       .emo-icon-btn {
         background: transparent;
         border: 1px solid rgba(212, 169, 67, 0.35);
@@ -1080,7 +1095,7 @@
           engine.setState('idle');
         }
       });
-      inputRow.insertBefore(soundBtn, sendBtn || null);
+      inputRow.style.display = 'flex'; inputRow.style.alignItems = 'center'; inputRow.style.gap = '4px'; if (input) input.placeholder = 'Ask ABHI...'; inputRow.insertBefore(soundBtn, sendBtn || null);
     }
 
     // 3. Mic icon button next to SEND (live dictation directly into input box)
