@@ -1,16 +1,19 @@
 (function () {
   function initTerminalHud() {
-    // Locate the terminal window container
-    const termWindow =
-      document.querySelector('.terminal-window, .term-window, .terminal-box, #terminalWindow') ||
-      document.querySelector('#terminal .terminal, section#terminal > div > div') ||
-      (document.querySelector('#termInput, .term-input, input[id*="term" i]')?.closest('div[class*="term" i], .terminal'));
+    const termInput = document.querySelector('#termInput, .term-input, input[id*="term" i], #terminal input');
+    if (!termInput || document.getElementById('abhiTerminalHud')) return;
 
-    if (!termWindow || document.getElementById('abhiTerminalHud')) return;
-
-    const termInput =
-      termWindow.querySelector('input[type="text"], input:not([type]), textarea') ||
-      document.querySelector('#termInput, .term-input, input[id*="term" i]');
+    // Walk UP to the outermost terminal box (direct child of section or its main container)
+    const section = termInput.closest('section');
+    let termWindow = termInput.parentElement;
+    while (termWindow && termWindow.parentElement && termWindow.parentElement !== section) {
+      const p = termWindow.parentElement;
+      if (p.tagName === 'SECTION' || /\b(container|wrap|inner|content|section)\b/i.test(p.className)) {
+        break;
+      }
+      termWindow = p;
+    }
+    if (!termWindow) return;
 
     // Inject scoped dark-gold HUD styles
     const style = document.createElement('style');
@@ -18,11 +21,11 @@
     style.textContent = `
       .abhi-term-grid {
         display: grid;
-        grid-template-columns: minmax(0, 1.85fr) minmax(270px, 1fr);
+        grid-template-columns: minmax(0, 2fr) minmax(300px, 1fr);
         gap: 18px;
         align-items: stretch;
         width: 100%;
-        max-width: 1180px;
+        max-width: 100%;
       }
       .abhi-term-grid > :first-child {
         width: 100% !important;
