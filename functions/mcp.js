@@ -21,8 +21,8 @@ const PROFILE = {
 };
 const PUBLICATIONS = {
   publications: [
-    { title: "Prompt Injection and Tool Hijacking in Agentic Large Language Model Systems", type: "paper", url: "https://abhinandanpandey-in.github.io/research_paper-1.pdf" },
-    { title: "Prompt Injection and Tool Hijacking in Agentic LLMs", type: "paper", url: "https://abhinandanpandey-in.github.io/research_paper-2.pdf" },
+    { title: "Prompt Injection and Tool Hijacking in Agentic Large Language Model Systems (v1)", type: "paper", version: "v1", url: "https://abhinandanpandey-in.github.io/research_paper-1.pdf" },
+    { title: "Prompt Injection and Tool Hijacking in Agentic LLMs (v2 - Extended Edition)", type: "paper", version: "v2-extended", url: "https://abhinandanpandey-in.github.io/research_paper-2.pdf" },
     { title: "Building Guardrails That Don't Rely on the Model Behaving", type: "article", url: "https://abhinandanpandey-in.github.io/healthcare-rag-guardrails.html" },
     { title: "Why I Fine-Tuned a LoRA Adapter Instead of Just Prompting", type: "article", url: "https://abhinandanpandey-in.github.io/threat-intel-lora.html" }
   ]

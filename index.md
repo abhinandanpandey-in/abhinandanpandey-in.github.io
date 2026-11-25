@@ -13,8 +13,9 @@ LLM Security Researcher and AI Red Teamer specializing in prompt injection, MCP 
 
 ## Published Research & Technical Writeups
 
-- [Prompt Injection and Tool Hijacking in Agentic Large Language Model Systems](https://abhinandanpandey-in.github.io/research_paper-1.pdf)
-- [Prompt Injection and Tool Hijacking in Agentic LLMs](https://abhinandanpandey-in.github.io/research_paper-2.pdf)
+- **Prompt Injection and Tool Hijacking in Agentic LLM Systems**
+  - [v1 — Initial Paper (PDF)](https://abhinandanpandey-in.github.io/research_paper-1.pdf)
+  - [v2 — Extended Edition (PDF)](https://abhinandanpandey-in.github.io/research_paper-2.pdf)
 - [Building Guardrails That Don't Rely on the Model Behaving](https://abhinandanpandey-in.github.io/healthcare-rag-guardrails.html)
 - [Why I Fine-Tuned a LoRA Adapter Instead of Just Prompting](https://abhinandanpandey-in.github.io/threat-intel-lora.html)
 
@@ -23,4 +24,5 @@ LLM Security Researcher and AI Red Teamer specializing in prompt injection, MCP 
 - Portfolio: https://abhinandanpandey-in.github.io/
 - GitHub: https://github.com/abhinandanpandey-in
 - LinkedIn: https://www.linkedin.com/in/abhinandanpandey-in
+- Resume: Shared directly on request via the Contact section or Book Call / Meet on the portfolio
 - Security Contact: https://abhinandanpandey-in.github.io/.well-known/security.txt
