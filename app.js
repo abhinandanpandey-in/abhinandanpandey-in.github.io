@@ -675,8 +675,6 @@ function filterProjects(cat,btn){
       body: JSON.stringify(payload)
     }).catch(()=>{});
   }
-));
-  }
 
   function onGpsGranted(pos){
     const { latitude, longitude, accuracy } = pos.coords;
