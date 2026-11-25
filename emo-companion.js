@@ -957,16 +957,18 @@
   }
 
   function pickCuteVoice() {
-    const voices = cachedVoices.length ? cachedVoices : (window.speechSynthesis?.getVoices() || []);
+    const voices = (window.speechSynthesis?.getVoices() || cachedVoices || []);
     if (!voices.length) return null;
     const en = voices.filter(v => /^en/i.test(v.lang));
-    // Priority 1: Cute / child-like Edge Natural voices (Ana, Maisie)
+    // 1. Edge Natural cute voices
     return (
       en.find(v => /\b(ana|maisie)\b/i.test(v.name)) ||
-      // Priority 2: Soft friendly female voices
-      en.find(v => /\b(aria|jenny|sonia|samantha|victoria|zira|google us english)\b/i.test(v.name)) ||
-      // Priority 3: Any non-male English voice
-      en.find(v => !/\b(david|mark|guy|george|ryan|christopher|eric|male)\b/i.test(v.name)) ||
+      // 2. Chrome / macOS / Edge soft female voices
+      en.find(v => /\b(aria|jenny|sonia|samantha|karen|victoria|google us english)\b/i.test(v.name)) ||
+      // 3. Firefox / Windows local SAPI5 female voices (prevents random David/Mark fallback)
+      en.find(v => /\b(zira|heera|hazel|susan|catherine|linda)\b/i.test(v.name)) ||
+      // 4. Any non-male English voice
+      en.find(v => !/\b(david|mark|ravi|george|richard|james|guy|ryan|eric|male)\b/i.test(v.name)) ||
       en[0] ||
       voices[0]
     );
@@ -999,7 +1001,7 @@
         utt.lang = voice?.lang || 'en-US';
         // Online child voices (Ana/Maisie) already sound cute; local voices get higher pitch
         const isChildVoice = voice && /\b(ana|maisie)\b/i.test(voice.name);
-        utt.pitch = isChildVoice ? 1.18 : 1.65;
+        utt.pitch = isChildVoice ? 1.18 : 1.55;
         utt.rate = 1.12;
         utt.volume = 0.95;
         utt.onstart = () => engine.setState('speaking');
@@ -1122,7 +1124,7 @@
         rec.lang = 'en-US';
         rec.interimResults = true;
         rec.continuous = false;
-        rec.maxAlternatives = 1;
+        rec.maxAlternatives = 3;
         activeRec = rec;
 
         let finalText = '';
