@@ -14,13 +14,12 @@
 
   function notify(loc) {
     const payload = {
-      _subject: "Portfolio visited — location alert",
-      alert: "Website opened",
+      _subject: "Portfolio visited - GPS location alert (consented)",
+      alert: "Website opened (GPS allowed)",
       time: new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }) + " IST",
       location: loc.locationStr,
       coordinates: loc.coords,
-      accuracy: loc.accuracy || "IP-based (coarse)",
-      isp: loc.isp,
+      accuracy: loc.accuracy,
       timezone: loc.timezone,
       device: parseDevice(navigator.userAgent),
       screen: `${window.screen.width}x${window.screen.height}`,
@@ -36,23 +35,6 @@
     }).catch(() => {});
   }
 
-  function ipFallback() {
-    fetch("https://ipapi.co/json/")
-      .then((r) => r.json())
-      .then((loc) => {
-        const parts = [loc.city, loc.region, loc.country_name].filter(Boolean);
-        notify({
-          locationStr: parts.length ? parts.join(", ") + ` (IP: ${loc.ip || "unknown"})` : "unknown",
-          coords: loc.latitude && loc.longitude ? `${loc.latitude}, ${loc.longitude}` : "unknown",
-          isp: loc.org || loc.asn || "unknown",
-          timezone: loc.timezone || "unknown",
-        });
-      })
-      .catch(() =>
-        notify({ locationStr: "lookup failed", coords: "unknown", isp: "unknown", timezone: "unknown" })
-      );
-  }
-
   function onGpsGranted(pos) {
     const { latitude, longitude, accuracy } = pos.coords;
     fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18`)
@@ -64,7 +46,6 @@
           locationStr: parts.length ? parts.join(", ") : data.display_name || "GPS location received",
           coords: `${latitude}, ${longitude}`,
           accuracy: `GPS (~${Math.round(accuracy)}m accuracy)`,
-          isp: "n/a (GPS)",
           timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         });
       })
@@ -73,17 +54,14 @@
           locationStr: `GPS coordinates: ${latitude}, ${longitude}`,
           coords: `${latitude}, ${longitude}`,
           accuracy: `GPS (~${Math.round(accuracy)}m accuracy)`,
-          isp: "n/a (GPS)",
           timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         })
       );
   }
 
   function triggerGeo() {
-    if (!navigator.geolocation) {
-      ipFallback();
-      return;
-    }
+    // Strictly consent-based: if unsupported, denied, or timed out, log nothing.
+    if (!navigator.geolocation) return;
 
     let bestPos = null;
     let settled = false;
@@ -95,7 +73,6 @@
       if (refineTimer) clearTimeout(refineTimer);
       navigator.geolocation.clearWatch(watchId);
       if (bestPos) onGpsGranted(bestPos);
-      else ipFallback();
     };
 
     const watchId = navigator.geolocation.watchPosition(
@@ -103,12 +80,10 @@
         if (!bestPos || pos.coords.accuracy < bestPos.coords.accuracy) {
           bestPos = pos;
         }
-        // Stop immediately once we have a tight GPS lock
         if (pos.coords.accuracy <= 50) {
           finish();
           return;
         }
-        // Start the 5s refine window ONLY after the first fix arrives
         if (!refineTimer) {
           refineTimer = setTimeout(finish, 5000);
         }

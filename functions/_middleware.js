@@ -19,7 +19,7 @@ export async function onRequest(context) {
     out.headers.set("Cross-Origin-Opener-Policy", "same-origin");
     out.headers.set(
       "Content-Security-Policy",
-      "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://formsubmit.co https://formspree.io https://ipapi.co https://nominatim.openstreetmap.org https://api.github.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self';"
+      "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://formsubmit.co https://formspree.io https://nominatim.openstreetmap.org https://api.github.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self';"
     );
     if (isPagesDev) {
       out.headers.set("X-Robots-Tag", "noindex, follow");
