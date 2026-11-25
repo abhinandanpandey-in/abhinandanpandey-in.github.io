@@ -1,3 +1,6 @@
+/* Frame-busting fallback for GitHub Pages (no X-Frame-Options header) */
+if (window.top !== window.self) { try { window.top.location = window.self.location; } catch (_) {} }
+
 /* ================= PAGE VIEW COUNTER (ZERO-DEPENDENCY) ================= */
 (async function () {
   const controller = new AbortController();

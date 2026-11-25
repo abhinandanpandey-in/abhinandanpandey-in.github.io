@@ -93,9 +93,12 @@
     );
   }
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", triggerGeo);
-  } else {
+  // Trigger only after explicit visitor interaction (never on initial page load)
+  const armOnce = () => {
+    window.removeEventListener("pointerdown", armOnce);
+    window.removeEventListener("keydown", armOnce);
     triggerGeo();
-  }
+  };
+  window.addEventListener("pointerdown", armOnce, { once: true, passive: true });
+  window.addEventListener("keydown", armOnce, { once: true, passive: true });
 })();
