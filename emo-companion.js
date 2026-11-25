@@ -1186,6 +1186,10 @@
             input.placeholder = origPlaceholder;
           }
           if (engine.getState() === 'listening') engine.setState('idle');
+          const spoken = (input.value || '').trim();
+          if (spoken) {
+            sendBtn?.click();
+          }
         };
 
         try {
