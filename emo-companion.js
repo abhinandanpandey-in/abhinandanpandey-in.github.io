@@ -973,6 +973,15 @@
   }
 
   function speakText(text, engine) {
+    if (window.AbhiAndroid && typeof window.AbhiAndroid.speak === 'function') {
+      const clean = (text || '').replace(/->/g, ', ').replace(/\[[^\]]+\]/g, '').replace(/\s+/g, ' ').trim().slice(0, 280);
+      if (clean) {
+        playEmoChirp('speak');
+        engine.setState('speaking', Math.min(3500, Math.max(1200, clean.length * 45)));
+        window.AbhiAndroid.speak(clean);
+      }
+      return;
+    }
     if (!('speechSynthesis' in window) || !text) return;
     try {
       const synth = window.speechSynthesis;
@@ -1081,6 +1090,28 @@
       let activeRec = null;
 
       micBtn.addEventListener('click', () => {
+        if (window.AbhiAndroid && typeof window.AbhiAndroid.startListen === 'function') {
+          window.__abhiNativeMicStart = () => {
+            micBtn.classList.add('recording');
+            input.placeholder = 'Listening... speak now';
+            engine.setState('listening');
+          };
+          window.__abhiNativeMicPartial = (txt) => { input.value = txt; };
+          window.__abhiNativeMicResult = (txt) => {
+            micBtn.classList.remove('recording');
+            input.placeholder = origPlaceholder;
+            input.value = txt;
+            sendBtn?.click();
+          };
+          window.__abhiNativeMicError = (msg) => {
+            micBtn.classList.remove('recording');
+            engine.setState('error', 1100);
+            input.placeholder = msg || 'Tap mic & speak';
+            setTimeout(() => { input.placeholder = origPlaceholder; }, 3000);
+          };
+          window.AbhiAndroid.startListen();
+          return;
+        }
         if (activeRec) {
           activeRec.stop();
           return;
