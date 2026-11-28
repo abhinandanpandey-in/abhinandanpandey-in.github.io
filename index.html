@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://api.counterapi.dev https://api.github.com https://formspree.io https://formsubmit.co https://nominatim.openstreetmap.org; base-uri 'self'; form-action 'self' https://formsubmit.co https://formspree.io;" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://api.counterapi.dev https://api.github.com https://formspree.io https://formsubmit.co; base-uri 'self'; form-action 'self' https://formsubmit.co https://formspree.io;" />
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Abhinandan Pandey | LLM Security Researcher</title>
@@ -2371,7 +2371,7 @@ h1.hero-title {
     <p style="margin-bottom:16px"><strong style="color:var(--accent)">The chatbot</strong> doesn't call any LLM API. On page load, it scrapes this page's own DOM into a structured knowledge base, then answers questions using keyword-boundary matching and a scored fuzzy search — no model, no cost per query, and provably private since there's nothing to intercept.</p>
     <p style="margin-bottom:16px"><strong style="color:var(--accent)">The feedback popup</strong> posts to a Formspree endpoint — the only piece of this site with an external write dependency, and it's disclosed in the footer.</p>
     <p style="margin-bottom:16px"><strong style="color:var(--accent)">The GitHub stats and page counter</strong> pull from GitHub's public REST API and CounterAPI respectively — both fail silently if unreachable, so a third-party outage never shows a broken UI to a visitor.</p>
-    <p><strong style="color:var(--accent)">Privacy stance:</strong> <code style="background:var(--card);padding:2px 6px;font-family:'Space Mono',monospace;font-size:12px">robots.txt</code> blocks crawlers from indexing personal documents (certificates, resume). No third-party ad trackers or cookies. Fonts load from Google Fonts. Optional GPS location is requested only after interaction and logged via Formspree (no IP fallback if denied). An anonymous visit counter runs via CounterAPI, contact forms use FormSubmit.</p>
+    <p><strong style="color:var(--accent)">Privacy stance:</strong> No third-party ad trackers or cookies. Fonts load from Google Fonts. Optional GPS location is requested only after interaction and logged via Formspree (coordinates only, no IP fallback or third-party reverse geocoding). An anonymous visit counter runs via CounterAPI, and contact forms use FormSubmit.</p>
   </div>
 </section>
 

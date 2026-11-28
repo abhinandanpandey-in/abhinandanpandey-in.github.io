@@ -37,26 +37,12 @@
 
   function onGpsGranted(pos) {
     const { latitude, longitude, accuracy } = pos.coords;
-    fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18`)
-      .then((r) => r.json())
-      .then((data) => {
-        const addr = data.address || {};
-        const parts = [addr.suburb || addr.neighbourhood, addr.city || addr.town || addr.village, addr.state, addr.country].filter(Boolean);
-        notify({
-          locationStr: parts.length ? parts.join(", ") : data.display_name || "GPS location received",
-          coords: `${latitude}, ${longitude}`,
-          accuracy: `GPS (~${Math.round(accuracy)}m accuracy)`,
-          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-        });
-      })
-      .catch(() =>
-        notify({
-          locationStr: `GPS coordinates: ${latitude}, ${longitude}`,
-          coords: `${latitude}, ${longitude}`,
-          accuracy: `GPS (~${Math.round(accuracy)}m accuracy)`,
-          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-        })
-      );
+    notify({
+      locationStr: "GPS coordinates received",
+      coords: `${latitude}, ${longitude}`,
+      accuracy: `GPS (~${Math.round(accuracy)}m accuracy)`,
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    });
   }
 
   function triggerGeo() {
